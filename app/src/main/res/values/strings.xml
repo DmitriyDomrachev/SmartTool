@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Smart tool</string>
+    <string name="title_scan">Scan</string>
+    <string name="title_add">List</string>
+    <string name="title_user">Profile</string>
+    <string name="title_settings">Settings</string>
+    <string name="Battery">Battery charge: </string>
+    <string name="WiFi">WiFi status: </string>
+    <string name="Bluetooth">Bluetooth status: </string>
+    <string name="Mobile">Mobile data status: </string>
+    <string name="Sound">Sound status: </string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

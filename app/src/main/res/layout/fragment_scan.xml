@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context="com.example.dima.smarttool.fragment.ScanFragment"
+    android:layout_margin="@dimen/fab_margin">
+
+    <TextView
+        android:id="@+id/ScanFragmentBatteryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Battery" />
+
+    <TextView
+        android:id="@+id/ScanFragmentMobileTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Mobile" />
+
+    <TextView
+        android:id="@+id/ScanFragmentWiFiTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/WiFi"
+        />
+
+    <TextView
+        android:id="@+id/ScanFragmentBleutoothTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Bluetooth" />
+
+    <TextView
+        android:id="@+id/ScanFragmentSoundTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Sound" />
+</LinearLayout>
