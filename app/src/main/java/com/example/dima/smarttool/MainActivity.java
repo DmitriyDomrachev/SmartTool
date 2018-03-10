@@ -1,9 +1,14 @@
 package com.example.dima.smarttool;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -19,6 +24,17 @@ public class MainActivity extends AppCompatActivity {
     static FragmentManager fragmentManager;
     static FragmentTransaction fragmentTransaction;
     static Fragment fragment;
+    int batteryLevel;
+
+
+    private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int level = intent.getIntExtra("EXTRA_LEVEL", 0);
+            int max = intent.getIntExtra("EXTRA_SCALE",0);
+            batteryLevel = (level/max*100);
+        }
+    };
 
 
     @Override
@@ -26,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fragmentManager = getFragmentManager();
+        fragment = new ScanFragment();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.container, fragment);
+        fragmentTransaction.commitAllowingStateLoss();
+        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -67,5 +89,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    protected void onDestroy() {
+        unregisterReceiver( batteryReceiver );
+        super.onDestroy();
+    }
+
 
 }
+
+
+
