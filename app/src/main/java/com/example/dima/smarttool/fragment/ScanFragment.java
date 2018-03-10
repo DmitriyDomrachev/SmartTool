@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.dima.smarttool.ControlState;
 import com.example.dima.smarttool.R;
 
 /**
@@ -15,21 +16,32 @@ import com.example.dima.smarttool.R;
 
 public class ScanFragment extends Fragment {
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_scan, container, false);
+        TextView battery = view.findViewById(R.id.ScanFragmentBatteryTextView);
+        TextView mobile = view.findViewById(R.id.ScanFragmentMobileTextView);
+        TextView wifi = view.findViewById(R.id.ScanFragmentWiFiTextView);
+        TextView bluetooth = view.findViewById(R.id.ScanFragmentBleutoothTextView);
+        TextView sound = view.findViewById(R.id.ScanFragmentSoundTextView);
+//        ControlState cs = new ControlState();
+//        battery.setText(battery.getText()+""+cs.getBatteryStateScan());
+//        wifi.setText(battery.getText()+""+cs.isWiFiStateScan());
+//        mobile.setText(battery.getText()+""+cs.isMobileStateScan());
+//        bluetooth.setText(battery.getText()+""+cs.isBluetoothStateScan());
+//        sound.setText(battery.getText()+""+cs.getBatteryStateScan());
 
-        return inflater.inflate(R.layout.fragment_scan, container, false);
+        return view ;
     }
 
-    public void updateScan(){
-        TextView battery = getView().findViewById(R.id.ScanFragmentBatteryTextView);
-        TextView mobile = getView().findViewById(R.id.ScanFragmentMobileTextView);
-        TextView wifi = getView().findViewById(R.id.ScanFragmentWiFiTextView);
-        TextView bluetooth = getView().findViewById(R.id.ScanFragmentBleutoothTextView);
-        TextView sound = getView().findViewById(R.id.ScanFragmentSoundTextView);
-        battery.setText("lalal");
+    public void onStart() {
+
+        super.onStart();
     }
+
+
 
 
 }
