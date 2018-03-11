@@ -1,13 +1,16 @@
 package com.example.dima.smarttool.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.dima.smarttool.ControlState;
+import com.example.dima.smarttool.MainActivity;
 import com.example.dima.smarttool.R;
 
 /**
@@ -15,6 +18,8 @@ import com.example.dima.smarttool.R;
  */
 
 public class ScanFragment extends Fragment {
+    boolean WiFiState =true, BluetoothState=true, MobileState=true;
+    int BatteryState=0, SoundState=0;
 
 
     @Override
@@ -26,20 +31,29 @@ public class ScanFragment extends Fragment {
         TextView wifi = view.findViewById(R.id.ScanFragmentWiFiTextView);
         TextView bluetooth = view.findViewById(R.id.ScanFragmentBleutoothTextView);
         TextView sound = view.findViewById(R.id.ScanFragmentSoundTextView);
-//        ControlState cs = new ControlState();
-//        battery.setText(battery.getText()+""+cs.getBatteryStateScan());
-//        wifi.setText(battery.getText()+""+cs.isWiFiStateScan());
-//        mobile.setText(battery.getText()+""+cs.isMobileStateScan());
-//        bluetooth.setText(battery.getText()+""+cs.isBluetoothStateScan());
-//        sound.setText(battery.getText()+""+cs.getBatteryStateScan());
 
-        return view ;
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            WiFiState = getArguments().getBoolean("wifi");
+            BluetoothState = getArguments().getBoolean("bluetooth");
+            MobileState = getArguments().getBoolean("mobile");
+            BatteryState = getArguments().getInt("battery");
+            SoundState = getArguments().getInt("sound");
+            Log.d("test1", "wifi;Bt:" + WiFiState+" " +BluetoothState);
+        }
+        battery.setText(battery.getText() + "" + BatteryState);
+        wifi.setText(wifi.getText() + "" +  WiFiState);
+        mobile.setText(mobile.getText() + "" + MobileState);
+        bluetooth.setText(bluetooth.getText() + "" + BluetoothState);
+        sound.setText(sound.getText() + "" + SoundState);
+        return view;
     }
 
-    public void onStart() {
 
-        super.onStart();
-    }
+
+
+
+
 
 
 

@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,39 +38,40 @@ public class MainActivity extends AppCompatActivity {
     static FragmentManager fragmentManager;
     static FragmentTransaction fragmentTransaction;
     static Fragment fragment;
+    public static ControlState controlState;
+    private static int navigateID = R.id.navigation_scan;
     int batteryLevel;
     private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
     private static final String[] READ_ACCESS_FINE = new String[]{ACCESS_WIFI_STATE, CHANGE_WIFI_STATE, BLUETOOTH_ADMIN};
 
 
-    private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int level = intent.getIntExtra("EXTRA_LEVEL", 1);
-            int max = intent.getIntExtra("EXTRA_SCALE", 1);
-            batteryLevel = (level / max * 100);
-        }
-    };
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fragmentManager = getFragmentManager();
+
+
+        fragmentManager = getFragmentManager();         //отображение 1 фрагмента
         fragment = new ScanFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
         fragmentTransaction.commitAllowingStateLoss();
 
-        registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        if (isPermissionGranted(BLUETOOTH_ADMIN)&& isPermissionGranted(ACCESS_WIFI_STATE)) {
-            Toast.makeText(this, "Разрешение есть, можно работать", Toast.LENGTH_SHORT).show();
-        } else { //иначе запрашиваем разрешение
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);
-            }
-        }
+
+    }
+
+
+    protected void onResume() {
+        super.onResume();
+        @SuppressLint("WifiManagerLeak") WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        controlState = new ControlState();              // создание объекта для отслеждивания состояния устройства
+        controlState.wifiManager = wifiManager;
+        controlState.btAdapter = btAdapter;
+        controlState.startScan();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -77,31 +80,23 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.navigation_scan:
-                        fragment = new ScanFragment();
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.container, fragment);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        navigateID = R.id.navigation_scan;
+                        rewriteFragment();
                         return true;
 
                     case R.id.navigation_list:
-                        fragment = new ListFragment();
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.container, fragment);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        navigateID = R.id.navigation_list;
+                        rewriteFragment();
                         return true;
 
                     case R.id.navigation_user:
-                        fragment = new UserFragment();
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.container, fragment);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        navigateID = R.id.navigation_user;
+                        rewriteFragment();
                         return true;
 
                     case R.id.navigation_setting:
-                        fragment = new SettingFragment();
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.container, fragment);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        navigateID = R.id.navigation_setting;
+                        rewriteFragment();
                         return true;
                 }
                 return false;
@@ -109,31 +104,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
     }
 
+    public float getBatteryLevel() {
+        Intent batteryIntent = registerReceiver(null, new     IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        if(level == -1 || scale == -1) {
+            return 50.0f;
+        }
 
+        return ((float)level / (float)scale) * 100.0f;
+    }           //уровень зарада акб
 
-
-
-
-    protected void onResume () {
-        super.onResume();
-        @SuppressLint("WifiManagerLeak") WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        ControlState controlState = new ControlState();
-        controlState.wifiManager = wifiManager;
-        controlState.btAdapter = btAdapter;
-        controlState.startScan();
-    }
-
-
-
-    protected void onDestroy() {
-        unregisterReceiver(batteryReceiver);
-        super.onDestroy();
-    }
 
     private boolean isPermissionGranted(String permission) {
         int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
@@ -145,7 +128,61 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    protected void onPostExecute(Void image) {
+        Log.d("test1 ", "поток end");
+
+    }
+
+
+    public static void rewriteFragment() {
+        Log.d("test1", "rewrite");
+        switch (navigateID) {
+            case R.id.navigation_scan:
+                Bundle arg = new Bundle();
+                arg.putInt("battery", controlState.getBatteryStateScan());
+                arg.putInt("sound", controlState.getSoundStateScan());
+                arg.putBoolean("wifi", controlState.isWiFiStateScan());
+                arg.putBoolean("bluetooth", controlState.isBluetoothStateScan());
+                arg.putBoolean("mobile", controlState.isMobileStateScan());
+                fragment = new ScanFragment();
+                fragment.setArguments(arg);
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container, fragment);
+                fragmentTransaction.commitAllowingStateLoss();
+                Log.d("test1", "rewrite scan");
+
+                return;
+            case R.id.navigation_list:
+                fragment = new ListFragment();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container, fragment);
+                fragmentTransaction.commitAllowingStateLoss();
+                Log.d("test1", "rewrite list");
+                return;
+            case R.id.navigation_user:
+                fragment = new UserFragment();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container, fragment);
+                fragmentTransaction.commitAllowingStateLoss();
+                return;
+            case R.id.navigation_setting:
+                fragment = new SettingFragment();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container, fragment);
+                fragmentTransaction.commitAllowingStateLoss();
+                return;
+            default:
+
+
+        }
+
+
+
+    }  //пересоздание фрагментов для отображения измененной информации
+
+
 }
+
 
 
 

@@ -13,9 +13,8 @@ import android.util.Log;
 
 public class ControlState extends MainActivity {
     private State state;
-    boolean WiFiStateScan, BluetoothStateScan, MobileStateScan, WiFiStateSelect, BluetoothStateSelect, MobileStateSelect;
-    int BatteryStateScan;
-    int SoundStateScan, BatteryStateSelect, SoundStateSelect;
+    static boolean WiFiStateScan, BluetoothStateScan, MobileStateScan, WiFiStateSelect, BluetoothStateSelect, MobileStateSelect;
+    static int SoundStateScan, BatteryStateSelect, SoundStateSelect, BatteryStateScan;
     public WifiManager wifiManager;
     public BluetoothAdapter btAdapter;
 
@@ -30,23 +29,27 @@ public class ControlState extends MainActivity {
 
     public void scanWiFi() {
         this.WiFiStateScan = wifiManager.isWifiEnabled();
+        Log.d("test", "wifiscan: " + WiFiStateScan);
 
     }
 
     public void scanBluetooth() {
-        this.BluetoothStateScan = btAdapter.isEnabled();
+        BluetoothStateScan = btAdapter.isEnabled();
+        Log.d("test", "btscan: " + BluetoothStateScan);
+
     }
 
     public void scanMobile() {
-        this.MobileStateScan = true;
+        MobileStateScan = true;
     }
 
     public void scanBattery() {
-        this.BatteryStateScan = batteryLevel;
+        Log.d("test1", "bat"+ getBatteryLevel());
+        BatteryStateScan = (int)getBatteryLevel();
     }
 
     public void scanSound() {
-        this.SoundStateScan = 100;
+        SoundStateScan = 100;
     }
 
     public void addState(boolean wifiST, boolean btST, boolean mbST, int batST, int soundST) {
@@ -62,18 +65,11 @@ public class ControlState extends MainActivity {
         SoundStateScan = state.BatteryState;
     }
 
-    public void startScan (){
+    public void startScan() {
         new Scanning().execute();
-    }
+    }  //запуск потока сканирования
 
-    public void fullScan() {
 
-        scanWiFi();
-        scanBluetooth();
-        scanMobile();
-        scanBattery();
-        scanSound();
-    }
 
 
     private class Scanning extends AsyncTask<Void, Integer, Void> {
@@ -85,7 +81,13 @@ public class ControlState extends MainActivity {
         protected Void doInBackground(Void... args) {
             while (true) {
                 Log.d("test", "поток, fullscan");
-                fullScan();
+                scanWiFi();
+                scanBluetooth();
+                scanMobile();
+                scanBattery();
+                scanSound();
+                MainActivity.rewriteFragment();
+
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -97,13 +99,14 @@ public class ControlState extends MainActivity {
         protected void onPostExecute(Void image) {
 
         }
-    }
+    }  // поток постоянного сканирования устройства
 
     public boolean isWiFiStateScan() {
         return WiFiStateScan;
     }
 
     public boolean isBluetoothStateScan() {
+
         return BluetoothStateScan;
     }
 
