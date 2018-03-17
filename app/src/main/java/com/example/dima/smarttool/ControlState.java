@@ -3,6 +3,7 @@ package com.example.dima.smarttool;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -45,11 +46,12 @@ public class ControlState extends MainActivity {
 
     public void scanBattery(int bat) {
 //        Log.d("test1", "bat"+ getBatteryLevel());
-        BatteryStateScan = bat;
+       BatteryStateScan = bat;
     }
 
-    public void scanSound() {
-        SoundStateScan = 100;
+    public void scanSound(int volume) {
+        SoundStateScan = 100*volume/7;
+
     }
 
     public void addState(boolean wifiST, boolean btST, boolean mbST, int batST, int soundST) {
@@ -84,9 +86,7 @@ public class ControlState extends MainActivity {
                 scanWiFi();
                 scanBluetooth();
                 scanMobile();
-                scanSound();
                 MainActivity.rewriteFragment();
-
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

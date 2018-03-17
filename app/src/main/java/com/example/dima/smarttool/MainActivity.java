@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
     private static final String[] READ_ACCESS_FINE = new String[]{ACCESS_WIFI_STATE, CHANGE_WIFI_STATE, BLUETOOTH_ADMIN};
     private static int batteryChange;
+    static AudioManager audioManager;
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -56,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         fragmentManager = getFragmentManager();         //отображение 1 фрагмента
         fragment = new ScanFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter  ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter Служит неким фильтром данных, которые мы хотим получить.
         //Чтобы получить текущее состояние батареи в виде намерения, нужно вызвать registerReceiver, передав mBroadcastReceiver в качестве преемника
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);
+          audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+
     }
 
     protected void onResume() {
@@ -75,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         controlState = new ControlState();              // создание объекта для отслеждивания состояния устройства
         controlState.wifiManager = wifiManager;
         controlState.btAdapter = btAdapter;
-
         controlState.startScan();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("test1", "rewrite");
         switch (navigateID) {
             case R.id.navigation_scan:
+                controlState.scanSound(audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
                 Bundle arg = new Bundle();
                 arg.putInt("battery", controlState.getBatteryStateScan());
                 arg.putInt("sound", controlState.getSoundStateScan());
