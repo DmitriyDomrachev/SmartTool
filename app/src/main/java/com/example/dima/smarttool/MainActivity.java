@@ -8,9 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -21,7 +19,6 @@ import android.view.MenuItem;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.widget.Toast;
 
 import com.example.dima.smarttool.fragment.ListFragment;
 import com.example.dima.smarttool.fragment.ScanFragment;
@@ -40,12 +37,19 @@ public class MainActivity extends AppCompatActivity {
     static Fragment fragment;
     public static ControlState controlState;
     private static int navigateID = R.id.navigation_scan;
-    int batteryLevel;
     private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
     private static final String[] READ_ACCESS_FINE = new String[]{ACCESS_WIFI_STATE, CHANGE_WIFI_STATE, BLUETOOTH_ADMIN};
+    private static int batteryChange;
 
-
-
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            float percentage = level / (float) scale;
+            controlState.scanBattery((int) ((percentage) * 100));
+        }
+    };
 
 
     @Override
@@ -53,16 +57,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         fragmentManager = getFragmentManager();         //отображение 1 фрагмента
         fragment = new ScanFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
         fragmentTransaction.commitAllowingStateLoss();
 
-
+        IntentFilter  ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter Служит неким фильтром данных, которые мы хотим получить.
+        //Чтобы получить текущее состояние батареи в виде намерения, нужно вызвать registerReceiver, передав mBroadcastReceiver в качестве преемника
+        Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);
     }
-
 
     protected void onResume() {
         super.onResume();
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         controlState = new ControlState();              // создание объекта для отслеждивания состояния устройства
         controlState.wifiManager = wifiManager;
         controlState.btAdapter = btAdapter;
+
         controlState.startScan();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -106,18 +111,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public float getBatteryLevel() {
-        Intent batteryIntent = registerReceiver(null, new     IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        if(level == -1 || scale == -1) {
-            return 50.0f;
-        }
-
-        return ((float)level / (float)scale) * 100.0f;
-    }           //уровень зарада акб
-
-
     private boolean isPermissionGranted(String permission) {
         int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
         return permissionCheck == PackageManager.PERMISSION_GRANTED;
@@ -127,12 +120,10 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
     }
 
-
     protected void onPostExecute(Void image) {
         Log.d("test1 ", "поток end");
 
     }
-
 
     public static void rewriteFragment() {
         Log.d("test1", "rewrite");
@@ -175,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
-
 
 
     }  //пересоздание фрагментов для отображения измененной информации

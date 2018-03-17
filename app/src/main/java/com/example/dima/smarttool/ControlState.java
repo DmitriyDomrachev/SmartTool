@@ -43,9 +43,9 @@ public class ControlState extends MainActivity {
         MobileStateScan = true;
     }
 
-    public void scanBattery() {
-        Log.d("test1", "bat"+ getBatteryLevel());
-        BatteryStateScan = (int)getBatteryLevel();
+    public void scanBattery(int bat) {
+//        Log.d("test1", "bat"+ getBatteryLevel());
+        BatteryStateScan = bat;
     }
 
     public void scanSound() {
@@ -84,7 +84,6 @@ public class ControlState extends MainActivity {
                 scanWiFi();
                 scanBluetooth();
                 scanMobile();
-                scanBattery();
                 scanSound();
                 MainActivity.rewriteFragment();
 
