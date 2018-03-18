@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import com.example.dima.smarttool.fragment.ScanFragment;
 import com.example.dima.smarttool.fragment.SettingFragment;
 import com.example.dima.smarttool.fragment.UserFragment;
 
+import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.ACCESS_WIFI_STATE;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
 import static android.Manifest.permission.CHANGE_WIFI_STATE;
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public static ControlState controlState;
     private static int navigateID = R.id.navigation_scan;
     private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
-    private static final String[] READ_ACCESS_FINE = new String[]{ACCESS_WIFI_STATE, CHANGE_WIFI_STATE, BLUETOOTH_ADMIN};
+    private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, ACCESS_NETWORK_STATE};
     private static int batteryChange;
     static AudioManager audioManager;
 
@@ -56,18 +59,28 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        boolean isWifiConn = networkInfo.isConnected();
+        networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        boolean isMobileConn = networkInfo.isConnected();
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         fragmentManager = getFragmentManager();         //отображение 1 фрагмента
         fragment = new ScanFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
         fragmentTransaction.commitAllowingStateLoss();
 
-        IntentFilter  ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter Служит неким фильтром данных, которые мы хотим получить.
-        //Чтобы получить текущее состояние батареи в виде намерения, нужно вызвать registerReceiver, передав mBroadcastReceiver в качестве преемника
-        Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);
-          audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        IntentFilter  ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter батареи
+        Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter); //текущее состояние батареи, mBroadcastReceiver в качестве преемника
+        audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
     }
 
@@ -75,8 +88,10 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         @SuppressLint("WifiManagerLeak") WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        controlState = new ControlState();              // создание объекта для отслеждивания состояния устройства
+        controlState = new ControlState();
+        controlState.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);    // создание объекта для отслеждивания состояния устройства
         controlState.wifiManager = wifiManager;
+
         controlState.btAdapter = btAdapter;
         controlState.startScan();
 

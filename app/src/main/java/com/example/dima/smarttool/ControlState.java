@@ -1,9 +1,9 @@
 package com.example.dima.smarttool;
 
-import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -18,18 +18,12 @@ public class ControlState extends MainActivity {
     static int SoundStateScan, BatteryStateSelect, SoundStateSelect, BatteryStateScan;
     public WifiManager wifiManager;
     public BluetoothAdapter btAdapter;
+    ConnectivityManager connMgr;
 
-
-
-
-    /*public State getScanState ( ){
-        State st = new State(WiFiStateScan, BluetoothStateScan, MobileStateScan, BatteryStateScan, SoundStateScan);
-        return st;
-
-    }*/
 
     public void scanWiFi() {
-        this.WiFiStateScan = wifiManager.isWifiEnabled();
+        this.WiFiStateScan = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+//        this.WiFiStateScan = wifiManager.isWifiEnabled();
         Log.d("test", "wifiscan: " + WiFiStateScan);
 
     }
@@ -41,7 +35,7 @@ public class ControlState extends MainActivity {
     }
 
     public void scanMobile() {
-        MobileStateScan = true;
+        MobileStateScan = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
     }
 
     public void scanBattery(int bat) {
