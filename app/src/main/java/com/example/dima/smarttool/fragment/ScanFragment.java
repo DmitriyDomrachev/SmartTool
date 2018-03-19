@@ -1,16 +1,12 @@
 package com.example.dima.smarttool.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.dima.smarttool.ControlState;
-import com.example.dima.smarttool.MainActivity;
 import com.example.dima.smarttool.R;
 
 /**
@@ -39,7 +35,6 @@ public class ScanFragment extends Fragment {
             MobileState = getArguments().getBoolean("mobile");
             BatteryState = getArguments().getInt("battery");
             SoundState = getArguments().getInt("sound");
-            Log.d("test1", "wifi;Bt:" + WiFiState+" " +BluetoothState);
         }
         battery.setText(battery.getText() + "" + BatteryState);
         wifi.setText(wifi.getText() + "" +  WiFiState);

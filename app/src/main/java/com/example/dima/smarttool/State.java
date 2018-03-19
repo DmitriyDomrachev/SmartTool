@@ -10,8 +10,8 @@ public class State {
 
 
     static ArrayList<State> stateList = new ArrayList<>();
-    boolean WiFiState, BluetoothState, MobileState;
-    int BatteryState, SoundState;
+    static boolean WiFiState, BluetoothState, MobileState;
+    static int BatteryState, SoundState;
 
 
     public State(boolean wifiState, boolean bluetoothState, boolean mobileState, int batteryState, int soundState) {
@@ -22,6 +22,8 @@ public class State {
         SoundState = soundState;
 
     }
+    public State(){}
+
 
     public void addState (boolean wifiState, boolean bluetoothState, boolean mobileState, int batteryState, int soundState) {
         stateList.add(new State(wifiState,bluetoothState,mobileState,batteryState,soundState));

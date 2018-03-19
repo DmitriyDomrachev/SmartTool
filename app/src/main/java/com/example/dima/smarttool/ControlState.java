@@ -1,50 +1,41 @@
 package com.example.dima.smarttool;
 
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.util.Log;
 
 /**
  * Created by dima on 10.03.2018.
  */
 
 public class ControlState extends MainActivity {
-    private State state;
-    static boolean WiFiStateScan, BluetoothStateScan, MobileStateScan, WiFiStateSelect, BluetoothStateSelect, MobileStateSelect;
-    static int SoundStateScan, BatteryStateSelect, SoundStateSelect, BatteryStateScan;
-    public WifiManager wifiManager;
+    private State state = new State();
     public BluetoothAdapter btAdapter;
     ConnectivityManager connMgr;
 
 
     public void scanWiFi() {
-        this.WiFiStateScan = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
-//        this.WiFiStateScan = wifiManager.isWifiEnabled();
-        Log.d("test", "wifiscan: " + WiFiStateScan);
+
+        state.WiFiState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
 
     }
 
     public void scanBluetooth() {
-        BluetoothStateScan = btAdapter.isEnabled();
-        Log.d("test", "btscan: " + BluetoothStateScan);
+        state.BluetoothState = btAdapter.isEnabled();
 
     }
 
     public void scanMobile() {
-        MobileStateScan = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
+        state.MobileState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
     }
 
     public void scanBattery(int bat) {
-//        Log.d("test1", "bat"+ getBatteryLevel());
-       BatteryStateScan = bat;
+       state.BatteryState = bat;
     }
 
     public void scanSound(int volume) {
-        SoundStateScan = 100*volume/7;
+        state.SoundState = 100*volume/7;
+
 
     }
 
@@ -53,12 +44,7 @@ public class ControlState extends MainActivity {
     }
 
     public void setState(int numState) {
-        state.getState(numState);
-        WiFiStateSelect = state.WiFiState;
-        BluetoothStateSelect = state.BluetoothState;
-        MobileStateScan = state.MobileState;
-        BatteryStateScan = state.BatteryState;
-        SoundStateScan = state.BatteryState;
+        state = state.getState(numState);
     }
 
     public void startScan() {
@@ -76,7 +62,6 @@ public class ControlState extends MainActivity {
 
         protected Void doInBackground(Void... args) {
             while (true) {
-                Log.d("test", "поток, fullscan");
                 scanWiFi();
                 scanBluetooth();
                 scanMobile();
@@ -94,44 +79,29 @@ public class ControlState extends MainActivity {
         }
     }  // поток постоянного сканирования устройства
 
-    public boolean isWiFiStateScan() {
-        return WiFiStateScan;
+    public boolean isWiFiState() {
+        return state.WiFiState;
     }
 
-    public boolean isBluetoothStateScan() {
+    public boolean isBluetoothState() {
 
-        return BluetoothStateScan;
+        return state.BluetoothState;
     }
 
-    public boolean isMobileStateScan() {
-        return MobileStateScan;
+    public boolean isMobileState() {
+        return state.MobileState;
     }
 
-    public boolean isWiFiStateSelect() {
-        return WiFiStateSelect;
+
+
+
+    public int getBatteryState() {
+        return state.BatteryState;
     }
 
-    public boolean isBluetoothStateSelect() {
-        return BluetoothStateSelect;
+    public int getSoundState() {
+        return state.SoundState;
     }
 
-    public boolean isMobileStateSelect() {
-        return MobileStateSelect;
-    }
 
-    public int getBatteryStateScan() {
-        return BatteryStateScan;
-    }
-
-    public int getSoundStateScan() {
-        return SoundStateScan;
-    }
-
-    public int getBatteryStateSelect() {
-        return BatteryStateSelect;
-    }
-
-    public int getSoundStateSelect() {
-        return SoundStateSelect;
-    }
 }

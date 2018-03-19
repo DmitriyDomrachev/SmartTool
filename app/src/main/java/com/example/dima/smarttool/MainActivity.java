@@ -1,6 +1,9 @@
 package com.example.dima.smarttool;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -19,9 +21,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 
 import com.example.dima.smarttool.fragment.ListFragment;
 import com.example.dima.smarttool.fragment.ScanFragment;
@@ -29,9 +28,7 @@ import com.example.dima.smarttool.fragment.SettingFragment;
 import com.example.dima.smarttool.fragment.UserFragment;
 
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
-import static android.Manifest.permission.ACCESS_WIFI_STATE;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
-import static android.Manifest.permission.CHANGE_WIFI_STATE;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -39,7 +36,12 @@ public class MainActivity extends AppCompatActivity {
     static FragmentManager fragmentManager;
     static FragmentTransaction fragmentTransaction;
     static Fragment fragment;
-    public static ControlState controlState;
+
+
+
+
+
+    public static ControlState controlState;       // объект класса, необходимый для отслеждивания текущего состояния устройства
     private static int navigateID = R.id.navigation_scan;
     private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
     private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, ACCESS_NETWORK_STATE};
@@ -60,19 +62,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        boolean isWifiConn = networkInfo.isConnected();
-        networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        boolean isMobileConn = networkInfo.isConnected();
-
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fragmentManager = getFragmentManager();         //отображение 1 фрагмента
+        fragmentManager = getFragmentManager(); //отображение 1 фрагмента
         fragment = new ScanFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
@@ -80,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         IntentFilter  ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter батареи
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter); //текущее состояние батареи, mBroadcastReceiver в качестве преемника
+
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
     }
@@ -90,8 +84,6 @@ public class MainActivity extends AppCompatActivity {
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         controlState = new ControlState();
         controlState.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);    // создание объекта для отслеждивания состояния устройства
-        controlState.wifiManager = wifiManager;
-
         controlState.btAdapter = btAdapter;
         controlState.startScan();
 
@@ -108,7 +100,11 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.navigation_list:
                         navigateID = R.id.navigation_list;
-                        rewriteFragment();
+                        fragment = new ListFragment();
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.container, fragment);
+                        fragmentTransaction.commitAllowingStateLoss();
+
                         return true;
 
                     case R.id.navigation_user:
@@ -148,11 +144,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.navigation_scan:
                 controlState.scanSound(audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
                 Bundle arg = new Bundle();
-                arg.putInt("battery", controlState.getBatteryStateScan());
-                arg.putInt("sound", controlState.getSoundStateScan());
-                arg.putBoolean("wifi", controlState.isWiFiStateScan());
-                arg.putBoolean("bluetooth", controlState.isBluetoothStateScan());
-                arg.putBoolean("mobile", controlState.isMobileStateScan());
+                arg.putInt("battery", controlState.getBatteryState());
+                arg.putInt("sound", controlState.getSoundState());
+                arg.putBoolean("wifi", controlState.isWiFiState());
+                arg.putBoolean("bluetooth", controlState.isBluetoothState());
+                arg.putBoolean("mobile", controlState.isMobileState());
                 fragment = new ScanFragment();
                 fragment.setArguments(arg);
                 fragmentTransaction = fragmentManager.beginTransaction();
@@ -161,13 +157,13 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("test1", "rewrite scan");
 
                 return;
-            case R.id.navigation_list:
-                fragment = new ListFragment();
-                fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.container, fragment);
-                fragmentTransaction.commitAllowingStateLoss();
-                Log.d("test1", "rewrite list");
-                return;
+//            case R.id.navigation_list:
+//                fragment = new ListFragment();
+//                fragmentTransaction = fragmentManager.beginTransaction();
+//                fragmentTransaction.replace(R.id.container, fragment);
+//                fragmentTransaction.commitAllowingStateLoss();
+//                Log.d("test1", "rewrite list");
+//                return;
             case R.id.navigation_user:
                 fragment = new UserFragment();
                 fragmentTransaction = fragmentManager.beginTransaction();
