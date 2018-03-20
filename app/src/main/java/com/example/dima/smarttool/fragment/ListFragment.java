@@ -27,17 +27,14 @@ public class ListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-        rules.add(new Rule(1,"уловие1","действие1"));
-        rules.add(new Rule(2,"уловие2","действие2"));
-        rules.add(new Rule(3,"уловие3","действие3"));
-        rules.add(new Rule(4,"уловие4","действие4"));
-        rules.add(new Rule(5,"уловие5","действие5"));
-        rules.add(new Rule(6,"уловие6","действие6"));
-        rules.add(new Rule(7,"уловие7","действие7"));
-        rv = view.findViewById(R.id.rv);
-        rv.setLayoutManager(new LinearLayoutManager(view.getContext())); // устанавливаем разметку для списка.
-        rv.setItemAnimator(new DefaultItemAnimator()); //устанавливаем класс, отвечающий за анимации в списке
-        rv.setAdapter(new RVAdapter(rules, view.getContext())); //устанавливаем наш адаптер
+
+            rules.add(new Rule(1, 001));
+            rules.add(new Rule(2, 002));
+
+            rv = view.findViewById(R.id.rv);
+            rv.setLayoutManager(new LinearLayoutManager(view.getContext())); // устанавливаем разметку для списка.
+            rv.setItemAnimator(new DefaultItemAnimator()); //устанавливаем класс, отвечающий за анимации в списке
+            rv.setAdapter(new RVAdapter(rules, view.getContext())); //устанавливаем наш адаптер
         return view;
     }
 }

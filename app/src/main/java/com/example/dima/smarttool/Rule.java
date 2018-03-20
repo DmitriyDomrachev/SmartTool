@@ -6,13 +6,12 @@ package com.example.dima.smarttool;
 
 public class Rule {
     long id;
-    String condition;
-    String act;
+    long condition;
 
-    public Rule(long id, String condition, String act) {
+
+    public Rule(long id, long condition) {
         this.id = id;
         this.condition = condition;
-        this.act = act;
     }
 
     public long getId() {
@@ -23,21 +22,14 @@ public class Rule {
         this.id = id;
     }
 
-    public String getCondition() {
+    public long getCondition() {
         return condition;
     }
 
-    public void setCondition(String condition) {
+    public void setCondition(long condition) {
         this.condition = condition;
     }
 
-    public String getAct() {
-        return act;
-    }
-
-    public void setact(String act) {
-        this.act = act;
-    }
 
 
 
@@ -46,7 +38,6 @@ public class Rule {
         return "Contact{" +
                 "id=" + id +
                 ", condition='" + condition + '\'' +
-                ", act='" + act + '\'' +
                 '}'+"\n";
     }
 }

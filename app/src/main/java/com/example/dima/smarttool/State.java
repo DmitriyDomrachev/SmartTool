@@ -12,6 +12,7 @@ public class State {
     static ArrayList<State> stateList = new ArrayList<>();
     static boolean WiFiState, BluetoothState, MobileState;
     static int BatteryState, SoundState;
+    Rule rule;
 
 
     public State(boolean wifiState, boolean bluetoothState, boolean mobileState, int batteryState, int soundState) {

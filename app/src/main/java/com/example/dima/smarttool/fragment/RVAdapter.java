@@ -40,9 +40,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         final Rule rule = rules.get(position);// получаем элемент для удобства использования
 
         holder.txtCondition.setText(String.valueOf(rule.getCondition()));
-        holder.txtAct.setText(rule.getAct());
-
-
         holder.cvListener.setRecord(rule);// как-то надо понимать с каким фильмом работаем
         holder.btnClickListener.setRecord(rule); // как-то надо понимать с фильмом  работаем
 

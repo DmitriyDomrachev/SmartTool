@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         controlState.btAdapter = btAdapter;
         controlState.startScan();
 
+
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
