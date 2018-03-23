@@ -11,9 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dima.smarttool.R;
-import com.example.dima.smarttool.Rule;
-
-import java.util.List;
+import com.example.dima.smarttool.State;
 
 /**
  * Created by dima on 19.03.2018.
@@ -21,11 +19,11 @@ import java.util.List;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder> {
 
-    private List<Rule> rules;
+    private State states;
     private Context context;
 
-    public RVAdapter(List<Rule> rules, Context context) {
-        this.rules = rules;
+    public RVAdapter(State states, Context context) {
+        this.states = states;
         this.context = context;
     }
 
@@ -37,23 +35,26 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
 
     @Override
     public void onBindViewHolder(final ContactsViewHolder holder, int position) { //тут будет просходить обработка каждого элемента, кога он появится на экране
-        final Rule rule = rules.get(position);// получаем элемент для удобства использования
+        final State state = states.getState(position);// получаем элемент для удобства использования
 
-        holder.txtCondition.setText(String.valueOf(rule.getCondition()));
-        holder.cvListener.setRecord(rule);// как-то надо понимать с каким фильмом работаем
-        holder.btnClickListener.setRecord(rule); // как-то надо понимать с фильмом  работаем
+        holder.txtName.setText(String.valueOf(state.getState(position).getName()));
+        holder.txtWiFi.setText(String.valueOf(state.getState(position).getName()));
+        holder.txtMobile.setText(String.valueOf(state.getState(position).getName()));
+        holder.txtBluetooth.setText(String.valueOf(state.getState(position).getName()));
+        holder.cvListener.setRecord(state);// как-то надо понимать с каким фильмом работаем
+        holder.btnClickListener.setRecord(state); // как-то надо понимать с фильмом  работаем
 
     }
 
     @Override
     public int getItemCount() {
-        return rules.size();
+        return states.size();
     }
 
     //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов. Ага!
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtCondition, txtAct;
+        TextView txtName, txtWiFi, txtMobile, txtBluetooth;
         Button btnRefactor;
         CardView cv;
 
@@ -64,8 +65,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         ContactsViewHolder(View itemView) {
             super(itemView);
 
-            txtCondition = itemView.findViewById(R.id.cvConditionTextView);
-            txtAct = itemView.findViewById(R.id.cvActTextView);
+            txtName = itemView.findViewById(R.id.cvNameTextView);
+            txtWiFi = itemView.findViewById(R.id.cvWiFiTextView);
+            txtMobile = itemView.findViewById(R.id.cvMobileTextView);
+            txtBluetooth= itemView.findViewById(R.id.cvBluetoothTextView);
             btnRefactor = itemView.findViewById(R.id.cvButton);
             cv = itemView.findViewById(R.id.cv_rv);
 
@@ -81,24 +84,24 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
 
     class CardViewClickListener implements View.OnClickListener {
 
-        private Rule rule;
+        private State state;
 
         @Override
         public void onClick(View v) {
             Toast.makeText(context,"он клик, гав",Toast.LENGTH_SHORT).show();
         }
 
-        void setRecord(Rule rule) {
-            this.rule = rule;
+        void setRecord(State state) {
+            this.state = state;
         }
     }
 
     class ButtonRemoveClickListener implements View.OnClickListener {
-        Rule rule;
+        State state;
 
         @Override
         public void onClick(View v) {
-            int position = rules.indexOf(rule); // получаем индекс удаляемого элемента
+            int position = states.indexOf(state); // получаем индекс удаляемого элемента
 //            ContactsHelper ch = new ContactsHelper(context);
 //            ch.deleteContact(String.valueOf(contact.getId()));
 //
@@ -107,8 +110,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
             notifyItemRemoved(position); // метод для удалаении из самого RecyclerView. Именно он отвечает за анимации
         }
 
-        void setRecord(Rule rule) {
-            this.rule = rule;
+        void setRecord(State state) {
+            this.state = state;
         }
     }
 }

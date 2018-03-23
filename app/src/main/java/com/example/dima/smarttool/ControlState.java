@@ -16,36 +16,36 @@ public class ControlState extends MainActivity {
 
     public void scanWiFi() {
 
-        state.WiFiState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+        state.wifiState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
 
     }
 
     public void scanBluetooth() {
-        state.BluetoothState = btAdapter.isEnabled();
+        state.bluetoothState = btAdapter.isEnabled();
 
     }
 
     public void scanMobile() {
-        state.MobileState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
+        state.mobileState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
     }
 
     public void scanBattery(int bat) {
-       state.BatteryState = bat;
+       state.batteryState = bat;
     }
 
     public void scanSound(int volume) {
-        state.SoundState = 100*volume/7;
+        state.soundState = 100*volume/7;
 
 
     }
 
-    public void addState(boolean wifiST, boolean btST, boolean mbST, int batST, int soundST) {
-        state.addState(wifiST, btST, mbST, batST, soundST);
-    }
-
-    public void setState(int numState) {
-        state = state.getState(numState);
-    }
+//    public void addState(Strinboolean wifiST, boolean btST, boolean mbST, int batST, int soundST) {
+//        state.addState(wifiST, btST, mbST, batST, soundST);
+//    }
+//
+//    public void setState(int numState) {
+//        state = state.getState(numState);
+//    }
 
     public void startScan() {
         new Scanning().execute();
@@ -80,27 +80,27 @@ public class ControlState extends MainActivity {
     }  // поток постоянного сканирования устройства
 
     public boolean isWiFiState() {
-        return state.WiFiState;
+        return state.wifiState;
     }
 
     public boolean isBluetoothState() {
 
-        return state.BluetoothState;
+        return state.bluetoothState;
     }
 
     public boolean isMobileState() {
-        return state.MobileState;
+        return state.mobileState;
     }
 
 
 
 
     public int getBatteryState() {
-        return state.BatteryState;
+        return state.batteryState;
     }
 
     public int getSoundState() {
-        return state.SoundState;
+        return state.soundState;
     }
 
 
