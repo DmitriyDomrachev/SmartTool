@@ -16,7 +16,6 @@ import com.example.dima.smarttool.State;
 /**
  * Created by dima on 19.03.2018.
  */
-
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder> {
 
     private State states;
@@ -115,3 +114,4 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         }
     }
 }
+

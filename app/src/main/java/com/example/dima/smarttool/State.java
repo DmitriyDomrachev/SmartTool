@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class State {
 
 
-     static ArrayList<State> stateList = new ArrayList<>();
+    static ArrayList<State> stateList = new ArrayList<>();
     boolean wifiState, bluetoothState, mobileState;
     int batteryState, soundState;
     String name, LOGARG = "mytest";

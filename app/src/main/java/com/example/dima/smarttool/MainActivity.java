@@ -23,10 +23,10 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.dima.smarttool.DB.StateHelper;
-import com.example.dima.smarttool.Fragment.ListFragment;
-import com.example.dima.smarttool.Fragment.ScanFragment;
-import com.example.dima.smarttool.Fragment.SettingFragment;
-import com.example.dima.smarttool.Fragment.UserFragment;
+import com.example.dima.smarttool.fragment.ListFragment;
+import com.example.dima.smarttool.fragment.ScanFragment;
+import com.example.dima.smarttool.fragment.SettingFragment;
+import com.example.dima.smarttool.fragment.UserFragment;
 
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
