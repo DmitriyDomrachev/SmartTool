@@ -22,10 +22,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.example.dima.smarttool.fragment.ListFragment;
-import com.example.dima.smarttool.fragment.ScanFragment;
-import com.example.dima.smarttool.fragment.SettingFragment;
-import com.example.dima.smarttool.fragment.UserFragment;
+import com.example.dima.smarttool.DB.StateHelper;
+import com.example.dima.smarttool.Fragment.ListFragment;
+import com.example.dima.smarttool.Fragment.ScanFragment;
+import com.example.dima.smarttool.Fragment.SettingFragment;
+import com.example.dima.smarttool.Fragment.UserFragment;
 
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     static FragmentTransaction fragmentTransaction;
     static Fragment fragment;
 
+
+
+    public static StateHelper sh;
 
 
 
@@ -86,6 +90,13 @@ public class MainActivity extends AppCompatActivity {
         controlState.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);    // создание объекта для отслеждивания состояния устройства
         controlState.btAdapter = btAdapter;
         controlState.startScan();
+
+//        sh = new StateHelper(getApplicationContext());
+//        sh.insert("first", 1, true, true, true);
+//        sh.insert("second", 2, true, true, false);
+//        sh.insert("third", 3, true, false, true);
+//        sh.insert("fourth", 4, true, false, false);
+
 
 
         BottomNavigationView navigation = findViewById(R.id.navigation);

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context="com.example.dima.smarttool.fragment.ListFragment">
+    tools:context="com.example.dima.smarttool.Fragment.ListFragment">
 
 
     <android.support.v7.widget.RecyclerView

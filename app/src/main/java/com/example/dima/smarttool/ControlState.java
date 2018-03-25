@@ -30,29 +30,18 @@ public class ControlState extends MainActivity {
     }
 
     public void scanBattery(int bat) {
-       state.batteryState = bat;
+        state.batteryState = bat;
     }
 
     public void scanSound(int volume) {
-        state.soundState = 100*volume/7;
+        state.soundState = 100 * volume / 7;
 
 
     }
-
-//    public void addState(Strinboolean wifiST, boolean btST, boolean mbST, int batST, int soundST) {
-//        state.addState(wifiST, btST, mbST, batST, soundST);
-//    }
-//
-//    public void setState(int numState) {
-//        state = state.getState(numState);
-//    }
 
     public void startScan() {
         new Scanning().execute();
     }  //запуск потока сканирования
-
-
-
 
     private class Scanning extends AsyncTask<Void, Integer, Void> {
         @Override
@@ -92,9 +81,6 @@ public class ControlState extends MainActivity {
         return state.mobileState;
     }
 
-
-
-
     public int getBatteryState() {
         return state.batteryState;
     }
@@ -104,4 +90,14 @@ public class ControlState extends MainActivity {
     }
 
 
+
 }
+
+
+//    public void addState(Strinboolean wifiST, boolean btST, boolean mbST, int batST, int soundST) {
+//        state.addState(wifiST, btST, mbST, batST, soundST);
+//    }
+//
+//    public void setState(int numState) {
+//        state = state.getState(numState);
+//    }

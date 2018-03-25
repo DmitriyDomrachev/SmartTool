@@ -1,4 +1,4 @@
-package com.example.dima.smarttool.fragment;
+package com.example.dima.smarttool.Fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -24,11 +24,13 @@ public class ListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
+//        StateHelper sh = MainActivity.sh;
+//
+//        state.addState(sh.getAll().get(1).getName(), sh.getAll().get(1).isWiFiState(), sh.getAll().get(1).isBluetoothState(), sh.getAll().get(1).isMobileState(), 1, 1);
+//        state.addState(sh.getAll().get(2).getName(), sh.getAll().get(2).isWiFiState(), sh.getAll().get(2).isBluetoothState(), sh.getAll().get(2).isMobileState(), 2, 2);
+//        state.addState(sh.getAll().get(3).getName(), sh.getAll().get(3).isWiFiState(), sh.getAll().get(3).isBluetoothState(), sh.getAll().get(3).isMobileState(), 3, 3);
+//        state.addState(sh.getAll().get(4).getName(), sh.getAll().get(4).isWiFiState(), sh.getAll().get(4).isBluetoothState(), sh.getAll().get(4).isMobileState(), 4, 4);
 
-        state.addState("first", true, true, true, 46,47);
-        state.addState("second", true, true, false, 48,49);
-        state.addState("third", true, false, false, 50,51);
-        state.addState("fourth", false, false, false, 52,53);
 
         rv = view.findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(view.getContext())); // устанавливаем разметку для списка.

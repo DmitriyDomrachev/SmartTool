@@ -1,4 +1,4 @@
-package com.example.dima.smarttool.fragment;
+package com.example.dima.smarttool.Fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;

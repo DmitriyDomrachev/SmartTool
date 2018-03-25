@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context="com.example.dima.smarttool.fragment.ScanFragment"
+    tools:context="com.example.dima.smarttool.Fragment.ScanFragment"
     android:layout_margin="@dimen/fab_margin">
 
     <TextView

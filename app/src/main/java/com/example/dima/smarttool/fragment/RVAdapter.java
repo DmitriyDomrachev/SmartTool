@@ -1,4 +1,4 @@
-package com.example.dima.smarttool.fragment;
+package com.example.dima.smarttool.Fragment;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -37,10 +37,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
     public void onBindViewHolder(final ContactsViewHolder holder, int position) { //тут будет просходить обработка каждого элемента, кога он появится на экране
         final State state = states.getState(position);// получаем элемент для удобства использования
 
-        holder.txtName.setText(String.valueOf(state.getState(position).getName()));
-        holder.txtWiFi.setText(String.valueOf(state.getState(position).getName()));
-        holder.txtMobile.setText(String.valueOf(state.getState(position).getName()));
-        holder.txtBluetooth.setText(String.valueOf(state.getState(position).getName()));
+        holder.txtName.setText(holder.txtName.getText()+String.valueOf(state.getState(position).getName()));
+        holder.txtWiFi.setText(holder.txtWiFi.getText()+String.valueOf(state.getState(position).isWiFiState()));
+        holder.txtMobile.setText(holder.txtMobile.getText()+String.valueOf(state.getState(position).isMobileState()));
+        holder.txtBluetooth.setText(holder.txtBluetooth.getText()+String.valueOf(state.getState(position).isBluetoothState()));
         holder.cvListener.setRecord(state);// как-то надо понимать с каким фильмом работаем
         holder.btnClickListener.setRecord(state); // как-то надо понимать с фильмом  работаем
 
