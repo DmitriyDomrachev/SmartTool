@@ -10,6 +10,7 @@ import com.example.dima.smarttool.State;
 
 import java.util.ArrayList;
 
+import static com.example.dima.smarttool.DB.DBHelper.NUM_COLUMN_TIMESTART;
 import static com.example.dima.smarttool.DB.DBHelper.TABLE_NAME;
 
 /**
@@ -26,15 +27,15 @@ public class StateHelper {
     }
 
     //метод для того, чтобы положить данные в базу
-    public long insert(String name, long condition, boolean wifi, boolean bluetooth, boolean mobile) {
+    public long insert(String name, boolean wifi, boolean mobile, boolean bluetooth, long startTime) {
         ContentValues cv = new ContentValues();// хранилище с принципом ключ-значени
 
         cv.put(DBHelper.COLUMN_NAME, name);
-        cv.put(DBHelper.COLUMN_CONDITION, condition);
+        cv.put(DBHelper.COLUMN_TIMESTART, startTime);
         cv.put(DBHelper.COLUMN_WIFI, boolToInt(wifi));
         cv.put(DBHelper.COLUMN_BLUETOOTH, boolToInt(bluetooth));
         cv.put(DBHelper.COLUMN_MOBILE, boolToInt(mobile));
-        Log.d("DB","insert: "+name+" "+condition+" "+wifi+" "+bluetooth+" "+mobile);
+        Log.d("DB","insert: "+name+" "+startTime+" "+wifi+" "+mobile+" "+bluetooth);
 
         return db.insert(TABLE_NAME, null, cv); // метод insert возвращает id, помещенного объекта в таблицу.
 
@@ -59,11 +60,12 @@ public class StateHelper {
                 boolean wifi = intToBool(mCursor.getInt(DBHelper.NUM_COLUMN_WIFI));
                 boolean bluetooth = intToBool(mCursor.getInt(DBHelper.NUM_COLUMN_BLUETOOTH));
                 boolean mobile = intToBool(mCursor.getInt(DBHelper.NUM_COLUMN_MOBILE));
+                long startTime = mCursor.getLong(NUM_COLUMN_TIMESTART);
                 Log.d("DB","get: "+name+" "+wifi+" "+mobile+" "+bluetooth);
 
 
                 // получем значения соотвествующих полей и формируем объект, добавив его в коллекцию.
-                arr.add(new State((int)id, name, wifi, bluetooth, mobile, 46,47));
+                arr.add(new State((int)id, name, wifi, bluetooth, mobile, 46,47, startTime));
 
 
 
@@ -78,11 +80,11 @@ public class StateHelper {
         return getAll().size();
     }
 
-    public void updateState (String id,String name,int condition, boolean wifi, boolean mobile, boolean bluetooth){
+    public void updateState (String id,String name,long startTime, boolean wifi, boolean mobile, boolean bluetooth){
         Log.d("DB", "update id = "+id+" name "+name);
         ContentValues cv = new ContentValues();// хранилище с принципом ключ-значени
         cv.put(DBHelper.COLUMN_NAME, name);
-        cv.put(DBHelper.COLUMN_CONDITION, condition);
+        cv.put(DBHelper.COLUMN_TIMESTART, startTime);
         cv.put(DBHelper.COLUMN_WIFI, boolToInt(wifi));
         cv.put(DBHelper.COLUMN_BLUETOOTH, boolToInt(bluetooth));
         cv.put(DBHelper.COLUMN_MOBILE, boolToInt(mobile));

@@ -43,6 +43,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         holder.txtWiFi.setText(holder.txtWiFi.getText()+String.valueOf(state.isWiFiState()));
         holder.txtMobile.setText(holder.txtMobile.getText()+String.valueOf(state.isMobileState()));
         holder.txtBluetooth.setText(holder.txtBluetooth.getText()+String.valueOf(state.isBluetoothState()));
+        holder.txtStartTime.setText(holder.txtStartTime.getText()+String.valueOf(state.getStartTime()));
         holder.cvListener.setRecord(state);// как-то надо понимать с каким фильмом работаем
         holder.btnClickListener.setRecord(state); // как-то надо понимать с фильмом  работаем
 
@@ -56,7 +57,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
     //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtName, txtWiFi, txtMobile, txtBluetooth;
+        TextView txtName, txtWiFi, txtMobile, txtBluetooth, txtStartTime;
         Button btnRefactor;
         CardView cv;
 
@@ -71,7 +72,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
             txtWiFi = itemView.findViewById(R.id.cvWiFiTextView);
             txtMobile = itemView.findViewById(R.id.cvMobileTextView);
             txtBluetooth= itemView.findViewById(R.id.cvBluetoothTextView);
+            txtStartTime= itemView.findViewById(R.id.cvTimeStartTextView);
             btnRefactor = itemView.findViewById(R.id.cvButton);
+
             cv = itemView.findViewById(R.id.cv_rv);
 
             //цепляем слушатели
@@ -106,7 +109,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
             int position = states.indexOf(state); // получаем индекс удаляемого элемента
             StateHelper sh = new StateHelper(context);
             sh.deleteState(String.valueOf(state.getId()));
-
             Log.d("DB",sh.getAll().toString());
             states.remove(state); // удаляем его из списка
             notifyItemRemoved(position); // метод для удалаении из самого RecyclerView. Именно он отвечает за анимации

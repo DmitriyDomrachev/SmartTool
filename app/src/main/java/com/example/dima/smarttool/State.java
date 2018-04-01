@@ -11,10 +11,13 @@ public class State {
 
     boolean wifiState, bluetoothState, mobileState;
     int batteryState, soundState, id;
+    long startTime;
     String name, LOGARG = "mytest";
 
 
-    public State(int id, String name,boolean wifiState, boolean mobileState, boolean bluetoothState, int batteryState, int soundState) {
+
+
+    public State(int id, String name, boolean wifiState, boolean mobileState, boolean bluetoothState, int batteryState, int soundState, long startTime) {
         this.id = id;
         this.name = name;
         this.wifiState = wifiState;
@@ -22,6 +25,8 @@ public class State {
         this.mobileState = mobileState;
         this.batteryState = batteryState;
         this.soundState = soundState;
+        this.startTime = startTime;
+
         Log.d(LOGARG,"new state name ="+name);
 
     }
@@ -55,6 +60,10 @@ public class State {
 
     public int getId() {
         return id;
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 
     @Override

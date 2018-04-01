@@ -17,10 +17,12 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.fragment.ListFragment;
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+
     static ArrayList<State> stateLoadArr = new ArrayList<>();
     static int countState;
 
@@ -67,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         fragmentManager = getFragmentManager(); //отображение 1 фрагмента
         fragment = new ScanFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -76,8 +81,20 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter батареи
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter); //текущее состояние батареи, mBroadcastReceiver в качестве преемника
 
+
+
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddStateActivity.class));
+            }
+        });
+
         loadDB();           // заргузка данных из базы данных
+
 
     }
 
@@ -197,8 +214,7 @@ public class MainActivity extends AppCompatActivity {
     public void loadDB() {
         countState = stateLoadArr.size();
         StateHelper sh = new StateHelper(getApplicationContext());     // инициализация помощника управления состояниямив базе данных
-        sh.insert("di1",1l,false,false,false);
-        sh.insert("di2",1l,true,true,true);
+        sh.insert("di1",false,false,false,1l);
         stateLoadArr.clear();
         stateLoadArr.addAll(sh.getAll());                                        // сохранениесех состаяний из БД в ArrayList
         for (int i=0; i<stateLoadArr.size();i++){
@@ -206,5 +222,7 @@ public class MainActivity extends AppCompatActivity {
         }
         countState = stateLoadArr.size();
     }
+
+
 
 }
