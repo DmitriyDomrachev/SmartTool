@@ -22,7 +22,7 @@ import java.util.ArrayList;
  */
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder> {
 
-    private ArrayList<State> states;
+    private static ArrayList<State> states;
     private Context context;
 
     public RVAdapter(ArrayList<State> states, Context context) {
@@ -39,7 +39,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
     @Override
     public void onBindViewHolder(final ContactsViewHolder holder, int position) { //тут будет просходить обработка каждого элемента, кога он появится на экране
         final State state = states.get(position);// получаем элемент для удобства использования
-
         holder.txtName.setText(holder.txtName.getText()+String.valueOf(state.getName()));
         holder.txtWiFi.setText(holder.txtWiFi.getText()+String.valueOf(state.isWiFiState()));
         holder.txtMobile.setText(holder.txtMobile.getText()+String.valueOf(state.isMobileState()));
@@ -54,7 +53,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         return states.size();
     }
 
-    //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов. Ага!
+    //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtName, txtWiFi, txtMobile, txtBluetooth;
@@ -91,7 +90,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(context,"он клик, гав",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"он клик, "+state.getId(),Toast.LENGTH_SHORT).show();
         }
 
         void setRecord(State state) {
@@ -107,7 +106,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
             int position = states.indexOf(state); // получаем индекс удаляемого элемента
             StateHelper sh = new StateHelper(context);
             sh.deleteState(String.valueOf(state.getId()));
-            Log.d("BD",sh.getAll().toString());
+
+            Log.d("DB",sh.getAll().toString());
             states.remove(state); // удаляем его из списка
             notifyItemRemoved(position); // метод для удалаении из самого RecyclerView. Именно он отвечает за анимации
         }

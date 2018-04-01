@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    public static ArrayList<State> stateLoadArr = new ArrayList<>();
+    static ArrayList<State> stateLoadArr = new ArrayList<>();
     static int countState;
 
 
@@ -77,17 +77,12 @@ public class MainActivity extends AppCompatActivity {
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter); //текущее состояние батареи, mBroadcastReceiver в качестве преемника
 
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-
+        loadDB();           // заргузка данных из базы данных
 
     }
 
     protected void onResume() {
         super.onResume();
-
-//        StateHelper sh = new StateHelper(getApplicationContext());     // инициализация помощника управления состояниямив базе данных
-//        stateLoadArr = sh.getAll();                                        // сохранениесех состаяний из БД в ArrayList
-        loadDB();
-
         @SuppressLint("WifiManagerLeak") WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         controlState = new ControlState();
@@ -113,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.container, fragment);
                         fragmentTransaction.commitAllowingStateLoss();
+
 
                         return true;
 
@@ -164,15 +160,8 @@ public class MainActivity extends AppCompatActivity {
                 fragmentTransaction.replace(R.id.container, fragment);
                 fragmentTransaction.commitAllowingStateLoss();
                 Log.d("test1", "rewrite scan");
-
                 return;
-//            case R.id.navigation_list:
-//                fragment = new ListFragment();
-//                fragmentTransaction = fragmentManager.beginTransaction();
-//                fragmentTransaction.replace(R.id.container, fragment);
-//                fragmentTransaction.commitAllowingStateLoss();
-//                Log.d("test1", "rewrite list");
-//                return;
+
             case R.id.navigation_user:
                 fragment = new UserFragment();
                 fragmentTransaction = fragmentManager.beginTransaction();
@@ -193,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
     }  //пересоздание фрагментов для отображения измененной информации
 
-    public static ArrayList<State> updateListView() {
+    public  ArrayList<State> updateListView() {
         return stateLoadArr;
     }
 
@@ -206,12 +195,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadDB() {
-
         countState = stateLoadArr.size();
         StateHelper sh = new StateHelper(getApplicationContext());     // инициализация помощника управления состояниямив базе данных
-        stateLoadArr = sh.getAll();                                        // сохранениесех состаяний из БД в ArrayList
+        sh.insert("di1",1l,false,false,false);
+        sh.insert("di2",1l,true,true,true);
+        stateLoadArr.clear();
+        stateLoadArr.addAll(sh.getAll());                                        // сохранениесех состаяний из БД в ArrayList
+        for (int i=0; i<stateLoadArr.size();i++){
+            Log.d("DB","stateLoadArr after: "+stateLoadArr.get(i).toString());
+        }
         countState = stateLoadArr.size();
-
     }
 
 }

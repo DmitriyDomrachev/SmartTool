@@ -14,7 +14,7 @@ public class State {
     String name, LOGARG = "mytest";
 
 
-    public State(int id, String name,boolean wifiState, boolean bluetoothState, boolean mobileState, int batteryState, int soundState) {
+    public State(int id, String name,boolean wifiState, boolean mobileState, boolean bluetoothState, int batteryState, int soundState) {
         this.id = id;
         this.name = name;
         this.wifiState = wifiState;

@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 
 public class ListFragment extends Fragment {
-    ArrayList<State> stateArrayList = MainActivity.getStateArr();
+    ArrayList<State> stateArrayList = new ArrayList<>(MainActivity.getStateArr());
     RecyclerView rv;
 
     @Override
@@ -28,11 +28,9 @@ public class ListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
-//        StateHelper sh = MainActivity.sh;
-
-        for (int i = 0; i<MainActivity.getCountState(); i++) {
-            stateArrayList.add(new State (stateArrayList.get(i).getId(),stateArrayList.get(i).getName(), stateArrayList.get(i).isWiFiState(), stateArrayList.get(i).isBluetoothState(), stateArrayList.get(i).isMobileState(), 1, 1));
-        }
+//        for (int i = 0; i<MainActivity.getCountState(); i++) {
+//            stateArrayList.add(new State (stateArrayList.get(i).getId(),stateArrayList.get(i).getName(), stateArrayList.get(i).isWiFiState(), stateArrayList.get(i).isBluetoothState(), stateArrayList.get(i).isMobileState(), 1, 1));
+//        }
 
 
         rv = view.findViewById(R.id.rv);
