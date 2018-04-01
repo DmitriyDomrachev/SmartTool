@@ -2,8 +2,6 @@ package com.example.dima.smarttool;
 
 import android.util.Log;
 
-import java.util.ArrayList;
-
 /**
  * Created by dima on 27.02.2018.
  */
@@ -11,13 +9,13 @@ import java.util.ArrayList;
 public class State {
 
 
-    static ArrayList<State> stateList = new ArrayList<>();
     boolean wifiState, bluetoothState, mobileState;
-    int batteryState, soundState;
+    int batteryState, soundState, id;
     String name, LOGARG = "mytest";
 
 
-    public State(String name,boolean wifiState, boolean bluetoothState, boolean mobileState, int batteryState, int soundState) {
+    public State(int id, String name,boolean wifiState, boolean bluetoothState, boolean mobileState, int batteryState, int soundState) {
+        this.id = id;
         this.name = name;
         this.wifiState = wifiState;
         this.bluetoothState = bluetoothState;
@@ -30,15 +28,6 @@ public class State {
     public State(){}
 
 
-    public void addState (String name, boolean wifiState, boolean bluetoothState, boolean mobileState, int batteryState, int soundState) {
-        stateList.add(new State(name,wifiState,bluetoothState,mobileState,batteryState,soundState));
-    }
-
-    public State getState (int num) {
-        Log.d(LOGARG,"get state name = "+ stateList.get(num).getName()+"state num = "+num);
-
-        return stateList.get(num);
-    }
 
     public boolean isWiFiState() {
         return wifiState;
@@ -64,12 +53,19 @@ public class State {
         return name;
     }
 
-    public int size(){
-        return stateList.size();
+    public int getId() {
+        return id;
     }
 
-    public int indexOf(State state){
-        return stateList.indexOf(state);
+    @Override
+    public String toString() {
+        return "State{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", wifi='" + wifiState + '\'' +
+                ", mobile='" + mobileState + '\'' +
+                ", bluetooth='" + bluetoothState + '\'' +
+                '}'+"\n";
     }
 
 }

@@ -92,12 +92,3 @@ public class ControlState extends MainActivity {
 
 
 }
-
-
-//    public void addState(Strinboolean wifiST, boolean btST, boolean mbST, int batST, int soundST) {
-//        state.addState(wifiST, btST, mbST, batST, soundST);
-//    }
-//
-//    public void setState(int numState) {
-//        state = state.getState(numState);
-//    }

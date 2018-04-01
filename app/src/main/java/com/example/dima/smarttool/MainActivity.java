@@ -28,6 +28,8 @@ import com.example.dima.smarttool.fragment.ScanFragment;
 import com.example.dima.smarttool.fragment.SettingFragment;
 import com.example.dima.smarttool.fragment.UserFragment;
 
+import java.util.ArrayList;
+
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
 
@@ -37,21 +39,12 @@ public class MainActivity extends AppCompatActivity {
     static FragmentManager fragmentManager;
     static FragmentTransaction fragmentTransaction;
     static Fragment fragment;
-
-
-
-    public static StateHelper sh;
-
-
-
-
     public static ControlState controlState;       // объект класса, необходимый для отслеждивания текущего состояния устройства
     private static int navigateID = R.id.navigation_scan;
     private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
     private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, ACCESS_NETWORK_STATE};
     private static int batteryChange;
     static AudioManager audioManager;
-
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -63,8 +56,13 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+    public static ArrayList<State> stateLoadArr = new ArrayList<>();
+    static int countState;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -75,28 +73,27 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.container, fragment);
         fragmentTransaction.commitAllowingStateLoss();
 
-        IntentFilter  ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter батареи
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter батареи
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter); //текущее состояние батареи, mBroadcastReceiver в качестве преемника
 
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+
 
     }
 
     protected void onResume() {
         super.onResume();
+
+//        StateHelper sh = new StateHelper(getApplicationContext());     // инициализация помощника управления состояниямив базе данных
+//        stateLoadArr = sh.getAll();                                        // сохранениесех состаяний из БД в ArrayList
+        loadDB();
+
         @SuppressLint("WifiManagerLeak") WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         controlState = new ControlState();
         controlState.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);    // создание объекта для отслеждивания состояния устройства
         controlState.btAdapter = btAdapter;
         controlState.startScan();
-
-//        sh = new StateHelper(getApplicationContext());
-//        sh.insert("first", 1, true, true, true);
-//        sh.insert("second", 2, true, true, false);
-//        sh.insert("third", 3, true, false, true);
-//        sh.insert("fourth", 4, true, false, false);
-
 
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -196,9 +193,25 @@ public class MainActivity extends AppCompatActivity {
 
     }  //пересоздание фрагментов для отображения измененной информации
 
+    public static ArrayList<State> updateListView() {
+        return stateLoadArr;
+    }
+
+    public static int getCountState() {
+        return countState;
+    }
+
+    public static ArrayList<State> getStateArr() {
+        return stateLoadArr;
+    }
+
+    public void loadDB() {
+
+        countState = stateLoadArr.size();
+        StateHelper sh = new StateHelper(getApplicationContext());     // инициализация помощника управления состояниямив базе данных
+        stateLoadArr = sh.getAll();                                        // сохранениесех состаяний из БД в ArrayList
+        countState = stateLoadArr.size();
+
+    }
 
 }
-
-
-
-

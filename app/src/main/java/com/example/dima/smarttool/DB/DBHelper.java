@@ -49,11 +49,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_NAME + " TEXT, " +
                 COLUMN_CONDITION + " INTEGER, " +
-                COLUMN_WIFI + " NUMERIC, " +
-                COLUMN_BLUETOOTH + " NUMERIC, " +
-                COLUMN_MOBILE + " NUMERIC, " +
-                COLUMN_SOUND + " NUMERIC, " +
-                COLUMN_BATTERY + " NUMERIC, " +
+                COLUMN_WIFI + " INTEGER, " +
+                COLUMN_BLUETOOTH + " INTEGER, " +
+                COLUMN_MOBILE + " INTEGER, " +
+                COLUMN_SOUND + " INTEGER, " +
+                COLUMN_BATTERY + " INTEGER, " +
                 COLUMN_TIMEWRITE + "TIMESTAMP localtime); ";
         db.execSQL(query);
     }
