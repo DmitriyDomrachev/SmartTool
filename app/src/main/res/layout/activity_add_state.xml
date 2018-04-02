@@ -90,13 +90,15 @@
             android:textColor="@android:color/background_dark"
             android:textSize="30sp" />
 
-        <EditText
-            android:id="@+id/addStateTimeEditText"
+        <TextView
+            android:id="@+id/addStateSetTimeTextView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:ems="10"
-            android:inputType="textPersonName" />
+            android:layout_height="match_parent"
+            android:hint="Enter time"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:textColor="@android:color/background_dark"
+            android:textSize="30sp" />
 
     </LinearLayout>
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,8 @@ import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.State;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by dima on 19.03.2018.
@@ -39,11 +42,22 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
     @Override
     public void onBindViewHolder(final ContactsViewHolder holder, int position) { //тут будет просходить обработка каждого элемента, кога он появится на экране
         final State state = states.get(position);// получаем элемент для удобства использования
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(state.getStartTime());
+        long millis = calendar.getTimeInMillis();
+        int hour = (int)TimeUnit.MILLISECONDS.toHours(millis);
+        int minute = (int)TimeUnit.MILLISECONDS.toMinutes(millis-hour*3600000);
         holder.txtName.setText(holder.txtName.getText()+String.valueOf(state.getName()));
-        holder.txtWiFi.setText(holder.txtWiFi.getText()+String.valueOf(state.isWiFiState()));
-        holder.txtMobile.setText(holder.txtMobile.getText()+String.valueOf(state.isMobileState()));
-        holder.txtBluetooth.setText(holder.txtBluetooth.getText()+String.valueOf(state.isBluetoothState()));
-        holder.txtStartTime.setText(holder.txtStartTime.getText()+String.valueOf(state.getStartTime()));
+//        holder.txtWiFi.setText(holder.txtWiFi.getText()+String.valueOf(state.isWiFiState()));
+//        holder.txtMobile.setText(holder.txtMobile.getText()+String.valueOf(state.isMobileState()));
+//        holder.txtBluetooth.setText(holder.txtBluetooth.getText()+String.valueOf(state.isBluetoothState()));
+
+        holder.wifi.setChecked(state.isWiFiState());
+        holder.mobile.setChecked(state.isMobileState());
+        holder.bt.setChecked(state.isBluetoothState());
+
+
+        holder.txtStartTime.setText(holder.txtStartTime.getText()+String.valueOf(hour)+":"+String.valueOf(minute));
         holder.cvListener.setRecord(state);// как-то надо понимать с каким фильмом работаем
         holder.btnClickListener.setRecord(state); // как-то надо понимать с фильмом  работаем
 
@@ -60,6 +74,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         TextView txtName, txtWiFi, txtMobile, txtBluetooth, txtStartTime;
         Button btnRefactor;
         CardView cv;
+        CheckBox wifi, mobile, bt;
 
         //Инициализируем слушатели
         CardViewClickListener cvListener = new CardViewClickListener();
@@ -74,6 +89,10 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
             txtBluetooth= itemView.findViewById(R.id.cvBluetoothTextView);
             txtStartTime= itemView.findViewById(R.id.cvTimeStartTextView);
             btnRefactor = itemView.findViewById(R.id.cvButton);
+
+            wifi = itemView.findViewById(R.id.cvWiFiCheckBox);
+            mobile = itemView.findViewById(R.id.cvMobileCheckBox);
+            bt = itemView.findViewById(R.id.cvBluetoothCheckBox);
 
             cv = itemView.findViewById(R.id.cv_rv);
 

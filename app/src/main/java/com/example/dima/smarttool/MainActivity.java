@@ -212,14 +212,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadDB() {
-        countState = stateLoadArr.size();
         StateHelper sh = new StateHelper(getApplicationContext());     // инициализация помощника управления состояниямив базе данных
-        sh.insert("di1",false,false,false,1l);
         stateLoadArr.clear();
         stateLoadArr.addAll(sh.getAll());                                        // сохранениесех состаяний из БД в ArrayList
-        for (int i=0; i<stateLoadArr.size();i++){
-            Log.d("DB","stateLoadArr after: "+stateLoadArr.get(i).toString());
-        }
         countState = stateLoadArr.size();
     }
 
