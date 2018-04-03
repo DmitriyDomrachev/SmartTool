@@ -34,6 +34,7 @@ import java.util.ArrayList;
 
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
+import static android.Manifest.permission.CHANGE_WIFI_STATE;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -44,9 +45,10 @@ public class MainActivity extends AppCompatActivity {
     public static ControlState controlState;       // объект класса, необходимый для отслеждивания текущего состояния устройства
     private static int navigateID = R.id.navigation_scan;
     private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
-    private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, ACCESS_NETWORK_STATE};
+    private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, ACCESS_NETWORK_STATE, CHANGE_WIFI_STATE };
     private static int batteryChange;
     static AudioManager audioManager;
+
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -56,30 +58,21 @@ public class MainActivity extends AppCompatActivity {
             controlState.scanBattery((int) ((percentage) * 100));
         }
     };
-
-
-
     static ArrayList<State> stateLoadArr = new ArrayList<>();
     static int countState;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
         fragmentManager = getFragmentManager(); //отображение 1 фрагмента
         fragment = new ScanFragment();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);
         fragmentTransaction.commitAllowingStateLoss();
-
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter батареи
-        Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter); //текущее состояние батареи, mBroadcastReceiver в качестве преемника
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);                         //IntentFilter батареи
+        Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);                            //текущее состояние батареи, mBroadcastReceiver в качестве преемника
 
 
 
@@ -100,12 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        @SuppressLint("WifiManagerLeak") WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        controlState = new ControlState();
-        controlState.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);    // создание объекта для отслеждивания состояния устройства
-        controlState.btAdapter = btAdapter;
-        controlState.startScan();
+
 
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -125,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.container, fragment);
                         fragmentTransaction.commitAllowingStateLoss();
-
-
                         return true;
 
                     case R.id.navigation_user:
@@ -155,10 +141,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
     }
 
-    protected void onPostExecute(Void image) {
-        Log.d("test1 ", "поток end");
 
-    }
 
     public static void rewriteFragment() {
         Log.d("test1", "rewrite");
@@ -197,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-    }  //пересоздание фрагментов для отображения измененной информации
+    }                                                        //пересоздание фрагментов для отображения измененной информации
 
     public  ArrayList<State> updateListView() {
         return stateLoadArr;
@@ -212,11 +195,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadDB() {
-        StateHelper sh = new StateHelper(getApplicationContext());     // инициализация помощника управления состояниямив базе данных
+        StateHelper sh = new StateHelper(getApplicationContext());                                     // инициализация помощника управления состояниямив базе данных
         stateLoadArr.clear();
-        stateLoadArr.addAll(sh.getAll());                                        // сохранениесех состаяний из БД в ArrayList
+        stateLoadArr.addAll(sh.getAll());                                                              // сохранениесех состаяний из БД в ArrayList
         countState = stateLoadArr.size();
+        @SuppressLint("WifiManagerLeak")
+        WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        controlState = new ControlState();
+        controlState.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);    // создание объекта для отслеждивания состояния устройства
+        controlState.btAdapter = btAdapter;
+        controlState.startScan(stateLoadArr);                                                           //сканирование состояния
+        controlState.setStates(stateLoadArr);
     }
+
+//    public static void setWifi(boolean set){
+//        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+//        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+//
+//        WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+//        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+//    }
 
 
 

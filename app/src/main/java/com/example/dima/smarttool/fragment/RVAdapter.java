@@ -48,15 +48,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         int hour = (int)TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int)TimeUnit.MILLISECONDS.toMinutes(millis-hour*3600000);
         holder.txtName.setText(holder.txtName.getText()+String.valueOf(state.getName()));
-//        holder.txtWiFi.setText(holder.txtWiFi.getText()+String.valueOf(state.isWiFiState()));
-//        holder.txtMobile.setText(holder.txtMobile.getText()+String.valueOf(state.isMobileState()));
-//        holder.txtBluetooth.setText(holder.txtBluetooth.getText()+String.valueOf(state.isBluetoothState()));
-
         holder.wifi.setChecked(state.isWiFiState());
         holder.mobile.setChecked(state.isMobileState());
         holder.bt.setChecked(state.isBluetoothState());
-
-
         holder.txtStartTime.setText(holder.txtStartTime.getText()+String.valueOf(hour)+":"+String.valueOf(minute));
         holder.cvListener.setRecord(state);// как-то надо понимать с каким фильмом работаем
         holder.btnClickListener.setRecord(state); // как-то надо понимать с фильмом  работаем

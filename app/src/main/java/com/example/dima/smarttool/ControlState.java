@@ -3,6 +3,14 @@ package com.example.dima.smarttool;
 import android.bluetooth.BluetoothAdapter;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by dima on 10.03.2018.
@@ -11,22 +19,22 @@ import android.os.AsyncTask;
 public class ControlState extends MainActivity {
     private State state = new State();
     public BluetoothAdapter btAdapter;
-    ConnectivityManager connMgr;
+    ConnectivityManager connMgr;  // mobile и bluetooth
+    ArrayList<State> states;
+    Map<String, Integer> stateTimeMap = new HashMap<String, Integer>();
+    Date date = new Date();
 
 
-    public void scanWiFi() {
+    public void setStates(ArrayList<State> states) {
+        this.states = states;
+        for (int i = 0; i < states.size(); i++) {
+            State state = states.get(i);
+            String time = TimeUnit.MILLISECONDS.toHours(state.getStartTime()) + ":" + TimeUnit.MILLISECONDS.toMinutes(state.getStartTime() - TimeUnit.MILLISECONDS.toHours(state.getStartTime()) * 3600000);
+            stateTimeMap.put(time, state.id);
+            Log.d("time", "setState " + time);
 
-        state.wifiState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+        }
 
-    }
-
-    public void scanBluetooth() {
-        state.bluetoothState = btAdapter.isEnabled();
-
-    }
-
-    public void scanMobile() {
-        state.mobileState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
     }
 
     public void scanBattery(int bat) {
@@ -39,24 +47,30 @@ public class ControlState extends MainActivity {
 
     }
 
-    public void startScan() {
+    public void startScan(ArrayList states) {
+        this.states = new ArrayList<>(states);
         new Scanning().execute();
-    }  //запуск потока сканирования
+    }                                                                   //запуск потока сканирования
 
     private class Scanning extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPreExecute() {
+        protected void onPreExecute(int y) {
             super.onPreExecute();
         }
 
         protected Void doInBackground(Void... args) {
             while (true) {
-                scanWiFi();
-                scanBluetooth();
-                scanMobile();
+                state.wifiState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+                state.bluetoothState = btAdapter.isEnabled();
+                state.mobileState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
                 MainActivity.rewriteFragment();
+
                 try {
-                    Thread.sleep(1000);
+                    Calendar calendar = Calendar.getInstance();
+                    date.setTime(calendar.getTimeInMillis());
+                    String time = date.getHours() + ":" + date.getMinutes();
+                    if (stateTimeMap.get(time) != null)
+                        setState(stateTimeMap.get(time));
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -89,6 +103,17 @@ public class ControlState extends MainActivity {
         return state.soundState;
     }
 
+    public void setState(int id) {
+        Log.d("time", "setState" + id);
+//        State state = states.get(2);
+//        WifiManager wifiManager = (WifiManager) MainActivity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+//        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+//        wifiManager.setWifiEnabled(state.wifiState);
+        if (state.isBluetoothState()) btAdapter.enable();
+        else btAdapter.disable();
+
+
+    }
 
 
 }
