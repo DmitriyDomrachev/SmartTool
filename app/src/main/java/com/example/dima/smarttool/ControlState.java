@@ -2,9 +2,12 @@ package com.example.dima.smarttool;
 
 import android.bluetooth.BluetoothAdapter;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,11 +21,18 @@ import java.util.concurrent.TimeUnit;
 
 public class ControlState extends MainActivity {
     private State state = new State();
-    public BluetoothAdapter btAdapter;
     ConnectivityManager connMgr;  // mobile и bluetooth
     ArrayList<State> states;
-    Map<String, Integer> stateTimeMap = new HashMap<String, Integer>();
+    static Map<String, Integer> stateTimeMap = new HashMap<String, Integer>();
     Date date = new Date();
+    WifiManager wifiManager ;
+    BluetoothAdapter btAdapter;
+
+    Method dataConnSwitchmethod;
+    Class telephonyManagerClass;
+    Object ITelephonyStub;
+    Class ITelephonyClass;
+    TelephonyManager telephonyManager;
 
 
     public void setStates(ArrayList<State> states) {
@@ -30,8 +40,8 @@ public class ControlState extends MainActivity {
         for (int i = 0; i < states.size(); i++) {
             State state = states.get(i);
             String time = TimeUnit.MILLISECONDS.toHours(state.getStartTime()) + ":" + TimeUnit.MILLISECONDS.toMinutes(state.getStartTime() - TimeUnit.MILLISECONDS.toHours(state.getStartTime()) * 3600000);
-            stateTimeMap.put(time, state.id);
-            Log.d("time", "setState " + time);
+            stateTimeMap.put(time, i);
+            Log.d("time", "loadState " + time);
 
         }
 
@@ -43,11 +53,9 @@ public class ControlState extends MainActivity {
 
     public void scanSound(int volume) {
         state.soundState = 100 * volume / 7;
-
-
     }
 
-    public void startScan(ArrayList states) {
+    public void startScan(ArrayList<State> states) {
         this.states = new ArrayList<>(states);
         new Scanning().execute();
     }                                                                   //запуск потока сканирования
@@ -64,12 +72,13 @@ public class ControlState extends MainActivity {
                 state.mobileState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
                 MainActivity.rewriteFragment();
 
+                Calendar calendar = Calendar.getInstance();
+                date.setTime(calendar.getTimeInMillis());
+                String time = date.getHours() + ":" + date.getMinutes();
+                if (stateTimeMap.get(time) != null)
+                    setState(stateTimeMap.get(time));
+
                 try {
-                    Calendar calendar = Calendar.getInstance();
-                    date.setTime(calendar.getTimeInMillis());
-                    String time = date.getHours() + ":" + date.getMinutes();
-                    if (stateTimeMap.get(time) != null)
-                        setState(stateTimeMap.get(time));
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -104,16 +113,20 @@ public class ControlState extends MainActivity {
     }
 
     public void setState(int id) {
-        Log.d("time", "setState" + id);
-//        State state = states.get(2);
-//        WifiManager wifiManager = (WifiManager) MainActivity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-//        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-//        wifiManager.setWifiEnabled(state.wifiState);
-        if (state.isBluetoothState()) btAdapter.enable();
+        State state1 = states.get(id);
+        Log.d("time", "setState " +state1.getName());
+        Log.d("time", "wifi " +state1.isWiFiState());
+        Log.d("time", "mobile " +state1.isMobileState());
+        Log.d("time", "bt " +state1.isBluetoothState());
+
+        wifiManager.setWifiEnabled(state1.wifiState);
+        if (state1.isBluetoothState()) btAdapter.enable();
         else btAdapter.disable();
 
 
     }
+
+
 
 
 }

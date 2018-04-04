@@ -48,7 +48,7 @@ public class AddStateActivity extends AppCompatActivity {
                 bluetoothB = bluetooth.isChecked();
                 nameS=String.valueOf(name.getText());
                 startTimeL= milliseconds;
-                sh.insert(nameS,wifiB, mobileB,bluetoothB,startTimeL);
+                sh.insert(nameS,wifiB, mobileB, bluetoothB, startTimeL);
                 startActivity(new Intent(AddStateActivity.this,MainActivity.class));
                 Log.d("DB", "add: "+sh.getAll().toString());
 

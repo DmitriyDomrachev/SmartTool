@@ -20,6 +20,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,10 +31,12 @@ import com.example.dima.smarttool.fragment.ScanFragment;
 import com.example.dima.smarttool.fragment.SettingFragment;
 import com.example.dima.smarttool.fragment.UserFragment;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
+import static android.Manifest.permission.CHANGE_NETWORK_STATE;
 import static android.Manifest.permission.CHANGE_WIFI_STATE;
 
 
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     public static ControlState controlState;       // объект класса, необходимый для отслеждивания текущего состояния устройства
     private static int navigateID = R.id.navigation_scan;
     private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
-    private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, ACCESS_NETWORK_STATE, CHANGE_WIFI_STATE };
+    private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, ACCESS_NETWORK_STATE, CHANGE_WIFI_STATE, CHANGE_NETWORK_STATE };
     private static int batteryChange;
     static AudioManager audioManager;
 
@@ -202,20 +205,23 @@ public class MainActivity extends AppCompatActivity {
         @SuppressLint("WifiManagerLeak")
         WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+
         controlState = new ControlState();
         controlState.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);    // создание объекта для отслеждивания состояния устройства
         controlState.btAdapter = btAdapter;
         controlState.startScan(stateLoadArr);                                                           //сканирование состояния
         controlState.setStates(stateLoadArr);
+        controlState.wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        controlState.btAdapter = BluetoothAdapter.getDefaultAdapter();
+        controlState.telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
     }
 
-//    public static void setWifi(boolean set){
-//        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-//        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-//
-//        WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-//        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-//    }
+
+
+
+
+
+
 
 
 

@@ -65,7 +65,7 @@ public class StateHelper {
 
 
                 // получем значения соотвествующих полей и формируем объект, добавив его в коллекцию.
-                arr.add(new State((int)id, name, wifi, bluetooth, mobile, 46,47, startTime));
+                arr.add(new State((int)id, name, wifi, mobile,bluetooth, 46,47, startTime));
 
 
 
