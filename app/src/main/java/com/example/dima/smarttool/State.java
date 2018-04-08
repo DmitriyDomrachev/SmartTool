@@ -17,12 +17,11 @@ public class State {
 
 
 
-    public State(int id, String name, boolean wifiState, boolean mobileState, boolean bluetoothState, int batteryState, int soundState, long startTime) {
+    public State(int id, String name, boolean wifiState, boolean bluetoothState, int batteryState, int soundState, long startTime) {
         this.id = id;
         this.name = name;
         this.wifiState = wifiState;
         this.bluetoothState = bluetoothState;
-        this.mobileState = mobileState;
         this.batteryState = batteryState;
         this.soundState = soundState;
         this.startTime = startTime;
@@ -40,10 +39,6 @@ public class State {
 
     public boolean isBluetoothState() {
         return bluetoothState;
-    }
-
-    public boolean isMobileState() {
-        return mobileState;
     }
 
     public int getBatteryState() {
@@ -66,13 +61,16 @@ public class State {
         return startTime;
     }
 
+    public void setWifiState(boolean wifiState) {
+        this.wifiState = wifiState;
+    }
+
     @Override
     public String toString() {
         return "State{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", wifi='" + wifiState + '\'' +
-                ", mobile='" + mobileState + '\'' +
                 ", bluetooth='" + bluetoothState + '\'' +
                 '}'+"\n";
     }

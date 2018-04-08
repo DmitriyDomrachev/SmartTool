@@ -27,15 +27,14 @@ public class StateHelper {
     }
 
     //метод для того, чтобы положить данные в базу
-    public long insert(String name, boolean wifi, boolean mobile, boolean bluetooth, long startTime) {
+    public long insert(String name, boolean wifi, boolean bluetooth, long startTime) {
         ContentValues cv = new ContentValues();// хранилище с принципом ключ-значени
 
         cv.put(DBHelper.COLUMN_NAME, name);
         cv.put(DBHelper.COLUMN_TIMESTART, startTime);
         cv.put(DBHelper.COLUMN_WIFI, boolToInt(wifi));
         cv.put(DBHelper.COLUMN_BLUETOOTH, boolToInt(bluetooth));
-        cv.put(DBHelper.COLUMN_MOBILE, boolToInt(mobile));
-        Log.d("DB","insert: "+name+" "+startTime+" "+wifi+" "+mobile+" "+bluetooth);
+        Log.d("DB","insert: "+name+" "+startTime+" "+wifi+" "+bluetooth);
 
         return db.insert(TABLE_NAME, null, cv); // метод insert возвращает id, помещенного объекта в таблицу.
 
@@ -59,13 +58,12 @@ public class StateHelper {
                 String name = mCursor.getString(DBHelper.NUM_COLUMN_NAME);
                 boolean wifi = intToBool(mCursor.getInt(DBHelper.NUM_COLUMN_WIFI));
                 boolean bluetooth = intToBool(mCursor.getInt(DBHelper.NUM_COLUMN_BLUETOOTH));
-                boolean mobile = intToBool(mCursor.getInt(DBHelper.NUM_COLUMN_MOBILE));
                 long startTime = mCursor.getLong(NUM_COLUMN_TIMESTART);
-                Log.d("DB","get: "+name+" "+wifi+" "+mobile+" "+bluetooth);
+                Log.d("DB","get: "+name+" "+wifi+" "+bluetooth);
 
 
                 // получем значения соотвествующих полей и формируем объект, добавив его в коллекцию.
-                arr.add(new State((int)id, name, wifi, mobile,bluetooth, 46,47, startTime));
+                arr.add(new State((int)id, name, wifi, bluetooth, 46,47, startTime));
 
 
 
@@ -80,14 +78,13 @@ public class StateHelper {
         return getAll().size();
     }
 
-    public void updateState (String id,String name,long startTime, boolean wifi, boolean mobile, boolean bluetooth){
+    public void updateState (String id,String name,long startTime, boolean wifi, boolean bluetooth){
         Log.d("DB", "update id = "+id+" name "+name);
         ContentValues cv = new ContentValues();// хранилище с принципом ключ-значени
         cv.put(DBHelper.COLUMN_NAME, name);
         cv.put(DBHelper.COLUMN_TIMESTART, startTime);
         cv.put(DBHelper.COLUMN_WIFI, boolToInt(wifi));
         cv.put(DBHelper.COLUMN_BLUETOOTH, boolToInt(bluetooth));
-        cv.put(DBHelper.COLUMN_MOBILE, boolToInt(mobile));
         db.update(TABLE_NAME,cv,DBHelper.COLUMN_ID+"=?",new String[] { id });
     }
 

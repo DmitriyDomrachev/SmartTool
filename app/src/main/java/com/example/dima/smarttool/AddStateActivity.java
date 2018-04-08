@@ -33,7 +33,6 @@ public class AddStateActivity extends AppCompatActivity {
         setTime = findViewById(R.id.addStateSetTimeTextView);
         name = findViewById(R.id.addStateNameEditText);
         wifi = findViewById(R.id.addStateWiFiSwitch);
-        mobile = findViewById(R.id.addStateMobileSwitch);
         bluetooth = findViewById(R.id.addStateBluetoothSwitch);
         save = findViewById(R.id.addStateSaveButton);
         close = findViewById(R.id.addStateCloseButton);
@@ -44,11 +43,10 @@ public class AddStateActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 wifiB = wifi.isChecked();
-                mobileB = mobile.isChecked();
                 bluetoothB = bluetooth.isChecked();
                 nameS=String.valueOf(name.getText());
                 startTimeL= milliseconds;
-                sh.insert(nameS,wifiB, mobileB, bluetoothB, startTimeL);
+                sh.insert(nameS,wifiB, bluetoothB, startTimeL);
                 startActivity(new Intent(AddStateActivity.this,MainActivity.class));
                 Log.d("DB", "add: "+sh.getAll().toString());
 

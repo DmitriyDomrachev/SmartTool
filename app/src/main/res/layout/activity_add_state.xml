@@ -52,21 +52,6 @@
         android:orientation="horizontal">
 
         <Switch
-            android:id="@+id/addStateMobileSwitch"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Mobile"
-            android:textSize="30sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Switch
             android:id="@+id/addStateBluetoothSwitch"
             android:layout_width="200dp"
             android:layout_height="match_parent"

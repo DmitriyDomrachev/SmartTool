@@ -14,7 +14,7 @@ import com.example.dima.smarttool.R;
  */
 
 public class ScanFragment extends Fragment {
-    boolean WiFiState =true, BluetoothState=true, MobileState=true;
+    boolean WiFiState =true, BluetoothState=true;
     int BatteryState=0, SoundState=0;
 
 
@@ -23,7 +23,6 @@ public class ScanFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
         TextView battery = view.findViewById(R.id.ScanFragmentBatteryTextView);
-        TextView mobile = view.findViewById(R.id.ScanFragmentMobileTextView);
         TextView wifi = view.findViewById(R.id.ScanFragmentWiFiTextView);
         TextView bluetooth = view.findViewById(R.id.ScanFragmentBleutoothTextView);
         TextView sound = view.findViewById(R.id.ScanFragmentSoundTextView);
@@ -32,13 +31,11 @@ public class ScanFragment extends Fragment {
         if (bundle != null) {
             WiFiState = getArguments().getBoolean("wifi");
             BluetoothState = getArguments().getBoolean("bluetooth");
-            MobileState = getArguments().getBoolean("mobile");
             BatteryState = getArguments().getInt("battery");
             SoundState = getArguments().getInt("sound");
         }
         battery.setText(battery.getText() + "" + BatteryState);
         wifi.setText(wifi.getText() + "" +  WiFiState);
-        mobile.setText(mobile.getText() + "" + MobileState);
         bluetooth.setText(bluetooth.getText() + "" + BluetoothState);
         sound.setText(sound.getText() + "" + SoundState);
         return view;

@@ -1,13 +1,11 @@
 package com.example.dima.smarttool;
 
 import android.bluetooth.BluetoothAdapter;
-import android.net.ConnectivityManager;
+import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,25 +19,21 @@ import java.util.concurrent.TimeUnit;
 
 public class ControlState extends MainActivity {
     private State state = new State();
-    ConnectivityManager connMgr;  // mobile и bluetooth
-    ArrayList<State> states;
     static Map<String, Integer> stateTimeMap = new HashMap<String, Integer>();
     Date date = new Date();
     WifiManager wifiManager ;
-    BluetoothAdapter btAdapter;
-
-    Method dataConnSwitchmethod;
-    Class telephonyManagerClass;
-    Object ITelephonyStub;
-    Class ITelephonyClass;
-    TelephonyManager telephonyManager;
+    BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+    boolean first = true;
+    static Intent intent;
+    static ArrayList<State> states;
 
 
-    public void setStates(ArrayList<State> states) {
-        this.states = states;
+
+
+    public void loadStates(ArrayList<State> states) {
         for (int i = 0; i < states.size(); i++) {
-            State state = states.get(i);
-            String time = TimeUnit.MILLISECONDS.toHours(state.getStartTime()) + ":" + TimeUnit.MILLISECONDS.toMinutes(state.getStartTime() - TimeUnit.MILLISECONDS.toHours(state.getStartTime()) * 3600000);
+            State state1 = states.get(i);
+            String time = TimeUnit.MILLISECONDS.toHours(state1.getStartTime()) + ":" + TimeUnit.MILLISECONDS.toMinutes(state1.getStartTime() - TimeUnit.MILLISECONDS.toHours(state1.getStartTime()) * 3600000);
             stateTimeMap.put(time, i);
             Log.d("time", "loadState " + time);
 
@@ -67,11 +61,11 @@ public class ControlState extends MainActivity {
 
         protected Void doInBackground(Void... args) {
             while (true) {
-                state.wifiState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+                Log.d("test", "scan");
+                state.wifiState = wifiManager.isWifiEnabled();
                 state.bluetoothState = btAdapter.isEnabled();
-                state.mobileState = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
-                MainActivity.rewriteFragment();
 
+                MainActivity.rewriteFragment();
                 Calendar calendar = Calendar.getInstance();
                 date.setTime(calendar.getTimeInMillis());
                 String time = date.getHours() + ":" + date.getMinutes();
@@ -79,7 +73,7 @@ public class ControlState extends MainActivity {
                     setState(stateTimeMap.get(time));
 
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -100,9 +94,6 @@ public class ControlState extends MainActivity {
         return state.bluetoothState;
     }
 
-    public boolean isMobileState() {
-        return state.mobileState;
-    }
 
     public int getBatteryState() {
         return state.batteryState;
@@ -113,20 +104,18 @@ public class ControlState extends MainActivity {
     }
 
     public void setState(int id) {
-        State state1 = states.get(id);
-        Log.d("time", "setState " +state1.getName());
-        Log.d("time", "wifi " +state1.isWiFiState());
-        Log.d("time", "mobile " +state1.isMobileState());
-        Log.d("time", "bt " +state1.isBluetoothState());
-
-        wifiManager.setWifiEnabled(state1.wifiState);
-        if (state1.isBluetoothState()) btAdapter.enable();
+        State state = states.get(id);
+        Log.d("time", "setState " +state.getName());
+        Log.d("time", "wifi " +state.isWiFiState());
+        Log.d("time", "bt " +state.isBluetoothState());
+        wifiManager.setWifiEnabled(state.wifiState);
+        if (state.isBluetoothState()) btAdapter.enable();
         else btAdapter.disable();
 
 
     }
 
-
-
-
+    public State getState() {
+        return state;
+    }
 }

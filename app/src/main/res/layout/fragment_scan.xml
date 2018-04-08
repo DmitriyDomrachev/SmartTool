@@ -14,18 +14,12 @@
         android:layout_height="wrap_content"
         android:text="@string/Battery" />
 
-    <TextView
-        android:id="@+id/ScanFragmentMobileTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Mobile" />
 
     <TextView
         android:id="@+id/ScanFragmentWiFiTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/WiFi"
-        />
+        android:text="@string/WiFi" />
 
     <TextView
         android:id="@+id/ScanFragmentBleutoothTextView"
