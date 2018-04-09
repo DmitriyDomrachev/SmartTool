@@ -172,10 +172,9 @@ public class MainActivity extends AppCompatActivity {
         controlState.wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         Intent intent = new Intent(this, Scanning.class);
         intent.putExtra("arrayList", stateLoadArr);
-        startService( new Intent(this, Scanning.class));
-
+        startService(new Intent(this, Scanning.class));
         controlState.startScan(stateLoadArr);                                                            //сканирование состояния
-        controlState.loadStates(stateLoadArr);
+
 
     }
 

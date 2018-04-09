@@ -2,77 +2,40 @@ package com.example.dima.smarttool;
 
 
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
+import com.example.dima.smarttool.DB.StateHelper;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
-//    Date date = new Date();
-//    static Map<String, Integer> stateTimeMap = new HashMap<String, Integer>();
-//
-//    @Override
-//    public IBinder onBind(Intent intent) {
-//        // TODO: Return the communication channel to the service.
-//        throw new UnsupportedOperationException("Not yet implemented");
-//    }
-//
-//    public  void onCreate(){
-//        StateHelper sh = new StateHelper(getApplicationContext());                                     // инициализация помощника управления состояниямив базе данных
-//        loadStates(sh.getAll());
-//
-//    }
-//
-//    public int onStartCommand (Intent intent, int flags, int startId) {
-//        while (true){
-//            Calendar calendar = Calendar.getInstance();
-//            date.setTime(calendar.getTimeInMillis());
-//            String time = date.getHours() + ":" + date.getMinutes();
-//            Log.d("timeService", "time: "+time);
-//
-//
-//            if (stateTimeMap.get(time) != null)
-//                MainActivity.controlState.setState(stateTimeMap.get(time));
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//                return START_STICKY;
-//            }
-//        }
-//
-//}
-//
-//    public  void setTimeMap(HashMap stateTimeMap){
-//        this.stateTimeMap = stateTimeMap;
-//    }
-//
-//    public void loadStates(ArrayList<State> states) {
-//        for (int i = 0; i < states.size(); i++) {
-//            State state1 = states.get(i);
-//            String time = TimeUnit.MILLISECONDS.toHours(state1.getStartTime()) + ":" + TimeUnit.MILLISECONDS.toMinutes(state1.getStartTime() - TimeUnit.MILLISECONDS.toHours(state1.getStartTime()) * 3600000);
-//            stateTimeMap.put(time, i);
-//            Log.d("time", "loadState " + time);
-//
-//        }
-//
-//    }
-//
-//}
+
 public class Scanning extends Service {
 
     // constant
-    public static final long NOTIFY_INTERVAL = 60 * 1000; // 60 seconds
+    public static final long NOTIFY_INTERVAL = 10 * 1000;                               // время обновления
+    static Map<String, State> stateTimeMap = new HashMap<String, State>();          //зраниение значиний времени старта и номера состояния
 
-    // run on another Thread to avoid crash
-    private Handler mHandler = new Handler();
-    // timer handling
-    private Timer mTimer = null;
+    private Handler mHandler = new Handler();                                           // run on another Thread to avoid crash
+    private Timer mTimer = null;                                                        // timer handling
+    BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+    WifiManager wifiManager;
+
+
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -92,6 +55,9 @@ public class Scanning extends Service {
         // schedule task
         mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0,
                 NOTIFY_INTERVAL);
+        StateHelper sh = new StateHelper(getApplicationContext());                                     // инициализация помощника управления состояниямив базе данных
+        loadStates(sh.getAll());
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
     }
 
     class TimeDisplayTimerTask extends TimerTask {
@@ -104,20 +70,42 @@ public class Scanning extends Service {
                 @Override
                 public void run() {
                     // display toast
-                    Toast.makeText(getApplicationContext(), "Пора кормить кота!",
+                    Toast.makeText(getApplicationContext(), getTime(),
                             Toast.LENGTH_SHORT).show();
+                    if (stateTimeMap.get(getTime()) != null) {
+                        Log.d("timeS", "setState: " + getTime());
+                        State state = stateTimeMap.get(getTime());
+                        Log.d("timeS", "setState: " + state.getName());
+                        wifiManager.setWifiEnabled(state.isWiFiState());
+                        if (state.isBluetoothState()) btAdapter.enable();
+                        else btAdapter.disable();
+                    }
+
                 }
             });
         }
 
-        // используйте метод в сообщении для вывода текущего времени вместо слов о кормежке кота
-        private String getDateTime() {
-            // get date time in custom format
-            SimpleDateFormat sdf = new SimpleDateFormat(
-                    "[dd/MM/yyyy - HH:mm:ss]", Locale.getDefault());
-            return sdf.format(new Date());
+
+    }
+
+    private String getTime() {                                                          // используйте метод для вывода текущего времени
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        date.setTime(calendar.getTimeInMillis());
+        return date.getHours() + ":" + date.getMinutes();
+    }
+
+
+    public static void loadStates(ArrayList<State> states) {
+        for (int i = 0; i < states.size(); i++) {
+            State state = states.get(i);
+            String time = TimeUnit.MILLISECONDS.toHours(state.getStartTime()) + ":" + TimeUnit.MILLISECONDS.toMinutes(state.getStartTime() - TimeUnit.MILLISECONDS.toHours(state.getStartTime()) * 3600000);
+            stateTimeMap.put(time, state);
+            Log.d("timeS", "loadState: " + time);
+
+
         }
+
     }
 }
-
 

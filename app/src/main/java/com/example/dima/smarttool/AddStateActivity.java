@@ -49,6 +49,9 @@ public class AddStateActivity extends AppCompatActivity {
                 sh.insert(nameS,wifiB, bluetoothB, startTimeL);
                 startActivity(new Intent(AddStateActivity.this,MainActivity.class));
                 Log.d("DB", "add: "+sh.getAll().toString());
+                stopService(new Intent(AddStateActivity.this, Scanning.class));
+                startService(new Intent(AddStateActivity.this, Scanning.class));
+
 
             }
         });
