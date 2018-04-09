@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -17,12 +18,14 @@ import com.example.dima.smarttool.fragment.TimePickerFragment;
 public class AddStateActivity extends AppCompatActivity {
     EditText name;
     Button save, close;
-    Switch wifi, mobile, bluetooth;
+    Switch wifi, bluetooth;
     static TextView setTime;
-    String nameS, time;
+    String nameS;
     Long startTimeL;
-    Boolean wifiB, mobileB, bluetoothB;
+    static int mediaI, systemI;
+    Boolean wifiB,  bluetoothB;
     static long milliseconds;
+    SeekBar media, system;
 
 
 
@@ -36,6 +39,9 @@ public class AddStateActivity extends AppCompatActivity {
         bluetooth = findViewById(R.id.addStateBluetoothSwitch);
         save = findViewById(R.id.addStateSaveButton);
         close = findViewById(R.id.addStateCloseButton);
+        media = findViewById(R.id.addStateMediaSoundSeekBar);
+        system = findViewById(R.id.addStateSystemSoundSeekBar);
+
 
         final StateHelper sh = new StateHelper(getApplicationContext());
 
@@ -46,7 +52,11 @@ public class AddStateActivity extends AppCompatActivity {
                 bluetoothB = bluetooth.isChecked();
                 nameS=String.valueOf(name.getText());
                 startTimeL= milliseconds;
-                sh.insert(nameS,wifiB, bluetoothB, startTimeL);
+                mediaI = media.getProgress();
+                systemI = system.getProgress();
+
+
+                sh.insert(nameS,wifiB, bluetoothB, startTimeL, mediaI, systemI);
                 startActivity(new Intent(AddStateActivity.this,MainActivity.class));
                 Log.d("DB", "add: "+sh.getAll().toString());
                 stopService(new Intent(AddStateActivity.this, Scanning.class));
@@ -71,6 +81,8 @@ public class AddStateActivity extends AppCompatActivity {
                     newFragment.show(getFragmentManager(), "timePicker");
             }
         });
+
+
 
 
 

@@ -5,6 +5,7 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,13 +27,15 @@ import java.util.concurrent.TimeUnit;
 public class Scanning extends Service {
 
     // constant
-    public static final long NOTIFY_INTERVAL = 10 * 1000;                               // время обновления
+    public static final long NOTIFY_INTERVAL = 60 * 1000;                               // время обновления
     static Map<String, State> stateTimeMap = new HashMap<String, State>();          //зраниение значиний времени старта и номера состояния
 
     private Handler mHandler = new Handler();                                           // run on another Thread to avoid crash
     private Timer mTimer = null;                                                        // timer handling
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
+    static AudioManager audioManager;
+
 
 
     @Override
@@ -56,6 +59,8 @@ public class Scanning extends Service {
         StateHelper sh = new StateHelper(getApplicationContext());                                     // инициализация помощника управления состояниямив базе данных
         loadStates(sh.getAll());
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
     }
 
     class TimeDisplayTimerTask extends TimerTask {
@@ -95,7 +100,7 @@ public class Scanning extends Service {
             State state = states.get(i);
             String time = TimeUnit.MILLISECONDS.toHours(state.getStartTime()) + ":" + TimeUnit.MILLISECONDS.toMinutes(state.getStartTime() - TimeUnit.MILLISECONDS.toHours(state.getStartTime()) * 3600000);
             stateTimeMap.put(time, state);
-            Log.d("timeS", "loadState: " + time);
+            Log.d("timeS", "loadState: " + time+" "+state.getMediaSoundState());
         }
 
     }
@@ -104,8 +109,15 @@ public class Scanning extends Service {
         wifiManager.setWifiEnabled(state.isWiFiState());
         if (state.isBluetoothState()) btAdapter.enable();
         else btAdapter.disable();
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.mediaSoundState,audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progInex(state.systemSoundState, audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
         Log.d("timeS", "setState: " + state.getName());
 
+    }
+
+    private int progInex(float in, int max){
+        in= in/100;
+        return (int)(max*in);
     }
 }
 

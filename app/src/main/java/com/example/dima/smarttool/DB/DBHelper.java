@@ -18,24 +18,22 @@ public class DBHelper extends SQLiteOpenHelper {
     //имена для колонок таблицы контактов
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_TIMESTART = "timestart";
+    public static final String COLUMN_TIME_START = "time_start";
     public static final String COLUMN_WIFI = "wifi";
     public static final String COLUMN_BLUETOOTH = "bluetooth";
-    public static final String COLUMN_MOBILE = "mobile";
-    public static final String COLUMN_SOUND = "sound";
+    public static final String COLUMN_MEDIA_SOUND = "media_sound";
+    public static final String COLUMN_SYSTEM_SOUND = "system_sound";
     public static final String COLUMN_BATTERY = "battery";
-    public static final String COLUMN_TIMEWRITE = "timewrite";
 
     //индексы расположения этих колонок в таблице
     public static final int NUM_COLUMN_ID = 0;
     public static final int NUM_COLUMN_NAME = 1;
-    public static final int NUM_COLUMN_TIMESTART = 2;
+    public static final int NUM_COLUMN_TIME_START = 2;
     public static final int NUM_COLUMN_WIFI= 3;
     public static final int NUM_COLUMN_BLUETOOTH = 4;
-    public static final int NUM_COLUMN_MOBILE = 5;
-    public static final int NUM_COLUMN_SOUND = 6;
+    public static final int NUM_COLUMN_MEDIA_SOUND = 5;
+    public static final int NUM_COLUMN_SYSTEM_SOUND = 6;
     public static final int NUM_COLUMN_BATTERY = 7;
-    public static final int NUM_COLUMN_TIMEWRITE = 8;
 
     //конструктор, куда передаётся контекст, имя базы и её версия
     public DBHelper(Context context) {
@@ -48,13 +46,12 @@ public class DBHelper extends SQLiteOpenHelper {
         String query = "CREATE TABLE " + TABLE_NAME + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_NAME + " TEXT, " +
-                COLUMN_TIMESTART + " INTEGER, " +
+                COLUMN_TIME_START + " INTEGER, " +
                 COLUMN_WIFI + " INTEGER, " +
                 COLUMN_BLUETOOTH + " INTEGER, " +
-                COLUMN_MOBILE + " INTEGER, " +
-                COLUMN_SOUND + " INTEGER, " +
-                COLUMN_BATTERY + " INTEGER, " +
-                COLUMN_TIMEWRITE + "TIMESTAMP localtime); ";
+                COLUMN_MEDIA_SOUND + " INTEGER, " +
+                COLUMN_SYSTEM_SOUND + " INTEGER, " +
+                COLUMN_BATTERY + " INTEGER);";
         db.execSQL(query);
     }
 

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,19 +41,21 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
     }
 
     @Override
-    public void onBindViewHolder(final ContactsViewHolder holder, int position) { //тут будет просходить обработка каждого элемента, кога он появится на экране
-        final State state = states.get(position);// получаем элемент для удобства использования
+    public void onBindViewHolder(final ContactsViewHolder holder, int position) {                       //тут будет просходить обработка каждого элемента, кога он появится на экране
+        final State state = states.get(position);                                                       // получаем элемент для удобства использования
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(state.getStartTime());
         long millis = calendar.getTimeInMillis();
         int hour = (int)TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int)TimeUnit.MILLISECONDS.toMinutes(millis-hour*3600000);
+        holder.media.setProgress(state.getMediaSoundState());
+        holder.system.setProgress(state.getSystemSoundState());
         holder.txtName.setText(holder.txtName.getText()+String.valueOf(state.getName()));
         holder.wifi.setChecked(state.isWiFiState());
         holder.bt.setChecked(state.isBluetoothState());
         holder.txtStartTime.setText(holder.txtStartTime.getText()+String.valueOf(hour)+":"+String.valueOf(minute));
-        holder.cvListener.setRecord(state);// как-то надо понимать с каким фильмом работаем
-        holder.btnClickListener.setRecord(state); // как-то надо понимать с фильмом  работаем
+        holder.cvListener.setRecord(state);                                                             // как-то надо понимать с каким состоянием работаем
+        holder.btnClickListener.setRecord(state);                                                       // как-то надо понимать с состоянием  работаем
 
     }
 
@@ -64,10 +67,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
     //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtName, txtWiFi, txtMobile, txtBluetooth, txtStartTime;
+        TextView txtName, txtWiFi, txtBluetooth, txtStartTime;
         Button btnRefactor;
         CardView cv;
-        CheckBox wifi, mobile, bt;
+        CheckBox wifi, bt;
+        SeekBar media, system;
 
         //Инициализируем слушатели
         CardViewClickListener cvListener = new CardViewClickListener();
@@ -76,6 +80,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         ContactsViewHolder(View itemView) {
             super(itemView);
 
+            media = itemView.findViewById(R.id.cvMediaSoundSeekBar);
+            system = itemView.findViewById(R.id.cvSystemSoundSeekBar);
             txtName = itemView.findViewById(R.id.cvNameTextView);
             txtWiFi = itemView.findViewById(R.id.cvWiFiTextView);
             txtBluetooth= itemView.findViewById(R.id.cvBluetoothTextView);

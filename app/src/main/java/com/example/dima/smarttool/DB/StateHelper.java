@@ -10,7 +10,9 @@ import com.example.dima.smarttool.State;
 
 import java.util.ArrayList;
 
-import static com.example.dima.smarttool.DB.DBHelper.NUM_COLUMN_TIMESTART;
+import static com.example.dima.smarttool.DB.DBHelper.NUM_COLUMN_MEDIA_SOUND;
+import static com.example.dima.smarttool.DB.DBHelper.NUM_COLUMN_SYSTEM_SOUND;
+import static com.example.dima.smarttool.DB.DBHelper.NUM_COLUMN_TIME_START;
 import static com.example.dima.smarttool.DB.DBHelper.TABLE_NAME;
 
 /**
@@ -27,14 +29,16 @@ public class StateHelper {
     }
 
     //метод для того, чтобы положить данные в базу
-    public long insert(String name, boolean wifi, boolean bluetooth, long startTime) {
+    public long insert(String name, boolean wifi, boolean bluetooth, long startTime, int mediaSound, int systemSound) {
         ContentValues cv = new ContentValues();// хранилище с принципом ключ-значени
 
         cv.put(DBHelper.COLUMN_NAME, name);
-        cv.put(DBHelper.COLUMN_TIMESTART, startTime);
+        cv.put(DBHelper.COLUMN_TIME_START, startTime);
         cv.put(DBHelper.COLUMN_WIFI, boolToInt(wifi));
         cv.put(DBHelper.COLUMN_BLUETOOTH, boolToInt(bluetooth));
-        Log.d("DB","insert: "+name+" "+startTime+" "+wifi+" "+bluetooth);
+        cv.put(DBHelper.COLUMN_MEDIA_SOUND, mediaSound);
+        cv.put(DBHelper.COLUMN_SYSTEM_SOUND, systemSound);
+        Log.d("DB","insert: "+name+" "+startTime+" "+wifi+" "+bluetooth+" "+mediaSound+" "+systemSound);
 
         return db.insert(TABLE_NAME, null, cv); // метод insert возвращает id, помещенного объекта в таблицу.
 
@@ -58,12 +62,14 @@ public class StateHelper {
                 String name = mCursor.getString(DBHelper.NUM_COLUMN_NAME);
                 boolean wifi = intToBool(mCursor.getInt(DBHelper.NUM_COLUMN_WIFI));
                 boolean bluetooth = intToBool(mCursor.getInt(DBHelper.NUM_COLUMN_BLUETOOTH));
-                long startTime = mCursor.getLong(NUM_COLUMN_TIMESTART);
+                long startTime = mCursor.getLong(NUM_COLUMN_TIME_START);
+                int mediaSound = mCursor.getInt(NUM_COLUMN_MEDIA_SOUND);
+                int systemSound = mCursor.getInt(NUM_COLUMN_SYSTEM_SOUND);
                 Log.d("DB","get: "+name+" "+wifi+" "+bluetooth);
 
 
                 // получем значения соотвествующих полей и формируем объект, добавив его в коллекцию.
-                arr.add(new State((int)id, name, wifi, bluetooth, 46,47, startTime));
+                arr.add(new State((int)id, name, wifi, bluetooth, 46,mediaSound,systemSound, startTime));
 
 
 
@@ -78,13 +84,15 @@ public class StateHelper {
         return getAll().size();
     }
 
-    public void updateState (String id,String name,long startTime, boolean wifi, boolean bluetooth){
+    public void updateState (String id,String name,long startTime, boolean wifi, boolean bluetooth, int mediaSound, int systemSound){
         Log.d("DB", "update id = "+id+" name "+name);
         ContentValues cv = new ContentValues();// хранилище с принципом ключ-значени
         cv.put(DBHelper.COLUMN_NAME, name);
-        cv.put(DBHelper.COLUMN_TIMESTART, startTime);
+        cv.put(DBHelper.COLUMN_TIME_START, startTime);
         cv.put(DBHelper.COLUMN_WIFI, boolToInt(wifi));
         cv.put(DBHelper.COLUMN_BLUETOOTH, boolToInt(bluetooth));
+        cv.put(DBHelper.COLUMN_MEDIA_SOUND, mediaSound);
+        cv.put(DBHelper.COLUMN_SYSTEM_SOUND, systemSound);
         db.update(TABLE_NAME,cv,DBHelper.COLUMN_ID+"=?",new String[] { id });
     }
 

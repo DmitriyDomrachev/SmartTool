@@ -9,21 +9,22 @@ import android.util.Log;
 public class State {
 
 
-    boolean wifiState, bluetoothState, mobileState;
-    int batteryState, soundState, id;
+    boolean wifiState, bluetoothState;
+    int batteryState, mediaSoundState, systemSoundState, id;
     long startTime;
     String name, LOGARG = "mytest";
 
 
 
 
-    public State(int id, String name, boolean wifiState, boolean bluetoothState, int batteryState, int soundState, long startTime) {
+    public State(int id, String name, boolean wifiState, boolean bluetoothState, int batteryState, int mediaSoundState, int systemSoundState, long startTime) {
         this.id = id;
         this.name = name;
         this.wifiState = wifiState;
         this.bluetoothState = bluetoothState;
         this.batteryState = batteryState;
-        this.soundState = soundState;
+        this.mediaSoundState = mediaSoundState;
+        this.systemSoundState = systemSoundState;
         this.startTime = startTime;
 
         Log.d(LOGARG,"new state name ="+name);
@@ -45,8 +46,12 @@ public class State {
         return batteryState;
     }
 
-    public int getSoundState() {
-        return soundState;
+    public int getMediaSoundState() {
+        return mediaSoundState;
+    }
+
+    public int getSystemSoundState() {
+        return systemSoundState;
     }
 
     public String getName() {
@@ -72,6 +77,8 @@ public class State {
                 ", name='" + name + '\'' +
                 ", wifi='" + wifiState + '\'' +
                 ", bluetooth='" + bluetoothState + '\'' +
+                ", mediaSound='" + mediaSoundState + '\'' +
+                ", systemSound='" + systemSoundState + '\'' +
                 '}'+"\n";
     }
 
