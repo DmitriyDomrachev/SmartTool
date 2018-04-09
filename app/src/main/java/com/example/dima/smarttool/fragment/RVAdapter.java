@@ -78,13 +78,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
 
             txtName = itemView.findViewById(R.id.cvNameTextView);
             txtWiFi = itemView.findViewById(R.id.cvWiFiTextView);
-            txtMobile = itemView.findViewById(R.id.cvMobileTextView);
             txtBluetooth= itemView.findViewById(R.id.cvBluetoothTextView);
             txtStartTime= itemView.findViewById(R.id.cvTimeStartTextView);
             btnRefactor = itemView.findViewById(R.id.cvButton);
 
             wifi = itemView.findViewById(R.id.cvWiFiCheckBox);
-            mobile = itemView.findViewById(R.id.cvMobileCheckBox);
             bt = itemView.findViewById(R.id.cvBluetoothCheckBox);
 
             cv = itemView.findViewById(R.id.cv_rv);

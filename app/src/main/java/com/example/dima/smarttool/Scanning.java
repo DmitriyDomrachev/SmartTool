@@ -35,8 +35,6 @@ public class Scanning extends Service {
     WifiManager wifiManager;
 
 
-
-
     @Override
     public IBinder onBind(Intent intent) {
         // TODO Auto-generated method stub
@@ -73,12 +71,8 @@ public class Scanning extends Service {
                     Toast.makeText(getApplicationContext(), getTime(),
                             Toast.LENGTH_SHORT).show();
                     if (stateTimeMap.get(getTime()) != null) {
-                        Log.d("timeS", "setState: " + getTime());
-                        State state = stateTimeMap.get(getTime());
-                        Log.d("timeS", "setState: " + state.getName());
-                        wifiManager.setWifiEnabled(state.isWiFiState());
-                        if (state.isBluetoothState()) btAdapter.enable();
-                        else btAdapter.disable();
+                        setState(stateTimeMap.get(getTime()));
+
                     }
 
                 }
@@ -102,9 +96,15 @@ public class Scanning extends Service {
             String time = TimeUnit.MILLISECONDS.toHours(state.getStartTime()) + ":" + TimeUnit.MILLISECONDS.toMinutes(state.getStartTime() - TimeUnit.MILLISECONDS.toHours(state.getStartTime()) * 3600000);
             stateTimeMap.put(time, state);
             Log.d("timeS", "loadState: " + time);
-
-
         }
+
+    }
+
+    private void setState(State state){
+        wifiManager.setWifiEnabled(state.isWiFiState());
+        if (state.isBluetoothState()) btAdapter.enable();
+        else btAdapter.disable();
+        Log.d("timeS", "setState: " + state.getName());
 
     }
 }

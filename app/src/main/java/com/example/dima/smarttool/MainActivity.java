@@ -3,11 +3,11 @@ package com.example.dima.smarttool;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -29,12 +28,6 @@ import com.example.dima.smarttool.fragment.UserFragment;
 
 import java.util.ArrayList;
 
-import static android.Manifest.permission.ACCESS_NETWORK_STATE;
-import static android.Manifest.permission.ACCESS_WIFI_STATE;
-import static android.Manifest.permission.BLUETOOTH_ADMIN;
-import static android.Manifest.permission.CHANGE_NETWORK_STATE;
-import static android.Manifest.permission.CHANGE_WIFI_STATE;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,12 +35,16 @@ public class MainActivity extends AppCompatActivity {
     static FragmentTransaction fragmentTransaction;
     static Fragment fragment;
 
-    public static ControlState controlState;       // объект класса, необходимый для отслеждивания текущего состояния устройства
     private static int navigateID = R.id.navigation_scan;
-    private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
-    private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, ACCESS_NETWORK_STATE, CHANGE_WIFI_STATE, CHANGE_NETWORK_STATE, ACCESS_WIFI_STATE};
-    private static int batteryChange;
+
+//    private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
+//        private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, ACCESS_NETWORK_STATE, CHANGE_WIFI_STATE, CHANGE_NETWORK_STATE, ACCESS_WIFI_STATE};
+
+    public static int batteryChange;
     static AudioManager audioManager;
+    static BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+    static  WifiManager wifiManager;
+
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -55,9 +52,10 @@ public class MainActivity extends AppCompatActivity {
             int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             float percentage = level / (float) scale;
-            controlState.scanBattery((int) ((percentage) * 100));
+            batteryChange = (int) ((percentage) * 100);
         }
     };
+
     static ArrayList<State> stateLoadArr = new ArrayList<>();
     static int countState;
     public final static String FILE_NAME = "filename";
@@ -66,14 +64,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        fragmentManager = getFragmentManager(); //отображение 1 фрагмента
-        fragment = new ScanFragment();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, fragment);
-        fragmentTransaction.commitAllowingStateLoss();
+
+
+
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED); //IntentFilter батареи
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);                            //текущее состояние батареи, mBroadcastReceiver в качестве преемника
-
 
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
@@ -130,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
+        fragmentManager = getFragmentManager(); //отображение 1 фрагмента
+        navigateID = R.id.navigation_scan;
+        rewriteFragment();
 
     }
 
@@ -138,10 +135,10 @@ public class MainActivity extends AppCompatActivity {
     public static void rewriteFragment() {
         if (navigateID == R.id.navigation_scan) {
             Bundle arg = new Bundle();
-            arg.putInt("battery", controlState.getBatteryState());
-            arg.putInt("sound", controlState.getSoundState());
-            arg.putBoolean("wifi", controlState.isWiFiState());
-            arg.putBoolean("bluetooth", controlState.isBluetoothState());
+            arg.putInt("battery", batteryChange);
+            arg.putInt("sound", 5);
+            arg.putBoolean("wifi",wifiManager.isWifiEnabled() );
+            arg.putBoolean("bluetooth", btAdapter.isEnabled());
             fragment = new ScanFragment();
             fragment.setArguments(arg);
             fragmentTransaction = fragmentManager.beginTransaction();
@@ -168,25 +165,22 @@ public class MainActivity extends AppCompatActivity {
         stateLoadArr.clear();
         stateLoadArr.addAll(sh.getAll());                                                              // сохранениесех состаяний из БД в ArrayList
         countState = stateLoadArr.size();
-        controlState = new ControlState();
-        controlState.wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         Intent intent = new Intent(this, Scanning.class);
         intent.putExtra("arrayList", stateLoadArr);
-        startService(new Intent(this, Scanning.class));
-        controlState.startScan(stateLoadArr);                                                            //сканирование состояния
-
+        startService(new Intent(this, Scanning.class));                                 //сканирование состояния
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
     }
 
 
-    private boolean isPermissionGranted(String permission) {
-        int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
-        return permissionCheck == PackageManager.PERMISSION_GRANTED;
-    }
+//    private boolean isPermissionGranted(String permission) {
+//        int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
+//        return permissionCheck == PackageManager.PERMISSION_GRANTED;
+//    }
 
-    private void requestPermission(String permission, int requestCode) {
-        ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
-    }
+//    private void requestPermission(String permission, int requestCode) {
+//        ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+//    }
 
 
 
