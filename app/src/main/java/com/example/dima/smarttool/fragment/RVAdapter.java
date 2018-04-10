@@ -1,6 +1,7 @@
 package com.example.dima.smarttool.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,11 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dima.smarttool.AddStateActivity;
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.State;
@@ -48,11 +48,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         long millis = calendar.getTimeInMillis();
         int hour = (int)TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int)TimeUnit.MILLISECONDS.toMinutes(millis-hour*3600000);
-        holder.media.setProgress(state.getMediaSoundState());
-        holder.system.setProgress(state.getSystemSoundState());
+//        holder.media.setProgress(state.getMediaSoundState());
+//        holder.system.setProgress(state.getSystemSoundState());
         holder.txtName.setText(holder.txtName.getText()+String.valueOf(state.getName()));
-        holder.wifi.setChecked(state.isWiFiState());
-        holder.bt.setChecked(state.isBluetoothState());
+//        holder.wifi.setChecked(state.isWiFiState());
+//        holder.bt.setChecked(state.isBluetoothState());
         holder.txtStartTime.setText(holder.txtStartTime.getText()+String.valueOf(hour)+":"+String.valueOf(minute));
         holder.cvListener.setRecord(state);                                                             // как-то надо понимать с каким состоянием работаем
         holder.btnClickListener.setRecord(state);                                                       // как-то надо понимать с состоянием  работаем
@@ -67,11 +67,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
     //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtName, txtWiFi, txtBluetooth, txtStartTime;
+        TextView txtName, /*txtWiFi, txtBluetooth,*/ txtStartTime;
         Button btnRefactor;
         CardView cv;
-        CheckBox wifi, bt;
-        SeekBar media, system;
+//        CheckBox wifi, bt;
+//        SeekBar media, system;
 
         //Инициализируем слушатели
         CardViewClickListener cvListener = new CardViewClickListener();
@@ -80,16 +80,16 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         ContactsViewHolder(View itemView) {
             super(itemView);
 
-            media = itemView.findViewById(R.id.cvMediaSoundSeekBar);
-            system = itemView.findViewById(R.id.cvSystemSoundSeekBar);
+//            media = itemView.findViewById(R.id.cvMediaSoundSeekBar);
+//            system = itemView.findViewById(R.id.cvSystemSoundSeekBar);
             txtName = itemView.findViewById(R.id.cvNameTextView);
-            txtWiFi = itemView.findViewById(R.id.cvWiFiTextView);
-            txtBluetooth= itemView.findViewById(R.id.cvBluetoothTextView);
+//            txtWiFi = itemView.findViewById(R.id.cvWiFiTextView);
+//            txtBluetooth= itemView.findViewById(R.id.cvBluetoothTextView);
             txtStartTime= itemView.findViewById(R.id.cvTimeStartTextView);
             btnRefactor = itemView.findViewById(R.id.cvButton);
 
-            wifi = itemView.findViewById(R.id.cvWiFiCheckBox);
-            bt = itemView.findViewById(R.id.cvBluetoothCheckBox);
+//            wifi = itemView.findViewById(R.id.cvWiFiCheckBox);
+//            bt = itemView.findViewById(R.id.cvBluetoothCheckBox);
 
             cv = itemView.findViewById(R.id.cv_rv);
 
@@ -110,6 +110,17 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         @Override
         public void onClick(View v) {
             Toast.makeText(context,"он клик, "+state.getId(),Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(context, AddStateActivity.class);
+            intent.putExtra("name", state.getName());
+            intent.putExtra("wifi", state.isWiFiState());
+            intent.putExtra("bluetooth", state.isBluetoothState());
+            intent.putExtra("media", state.getMediaSoundState());
+            intent.putExtra("system", state.getSystemSoundState());
+            intent.putExtra("starttime", state.getStartTime());
+            intent.putExtra("id",state.getId());
+            context.startActivity(intent);
+
+
         }
 
         void setRecord(State state) {

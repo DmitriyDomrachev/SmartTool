@@ -10,7 +10,6 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.StateHelper;
 
@@ -73,8 +72,8 @@ public class Scanning extends Service {
                 @Override
                 public void run() {
                     // display toast
-                    Toast.makeText(getApplicationContext(), getTime(),
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), getTime(),
+//                            Toast.LENGTH_SHORT).show();
                     if (stateTimeMap.get(getTime()) != null) {
                         setState(stateTimeMap.get(getTime()));
 
@@ -109,8 +108,10 @@ public class Scanning extends Service {
         wifiManager.setWifiEnabled(state.isWiFiState());
         if (state.isBluetoothState()) btAdapter.enable();
         else btAdapter.disable();
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.mediaSoundState,audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
-        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progInex(state.systemSoundState, audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
+
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.getMediaSoundState(),audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
+//        if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progInex(state.getSystemSoundState(), audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
         Log.d("timeS", "setState: " + state.getName());
 
     }

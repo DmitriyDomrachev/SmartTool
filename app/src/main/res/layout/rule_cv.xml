@@ -24,103 +24,103 @@
             android:textAllCaps="true"
             android:textSize="24sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:id="@+id/cvWiFiTextView"
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="wifi: "
-                android:textAlignment="textEnd"
-                android:textAllCaps="true"
-                android:textSize="24sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/cvWiFiTextView"-->
+                <!--android:layout_width="30dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="wifi: "-->
+                <!--android:textAlignment="textEnd"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:textSize="24sp" />-->
 
-            <CheckBox
-                android:id="@+id/cvWiFiCheckBox"
-                android:clickable="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+            <!--<CheckBox-->
+                <!--android:id="@+id/cvWiFiCheckBox"-->
+                <!--android:clickable="false"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:id="@+id/cvBluetoothTextView"
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="bluetooth: "
-                android:textAlignment="textEnd"
-                android:textAllCaps="true"
-                android:textSize="24sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/cvBluetoothTextView"-->
+                <!--android:layout_width="30dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="bluetooth: "-->
+                <!--android:textAlignment="textEnd"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:textSize="24sp" />-->
 
-            <CheckBox
-                android:id="@+id/cvBluetoothCheckBox"
-                android:clickable="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+            <!--<CheckBox-->
+                <!--android:id="@+id/cvBluetoothCheckBox"-->
+                <!--android:clickable="false"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1" />-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:id="@+id/cvMediaSoundTextView"
-                android:layout_width="42dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Media Sound:"
-                android:textAlignment="textEnd"
-                android:textAllCaps="true"
-                android:textSize="24sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/cvMediaSoundTextView"-->
+                <!--android:layout_width="42dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="Media Sound:"-->
+                <!--android:textAlignment="textEnd"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:textSize="24sp" />-->
 
-            <SeekBar
-                android:id="@+id/cvMediaSoundSeekBar"
-                android:clickable="false"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
+            <!--<SeekBar-->
+                <!--android:id="@+id/cvMediaSoundSeekBar"-->
+                <!--android:clickable="false"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1" />-->
 
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:id="@+id/cvSystemSoundTextView"
-                android:layout_width="42dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="System Sound:"
-                android:textAlignment="textEnd"
-                android:textAllCaps="true"
-                android:textSize="24sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/cvSystemSoundTextView"-->
+                <!--android:layout_width="42dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="System Sound:"-->
+                <!--android:textAlignment="textEnd"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:textSize="24sp" />-->
 
-            <SeekBar
-                android:id="@+id/cvSystemSoundSeekBar"
-                android:clickable="false"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-        </LinearLayout>
+            <!--<SeekBar-->
+                <!--android:id="@+id/cvSystemSoundSeekBar"-->
+                <!--android:clickable="false"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1" />-->
+        <!--</LinearLayout>-->
 
         <TextView
             android:id="@+id/cvTimeStartTextView"

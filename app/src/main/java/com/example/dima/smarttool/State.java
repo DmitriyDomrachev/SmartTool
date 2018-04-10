@@ -9,10 +9,10 @@ import android.util.Log;
 public class State {
 
 
-    boolean wifiState, bluetoothState;
-    int batteryState, mediaSoundState, systemSoundState, id;
-    long startTime;
-    String name, LOGARG = "mytest";
+    private boolean wifiState, bluetoothState;
+    private int batteryState, mediaSoundState, systemSoundState, id;
+    private long startTime;
+    private String name;
 
 
 
@@ -27,7 +27,7 @@ public class State {
         this.systemSoundState = systemSoundState;
         this.startTime = startTime;
 
-        Log.d(LOGARG,"new state name ="+name);
+        Log.d("test","new state name ="+name);
 
     }
     public State(){}

@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.fragment.TimePickerFragment;
 
+import java.util.Date;
+
 public class AddStateActivity extends AppCompatActivity {
     EditText name;
     Button save, close;
@@ -23,15 +25,17 @@ public class AddStateActivity extends AppCompatActivity {
     String nameS;
     Long startTimeL;
     static int mediaI, systemI;
-    Boolean wifiB,  bluetoothB;
+    Boolean wifiB, bluetoothB;
     static long milliseconds;
     SeekBar media, system;
-
+    boolean newState;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Intent intent = getIntent();
+        newState = intent.getStringExtra("name") == null;
         setContentView(R.layout.activity_add_state);
         setTime = findViewById(R.id.addStateSetTimeTextView);
         name = findViewById(R.id.addStateNameEditText);
@@ -41,6 +45,15 @@ public class AddStateActivity extends AppCompatActivity {
         close = findViewById(R.id.addStateCloseButton);
         media = findViewById(R.id.addStateMediaSoundSeekBar);
         system = findViewById(R.id.addStateSystemSoundSeekBar);
+        if (!newState) {
+            name.setText(intent.getStringExtra("name"));
+            wifi.setChecked(intent.getBooleanExtra("wifi", false));
+            bluetooth.setChecked(intent.getBooleanExtra("bluetooth", false));
+            setTime.setText(getTime(intent.getLongExtra("starttime",0l)));
+            media.setProgress(intent.getIntExtra("media",0));
+            system.setProgress(intent.getIntExtra("system",0));
+
+        }
 
 
         final StateHelper sh = new StateHelper(getApplicationContext());
@@ -50,17 +63,19 @@ public class AddStateActivity extends AppCompatActivity {
             public void onClick(View v) {
                 wifiB = wifi.isChecked();
                 bluetoothB = bluetooth.isChecked();
-                nameS=String.valueOf(name.getText());
-                startTimeL= milliseconds;
+                nameS = String.valueOf(name.getText());
+                startTimeL = milliseconds;
                 mediaI = media.getProgress();
                 systemI = system.getProgress();
 
-
-                sh.insert(nameS,wifiB, bluetoothB, startTimeL, mediaI, systemI);
-                startActivity(new Intent(AddStateActivity.this,MainActivity.class));
-                Log.d("DB", "add: "+sh.getAll().toString());
+                if (newState)
+                    sh.insert(nameS, wifiB, bluetoothB, startTimeL, mediaI, systemI);
+                else  sh.updateState(String.valueOf(intent.getIntExtra("id", 0)) ,nameS, startTimeL, wifiB, bluetoothB,mediaI,systemI);
+                startActivity(new Intent(AddStateActivity.this, MainActivity.class));
+                Log.d("DB", "add: " + sh.getAll().toString());
                 stopService(new Intent(AddStateActivity.this, Scanning.class));
                 startService(new Intent(AddStateActivity.this, Scanning.class));
+                finish();
 
 
             }
@@ -69,7 +84,9 @@ public class AddStateActivity extends AppCompatActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AddStateActivity.this,MainActivity.class));
+                startActivity(new Intent(AddStateActivity.this, MainActivity.class));
+                finish();
+
 
             }
         });
@@ -77,20 +94,23 @@ public class AddStateActivity extends AppCompatActivity {
         setTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    DialogFragment newFragment = new TimePickerFragment();
-                    newFragment.show(getFragmentManager(), "timePicker");
+                DialogFragment newFragment = new TimePickerFragment();
+                newFragment.show(getFragmentManager(), "timePicker");
             }
         });
 
 
+    }
 
-
+    public static void setTime(int hour, int minute) {
+        setTime.setText(hour + ":" + minute);
+        milliseconds = hour * 3_600_000 + minute * 60_000;
 
     }
 
-    public static void setTime(int hour, int minute){
-     setTime.setText(hour+":"+minute);
-        milliseconds = hour * 3_600_000 + minute * 60_000;
-
+    public String getTime(long milliseconds){
+        Date date = new Date();
+        date.setTime(milliseconds);
+        return String.valueOf(milliseconds/3_600_000) + ":" + String.valueOf(milliseconds%3_600_000/60_000);
     }
 }
