@@ -10,6 +10,7 @@ import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.StateHelper;
 
@@ -26,15 +27,14 @@ import java.util.concurrent.TimeUnit;
 public class Scanning extends Service {
 
     // constant
-    public static final long NOTIFY_INTERVAL = 60 * 1000;                               // время обновления
-    static Map<String, State> stateTimeMap = new HashMap<String, State>();          //зраниение значиний времени старта и номера состояния
+    public static final long NOTIFY_INTERVAL = 30 * 1000;                               // время обновления
+    static Map<String, State> stateTimeMap = new HashMap<String, State>();                       //зраниение значиний времени старта и номера состояния
 
     private Handler mHandler = new Handler();                                           // run on another Thread to avoid crash
     private Timer mTimer = null;                                                        // timer handling
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
     static AudioManager audioManager;
-
 
 
     @Override
@@ -57,8 +57,10 @@ public class Scanning extends Service {
                 NOTIFY_INTERVAL);
         StateHelper sh = new StateHelper(getApplicationContext());                                     // инициализация помощника управления состояниямив базе данных
         loadStates(sh.getAll());
-        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        wifiManager = (WifiManager) getApplicationContext()
+                .getSystemService(Context.WIFI_SERVICE);
+        audioManager = (AudioManager) getApplicationContext()
+                .getSystemService(Context.AUDIO_SERVICE);
 
     }
 
@@ -72,10 +74,10 @@ public class Scanning extends Service {
                 @Override
                 public void run() {
                     // display toast
-//                    Toast.makeText(getApplicationContext(), getTime(),
-//                            Toast.LENGTH_SHORT).show();
+//
                     if (stateTimeMap.get(getTime()) != null) {
                         setState(stateTimeMap.get(getTime()));
+                        Toast.makeText(getApplicationContext(), getTime(), Toast.LENGTH_SHORT).show();
 
                     }
 
@@ -94,31 +96,33 @@ public class Scanning extends Service {
     }
 
 
-    public static void loadStates(ArrayList<State> states) {
+    public void loadStates(ArrayList<State> states) {
         for (int i = 0; i < states.size(); i++) {
             State state = states.get(i);
-            String time = TimeUnit.MILLISECONDS.toHours(state.getStartTime()) + ":" + TimeUnit.MILLISECONDS.toMinutes(state.getStartTime() - TimeUnit.MILLISECONDS.toHours(state.getStartTime()) * 3600000);
+            String time = TimeUnit.MILLISECONDS.toHours(state.getStartTime()) + ":" +
+                    TimeUnit.MILLISECONDS.toMinutes(state.getStartTime() - TimeUnit.MILLISECONDS.toHours(state.getStartTime()) * 3600000);
             stateTimeMap.put(time, state);
-            Log.d("timeS", "loadState: " + time+" "+state.getMediaSoundState());
+            Log.d("timeS", "loadState: " + time + " " + state.getMediaSoundState());
         }
 
     }
 
-    private void setState(State state){
+    private void setState(State state) {
         wifiManager.setWifiEnabled(state.isWiFiState());
         if (state.isBluetoothState()) btAdapter.enable();
         else btAdapter.disable();
 
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.getMediaSoundState(),audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
-//        if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT) audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progInex(state.getSystemSoundState(), audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.getMediaSoundState(),
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progInex(state.getSystemSoundState(),
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
         Log.d("timeS", "setState: " + state.getName());
 
     }
 
-    private int progInex(float in, int max){
-        in= in/100;
-        return (int)(max*in);
+    private int progInex(float in, int max) {
+        in = in / 100;
+        return (int) (max * in);
     }
 }
 

@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.fragment.TimePickerFragment;
@@ -49,9 +50,9 @@ public class AddStateActivity extends AppCompatActivity {
             name.setText(intent.getStringExtra("name"));
             wifi.setChecked(intent.getBooleanExtra("wifi", false));
             bluetooth.setChecked(intent.getBooleanExtra("bluetooth", false));
-            setTime.setText(getTime(intent.getLongExtra("starttime",0l)));
-            media.setProgress(intent.getIntExtra("media",0));
-            system.setProgress(intent.getIntExtra("system",0));
+            setTime.setText(getTime(intent.getLongExtra("starttime", 0l)));
+            media.setProgress(intent.getIntExtra("media", 0));
+            system.setProgress(intent.getIntExtra("system", 0));
 
         }
 
@@ -63,19 +64,23 @@ public class AddStateActivity extends AppCompatActivity {
             public void onClick(View v) {
                 wifiB = wifi.isChecked();
                 bluetoothB = bluetooth.isChecked();
-                nameS = String.valueOf(name.getText());
+                nameS = (name.getText()).toString();
                 startTimeL = milliseconds;
                 mediaI = media.getProgress();
                 systemI = system.getProgress();
-
-                if (newState)
-                    sh.insert(nameS, wifiB, bluetoothB, startTimeL, mediaI, systemI);
-                else  sh.updateState(String.valueOf(intent.getIntExtra("id", 0)) ,nameS, startTimeL, wifiB, bluetoothB,mediaI,systemI);
-                startActivity(new Intent(AddStateActivity.this, MainActivity.class));
-                Log.d("DB", "add: " + sh.getAll().toString());
-                stopService(new Intent(AddStateActivity.this, Scanning.class));
-                startService(new Intent(AddStateActivity.this, Scanning.class));
-                finish();
+                if (nameS.length() == 0)
+                    Toast.makeText(getApplicationContext(), "enter name", Toast.LENGTH_SHORT).show();
+                else {
+                    if (newState && nameS.length() > 0)
+                        sh.insert(nameS, wifiB, bluetoothB, startTimeL, mediaI, systemI);
+                    else
+                        sh.updateState(String.valueOf(intent.getIntExtra("id", 0)), nameS, startTimeL, wifiB, bluetoothB, mediaI, systemI);
+                    startActivity(new Intent(AddStateActivity.this, MainActivity.class));
+                    Log.d("DB", "add: " + sh.getAll().toString());
+                    stopService(new Intent(AddStateActivity.this, Scanning.class));
+                    startService(new Intent(AddStateActivity.this, Scanning.class));
+                    finish();
+                }
 
 
             }
@@ -108,9 +113,9 @@ public class AddStateActivity extends AppCompatActivity {
 
     }
 
-    public String getTime(long milliseconds){
+    public String getTime(long milliseconds) {
         Date date = new Date();
         date.setTime(milliseconds);
-        return String.valueOf(milliseconds/3_600_000) + ":" + String.valueOf(milliseconds%3_600_000/60_000);
+        return String.valueOf(milliseconds / 3_600_000) + ":" + String.valueOf(milliseconds % 3_600_000 / 60_000);
     }
 }

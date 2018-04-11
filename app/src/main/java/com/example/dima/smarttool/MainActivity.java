@@ -9,7 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -48,14 +47,13 @@ public class MainActivity extends AppCompatActivity {
     private static int navigateID = R.id.navigation_scan;
 
     private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
-        private static final String[] READ_ACCESS_FINE = new String [] {BLUETOOTH_ADMIN,  CHANGE_WIFI_STATE,  ACCESS_WIFI_STATE,READ_CONTACTS};
+    private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, CHANGE_WIFI_STATE, ACCESS_WIFI_STATE, READ_CONTACTS};
 
     public static int batteryChange;
     static AudioManager audioManager;
     static BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-    static  WifiManager wifiManager;
+    static WifiManager wifiManager;
     static FloatingActionButton fab;
-
 
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -90,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(
                     android.provider.Settings
                             .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-
             startActivity(intent);
         }
 
@@ -109,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddStateActivity.class));
             }
         });
-
 
 
     }
@@ -173,13 +169,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public  void rewriteFragment() {
+    public void rewriteFragment() {
         if (navigateID == R.id.navigation_scan) {
             fragmentManager = getFragmentManager();
             Bundle arg = new Bundle();
             arg.putInt("battery", batteryChange);
             arg.putInt("sound", 5);
-            arg.putBoolean("wifi",wifiManager.isWifiEnabled() );
+            arg.putBoolean("wifi", wifiManager.isWifiEnabled());
             arg.putBoolean("bluetooth", btAdapter.isEnabled());
             fragment = new ScanFragment();
             fragment.setArguments(arg);
@@ -222,32 +218,33 @@ public class MainActivity extends AppCompatActivity {
 
         protected Void doInBackground(Void... args) {
 
-                Log.d("test", "поток");
+            Log.d("test", "поток");
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-                rewriteFragment();
+            navigateID = R.id.navigation_scan;
+            rewriteFragment();
 
             return null;
         }
-        }
-
-        protected void onPostExecute(Void image) {
-
-        }
-
-
-    private boolean isPermissionGranted(String permission) {
-        int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
-        return permissionCheck == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestPermission(String permission, int requestCode) {
-        ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+    protected void onPostExecute(Void image) {
+
     }
-    }
+
+
+//    private boolean isPermissionGranted(String permission) {
+//        int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
+//        return permissionCheck == PackageManager.PERMISSION_GRANTED;
+//    }
+//
+//    private void requestPermission(String permission, int requestCode) {
+//        ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+//    }
+}
 
 
 
