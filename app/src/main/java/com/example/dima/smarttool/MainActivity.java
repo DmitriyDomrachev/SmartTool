@@ -32,6 +32,8 @@ import com.example.dima.smarttool.fragment.UserFragment;
 
 import java.util.ArrayList;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.ACCESS_WIFI_STATE;
 import static android.Manifest.permission.BLUETOOTH_ADMIN;
 import static android.Manifest.permission.CHANGE_WIFI_STATE;
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     static AudioManager audioManager;
     static BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     static WifiManager wifiManager;
-    static FloatingActionButton fab;
+    static FloatingActionButton fab, fabMap;
 
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -76,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         ActivityCompat.requestPermissions(this,
-                new String[]{READ_CONTACTS},
-                123);
+                new String[]{READ_CONTACTS,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION},
+                3);
 
         NotificationManager notificationManager =
                 (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -104,6 +106,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, AddStateActivity.class));
+            }
+        });
+
+        fabMap = findViewById(R.id.fab2);
+//        fabMap.hide();
+        fabMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, MapsActivity.class));
             }
         });
 
