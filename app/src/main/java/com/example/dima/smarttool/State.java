@@ -12,12 +12,12 @@ public class State {
     private boolean wifiState, bluetoothState;
     private int batteryState, mediaSoundState, systemSoundState, id;
     private long startTime;
-    private String name;
+    private String name, latlng;
 
 
 
 
-    public State(int id, String name, boolean wifiState, boolean bluetoothState, int batteryState, int mediaSoundState, int systemSoundState, long startTime) {
+    public State(int id, String name, boolean wifiState, boolean bluetoothState, int batteryState, int mediaSoundState, int systemSoundState, long startTime, String latlng) {
         this.id = id;
         this.name = name;
         this.wifiState = wifiState;
@@ -26,6 +26,7 @@ public class State {
         this.mediaSoundState = mediaSoundState;
         this.systemSoundState = systemSoundState;
         this.startTime = startTime;
+        this.latlng = latlng;
 
         Log.d("test","new state name ="+name);
 
@@ -68,6 +69,10 @@ public class State {
 
     public void setWifiState(boolean wifiState) {
         this.wifiState = wifiState;
+    }
+
+    public String getLatlng() {
+        return latlng;
     }
 
     @Override

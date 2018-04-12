@@ -34,9 +34,6 @@ import java.util.ArrayList;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.ACCESS_WIFI_STATE;
-import static android.Manifest.permission.BLUETOOTH_ADMIN;
-import static android.Manifest.permission.CHANGE_WIFI_STATE;
 import static android.Manifest.permission.READ_CONTACTS;
 
 
@@ -48,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static int navigateID = R.id.navigation_scan;
 
-    private static int REQUEST_READ_ACCESS_FINE = 10001, countFragments = 0;
-    private static final String[] READ_ACCESS_FINE = new String[]{BLUETOOTH_ADMIN, CHANGE_WIFI_STATE, ACCESS_WIFI_STATE, READ_CONTACTS};
+    private static int REQUEST_READ_ACCESS_FINE = 3, countFragments = 0;
+    private static final String[] READ_ACCESS_FINE = new String[]{READ_CONTACTS, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION};
 
     public static int batteryChange;
     static AudioManager audioManager;
@@ -77,12 +74,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-        ActivityCompat.requestPermissions(this,
-                new String[]{READ_CONTACTS,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION},
-                3);
+
+        requestPermission(READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);
+//        ActivityCompat.requestPermissions(this, READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);  //запрос разрешений
+
+
 
         NotificationManager notificationManager =
-                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE); //запрос разрешения на изменения состояния не беспокоить
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && !notificationManager.isNotificationPolicyAccessGranted()) {
@@ -92,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
                             .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
             startActivity(intent);
         }
+
+
 
 
         setContentView(R.layout.activity_main);
@@ -246,15 +247,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void requestPermission(String[] permission, int requestCode) {
+        ActivityCompat.requestPermissions(this, permission , requestCode);
+    }
 
-//    private boolean isPermissionGranted(String permission) {
-//        int permissionCheck = ActivityCompat.checkSelfPermission(this, permission);
-//        return permissionCheck == PackageManager.PERMISSION_GRANTED;
-//    }
-//
-//    private void requestPermission(String permission, int requestCode) {
-//        ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
-//    }
 }
 
 

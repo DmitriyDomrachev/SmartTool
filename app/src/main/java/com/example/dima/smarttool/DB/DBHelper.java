@@ -24,6 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_MEDIA_SOUND = "media_sound";
     public static final String COLUMN_SYSTEM_SOUND = "system_sound";
     public static final String COLUMN_BATTERY = "battery";
+    public static final String COLUMN_LATLNG = "latlng";
 
     //индексы расположения этих колонок в таблице
     public static final int NUM_COLUMN_ID = 0;
@@ -34,6 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final int NUM_COLUMN_MEDIA_SOUND = 5;
     public static final int NUM_COLUMN_SYSTEM_SOUND = 6;
     public static final int NUM_COLUMN_BATTERY = 7;
+    public static final int NUM_COLUMN_LATLNG = 7;
 
     //конструктор, куда передаётся контекст, имя базы и её версия
     public DBHelper(Context context) {
@@ -51,7 +53,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 COLUMN_BLUETOOTH + " INTEGER, " +
                 COLUMN_MEDIA_SOUND + " INTEGER, " +
                 COLUMN_SYSTEM_SOUND + " INTEGER, " +
-                COLUMN_BATTERY + " INTEGER);";
+                COLUMN_BATTERY + " INTEGER, " +
+                COLUMN_LATLNG + " TEXT);";
         db.execSQL(query);
     }
 

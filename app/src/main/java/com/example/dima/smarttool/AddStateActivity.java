@@ -23,7 +23,7 @@ public class AddStateActivity extends AppCompatActivity {
     Button save, close;
     Switch wifi, bluetooth;
     static TextView setTime;
-    String nameS;
+    String nameS, latlng;
     Long startTimeL;
     static int mediaI, systemI;
     Boolean wifiB, bluetoothB;
@@ -72,9 +72,9 @@ public class AddStateActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "enter name", Toast.LENGTH_SHORT).show();
                 else {
                     if (newState && nameS.length() > 0)
-                        sh.insert(nameS, wifiB, bluetoothB, startTimeL, mediaI, systemI);
+                        sh.insert(nameS, wifiB, bluetoothB, startTimeL, mediaI, systemI, latlng);
                     else
-                        sh.updateState(String.valueOf(intent.getIntExtra("id", 0)), nameS, startTimeL, wifiB, bluetoothB, mediaI, systemI);
+                        sh.updateState(String.valueOf(intent.getIntExtra("id", 0)), nameS, startTimeL, wifiB, bluetoothB, mediaI, systemI, latlng);
                     startActivity(new Intent(AddStateActivity.this, MainActivity.class));
                     Log.d("DB", "add: " + sh.getAll().toString());
                     stopService(new Intent(AddStateActivity.this, Scanning.class));
