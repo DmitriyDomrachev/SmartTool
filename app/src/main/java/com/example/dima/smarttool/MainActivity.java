@@ -132,14 +132,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-    }
-
-    protected void onResume() {
-        super.onResume();
-        loadDB();           // заргузка данных из базы данных
-
-        new RewriteFragment().execute();
-
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(MainActivity.this, MyReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0,
@@ -151,7 +143,18 @@ public class MainActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 10);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),1000, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),60*1000, pendingIntent);
+
+
+    }
+
+    protected void onResume() {
+        super.onResume();
+        loadDB();           // заргузка данных из базы данных
+
+        new RewriteFragment().execute();
+
+
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -205,6 +208,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent(getApplicationContext(), Scanning.class);
+        stopService(intent);
+        Log.d("alarm", "destroy");
+    }
 
     public void rewriteFragment() {
         if (navigateID == R.id.navigation_scan) {

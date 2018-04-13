@@ -83,21 +83,6 @@ public class AddStateActivity extends AppCompatActivity {
                     else
                         sh.updateState(String.valueOf(intent.getIntExtra("id", 0)), nameS, startTimeL, wifiB, bluetoothB, mediaI, systemI, latlng);
 
-//                    Intent myIntent = new Intent(AddStateActivity.this,
-//                            TimeService.class);
-//
-//                    pendingIntent = PendingIntent.getService(AddStateActivity.this, 0,
-//                            myIntent, 0);
-//
-//                    AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//
-//                    if (android.os.Build.VERSION.SDK_INT >= 19) {
-//                        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeL,
-//                                AlarmManager.INTERVAL_DAY, pendingIntent);
-//                    } else {
-//                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTimeL,
-//                                AlarmManager.INTERVAL_DAY, pendingIntent);
-//                    }
 
                     startActivity(new Intent(AddStateActivity.this, MainActivity.class));
                     Log.d("DB", "add: " + sh.getAll().toString());

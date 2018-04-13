@@ -51,6 +51,7 @@ public class Scanning extends Service {
             Toast.makeText(getApplicationContext(), getTime(), Toast.LENGTH_SHORT).show();
         }
         Log.d("alarm","startService");
+
     }
 
     @Nullable
@@ -64,12 +65,14 @@ public class Scanning extends Service {
     public void onCreate() {
         Log.d("alarm","createService");
         Log.d("timeS","createService");
-        onDestroy();
-
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("alarm","destroyService");
 
-
+    }
 
     private String getTime() {                                                          // используйте метод для вывода текущего времени
         Date date = new Date();
