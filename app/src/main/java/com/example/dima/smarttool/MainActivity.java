@@ -1,9 +1,11 @@
 package com.example.dima.smarttool;
 
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.fragment.ListFragment;
@@ -31,6 +34,7 @@ import com.example.dima.smarttool.fragment.SettingFragment;
 import com.example.dima.smarttool.fragment.UserFragment;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     static BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     static WifiManager wifiManager;
     static FloatingActionButton fab, fabMap;
+    private PendingIntent pendingIntent;
+    AlarmManager alarmManager;
 
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
@@ -111,11 +117,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         fabMap = findViewById(R.id.fab2);
-//        fabMap.hide();
+
         fabMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+
+
+
+
+
+                Toast.makeText(MainActivity.this, "Start Alarm",
+                        Toast.LENGTH_LONG).show();
             }
         });
 
@@ -127,6 +139,19 @@ public class MainActivity extends AppCompatActivity {
         loadDB();           // заргузка данных из базы данных
 
         new RewriteFragment().execute();
+
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(MainActivity.this, MyReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0,
+                intent, PendingIntent.FLAG_CANCEL_CURRENT );
+        // На случай, если мы ранее запускали активити, а потом поменяли время,
+        // откажемся от уведомления
+        alarmManager.cancel(pendingIntent);
+        // Устанавливаем разовое напоминание
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 10);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),1000, pendingIntent);
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -215,9 +240,9 @@ public class MainActivity extends AppCompatActivity {
         stateLoadArr.clear();
         stateLoadArr.addAll(sh.getAll());                                                              // сохранениесех состаяний из БД в ArrayList
         countState = stateLoadArr.size();
-        Intent intent = new Intent(this, Scanning.class);
-        intent.putExtra("arrayList", stateLoadArr);
-        startService(new Intent(this, Scanning.class));                                 //сканирование состояния
+//        Intent intent = new Intent(this, Scanning.class);
+//        intent.putExtra("arrayList", stateLoadArr);
+//        startService(new Intent(this, Scanning.class));                                 //сканирование состояния
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
     }
@@ -250,6 +275,8 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermission(String[] permission, int requestCode) {
         ActivityCompat.requestPermissions(this, permission , requestCode);
     }
+
+
 
 }
 

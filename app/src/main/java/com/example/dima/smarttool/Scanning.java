@@ -9,6 +9,7 @@ import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,7 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 
@@ -38,55 +38,38 @@ public class Scanning extends Service {
 
 
     @Override
-    public IBinder onBind(Intent intent) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public void onStart(Intent intent, int startId) {
 
-    @Override
-    public void onCreate() {
-        // cancel if already existed
-        if (mTimer != null) {
-            mTimer.cancel();
-        } else {
-            // recreate new
-            mTimer = new Timer();
-        }
-        // schedule task
-        mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0,
-                NOTIFY_INTERVAL);
         StateHelper sh = new StateHelper(getApplicationContext());                                     // инициализация помощника управления состояниямив базе данных
         loadStates(sh.getAll());
         wifiManager = (WifiManager) getApplicationContext()
                 .getSystemService(Context.WIFI_SERVICE);
         audioManager = (AudioManager) getApplicationContext()
                 .getSystemService(Context.AUDIO_SERVICE);
-
-    }
-
-    class TimeDisplayTimerTask extends TimerTask {
-
-        @Override
-        public void run() {
-            // run on another thread
-            mHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    // display toast
-//
-                    if (stateTimeMap.get(getTime()) != null) {
-                        setState(stateTimeMap.get(getTime()));
-                        Toast.makeText(getApplicationContext(), getTime(), Toast.LENGTH_SHORT).show();
-
-                    }
-
-                }
-            });
+        if (stateTimeMap.get(getTime()) != null) {
+            setState(stateTimeMap.get(getTime()));
+            Toast.makeText(getApplicationContext(), getTime(), Toast.LENGTH_SHORT).show();
         }
+        Log.d("alarm","startService");
+    }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+
+    @Override
+    public void onCreate() {
+        Log.d("alarm","createService");
+        Log.d("timeS","createService");
+        onDestroy();
 
     }
+
+
+
 
     private String getTime() {                                                          // используйте метод для вывода текущего времени
         Date date = new Date();

@@ -1,6 +1,7 @@
 package com.example.dima.smarttool;
 
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,8 @@ public class AddStateActivity extends AppCompatActivity {
     static long milliseconds;
     SeekBar media, system;
     boolean newState;
+    private PendingIntent pendingIntent;
+
 
 
     @Override
@@ -46,6 +49,8 @@ public class AddStateActivity extends AppCompatActivity {
         close = findViewById(R.id.addStateCloseButton);
         media = findViewById(R.id.addStateMediaSoundSeekBar);
         system = findViewById(R.id.addStateSystemSoundSeekBar);
+
+
         if (!newState) {
             name.setText(intent.getStringExtra("name"));
             wifi.setChecked(intent.getBooleanExtra("wifi", false));
@@ -68,17 +73,36 @@ public class AddStateActivity extends AppCompatActivity {
                 startTimeL = milliseconds;
                 mediaI = media.getProgress();
                 systemI = system.getProgress();
+                latlng = "ufd";
                 if (nameS.length() == 0)
                     Toast.makeText(getApplicationContext(), "enter name", Toast.LENGTH_SHORT).show();
                 else {
-                    if (newState && nameS.length() > 0)
+                    if (newState && nameS.length() > 0){
                         sh.insert(nameS, wifiB, bluetoothB, startTimeL, mediaI, systemI, latlng);
+                    }
                     else
                         sh.updateState(String.valueOf(intent.getIntExtra("id", 0)), nameS, startTimeL, wifiB, bluetoothB, mediaI, systemI, latlng);
+
+//                    Intent myIntent = new Intent(AddStateActivity.this,
+//                            TimeService.class);
+//
+//                    pendingIntent = PendingIntent.getService(AddStateActivity.this, 0,
+//                            myIntent, 0);
+//
+//                    AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//
+//                    if (android.os.Build.VERSION.SDK_INT >= 19) {
+//                        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeL,
+//                                AlarmManager.INTERVAL_DAY, pendingIntent);
+//                    } else {
+//                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTimeL,
+//                                AlarmManager.INTERVAL_DAY, pendingIntent);
+//                    }
+
                     startActivity(new Intent(AddStateActivity.this, MainActivity.class));
                     Log.d("DB", "add: " + sh.getAll().toString());
-                    stopService(new Intent(AddStateActivity.this, Scanning.class));
-                    startService(new Intent(AddStateActivity.this, Scanning.class));
+
+
                     finish();
                 }
 
