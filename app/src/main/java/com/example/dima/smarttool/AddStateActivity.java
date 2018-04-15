@@ -1,13 +1,16 @@
 package com.example.dima.smarttool;
 
+import android.app.AlarmManager;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -17,85 +20,91 @@ import android.widget.Toast;
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.fragment.TimePickerFragment;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.Random;
 
 public class AddStateActivity extends AppCompatActivity {
-    EditText name;
-    Button save, close;
-    Switch wifi, bluetooth;
-    static TextView setTime;
-    String nameS, latlng;
-    Long startTimeL;
-    static int mediaI, systemI;
-    Boolean wifiB, bluetoothB;
+    EditText nameEditText;
+    Button saveBtn, closeBtn;
+    static Switch wifiSwitch, bluetoothSwitch, conditionSwitch;
+    static TextView conditionTextView, setConditionTextView;
+    String name, latlng;
+    Long startTime, time;
+    static int mediaI, systemI, hour, minute;
+    Boolean wifi, bluetooth;
     static long milliseconds;
-    SeekBar media, system;
-    boolean newState;
-    private PendingIntent pendingIntent;
-
+    SeekBar mediaSeekBar, systemSeekBar;
+    AlarmManager alarmManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Intent intent = getIntent();
-        newState = intent.getStringExtra("name") == null;
         setContentView(R.layout.activity_add_state);
-        setTime = findViewById(R.id.addStateSetTimeTextView);
-        name = findViewById(R.id.addStateNameEditText);
-        wifi = findViewById(R.id.addStateWiFiSwitch);
-        bluetooth = findViewById(R.id.addStateBluetoothSwitch);
-        save = findViewById(R.id.addStateSaveButton);
-        close = findViewById(R.id.addStateCloseButton);
-        media = findViewById(R.id.addStateMediaSoundSeekBar);
-        system = findViewById(R.id.addStateSystemSoundSeekBar);
-
-
-        if (!newState) {
-            name.setText(intent.getStringExtra("name"));
-            wifi.setChecked(intent.getBooleanExtra("wifi", false));
-            bluetooth.setChecked(intent.getBooleanExtra("bluetooth", false));
-            setTime.setText(getTime(intent.getLongExtra("starttime", 0l)));
-            media.setProgress(intent.getIntExtra("media", 0));
-            system.setProgress(intent.getIntExtra("system", 0));
-
-        }
-
+        conditionTextView = findViewById(R.id.addStateConditionTextView);
+        setConditionTextView = findViewById(R.id.addStateSetTextView);
+        nameEditText = findViewById(R.id.addStateNameEditText);
+        wifiSwitch = findViewById(R.id.addStateWiFiSwitch);
+        bluetoothSwitch = findViewById(R.id.addStateBluetoothSwitch);
+        conditionSwitch = findViewById(R.id.addStateConditionSwitch);
+        saveBtn = findViewById(R.id.addStateSaveButton);
+        closeBtn = findViewById(R.id.addStateCloseButton);
+        mediaSeekBar = findViewById(R.id.addStateMediaSoundSeekBar);
+        systemSeekBar = findViewById(R.id.addStateSystemSoundSeekBar);
 
         final StateHelper sh = new StateHelper(getApplicationContext());
 
-        save.setOnClickListener(new View.OnClickListener() {
+        saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wifiB = wifi.isChecked();
-                bluetoothB = bluetooth.isChecked();
-                nameS = (name.getText()).toString();
-                startTimeL = milliseconds;
-                mediaI = media.getProgress();
-                systemI = system.getProgress();
+                wifi = wifiSwitch.isChecked();
+                bluetooth = bluetoothSwitch.isChecked();
+                name = (nameEditText.getText()).toString();
+                startTime = milliseconds;
+                mediaI = mediaSeekBar.getProgress();
+                systemI = systemSeekBar.getProgress();
                 latlng = "ufd";
-                if (nameS.length() == 0)
-                    Toast.makeText(getApplicationContext(), "enter name", Toast.LENGTH_SHORT).show();
+                if (name.length() == 0)
+                    Toast.makeText(getApplicationContext(), "enter nameEditText", Toast.LENGTH_SHORT).show();
                 else {
-                    if (newState && nameS.length() > 0){
-                        sh.insert(nameS, wifiB, bluetoothB, startTimeL, mediaI, systemI, latlng);
+                    sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, latlng);
+
+                    alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    Intent intent = new Intent(AddStateActivity.this, MyReceiver.class);
+                    intent.putExtra("nameEditText", name);
+                    PendingIntent pendingIntent;
+                    Random r = new Random();
+                    pendingIntent = PendingIntent.getBroadcast(AddStateActivity.this, r.nextInt(),
+                            intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.HOUR_OF_DAY, hour);
+                    calendar.set(Calendar.MINUTE, minute);
+                    time = (calendar.getTimeInMillis() - (calendar.getTimeInMillis() % 60000));
+                    if (System.currentTimeMillis() > time) {
+                        if (calendar.AM_PM == 0)
+                            time = time + (1000 * 60 * 60 * 12);
+                        else
+                            time = time + (1000 * 60 * 60 * 24);
                     }
-                    else
-                        sh.updateState(String.valueOf(intent.getIntExtra("id", 0)), nameS, startTimeL, wifiB, bluetoothB, mediaI, systemI, latlng);
-
-
-                    startActivity(new Intent(AddStateActivity.this, MainActivity.class));
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
                     Log.d("DB", "add: " + sh.getAll().toString());
-
-
+                    startActivity(new Intent(AddStateActivity.this, MainActivity.class));
                     finish();
                 }
-
-
             }
         });
 
-        close.setOnClickListener(new View.OnClickListener() {
+        conditionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked)
+                    conditionTextView.setText("GPS");
+                else conditionTextView.setText("TIME");
+            }
+        });
+
+        closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(AddStateActivity.this, MainActivity.class));
@@ -105,11 +114,16 @@ public class AddStateActivity extends AppCompatActivity {
             }
         });
 
-        setTime.setOnClickListener(new View.OnClickListener() {
+        setConditionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment newFragment = new TimePickerFragment();
-                newFragment.show(getFragmentManager(), "timePicker");
+                if(!conditionSwitch.isChecked()){
+                    DialogFragment newFragment = new TimePickerFragment();
+                    newFragment.show(getFragmentManager(), "timePicker");
+                }
+                else startActivity(new Intent(AddStateActivity.this, MapsActivity.class));
+
+
             }
         });
 
@@ -117,14 +131,17 @@ public class AddStateActivity extends AppCompatActivity {
     }
 
     public static void setTime(int hour, int minute) {
-        setTime.setText(hour + ":" + minute);
+        setConditionTextView.setText(hour + ":" + minute);
         milliseconds = hour * 3_600_000 + minute * 60_000;
 
     }
 
-    public String getTime(long milliseconds) {
-        Date date = new Date();
-        date.setTime(milliseconds);
-        return String.valueOf(milliseconds / 3_600_000) + ":" + String.valueOf(milliseconds % 3_600_000 / 60_000);
+    public static void setHour(int hour) {
+        AddStateActivity.hour = hour;
     }
+
+    public static void setMinute(int minute) {
+        AddStateActivity.minute = minute;
+    }
+
 }

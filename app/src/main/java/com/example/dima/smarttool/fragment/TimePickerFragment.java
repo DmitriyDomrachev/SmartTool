@@ -34,6 +34,8 @@ public class TimePickerFragment extends DialogFragment
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         Log.d ("time"," set time: "+String.valueOf(hourOfDay)+":"+String.valueOf(minute));
         AddStateActivity.setTime(hourOfDay, minute);
+        AddStateActivity.setHour(hourOfDay);
+        AddStateActivity.setMinute(minute);
     }
 }
 

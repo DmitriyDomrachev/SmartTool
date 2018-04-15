@@ -25,7 +25,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.fragment.ListFragment;
@@ -48,10 +47,9 @@ public class MainActivity extends AppCompatActivity {
     Fragment fragment;
 
     private static int navigateID = R.id.navigation_scan;
-
-    private static int REQUEST_READ_ACCESS_FINE = 3, countFragments = 0;
+    private static int REQUEST_READ_ACCESS_FINE = 3;
     private static final String[] READ_ACCESS_FINE = new String[]{READ_CONTACTS, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION};
-
+    final int REQUEST_SAVE = 1;
     public static int batteryChange;
     static AudioManager audioManager;
     static BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -59,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
     static FloatingActionButton fab, fabMap;
     private PendingIntent pendingIntent;
     AlarmManager alarmManager;
-
+    static ArrayList<State> stateLoadArr = new ArrayList<>();
+    static int countState;
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -71,19 +70,12 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    static ArrayList<State> stateLoadArr = new ArrayList<>();
-    static int countState;
-    public final static String FILE_NAME = "filename";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
-
         requestPermission(READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);
-//        ActivityCompat.requestPermissions(this, READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);  //запрос разрешений
-
 
 
         NotificationManager notificationManager =
@@ -99,10 +91,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         setContentView(R.layout.activity_main);
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);                 //IntentFilter батареи
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);                         //IntentFilter батареи
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);                            //текущее состояние батареи, mBroadcastReceiver в качестве преемника
 
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
@@ -112,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 startActivity(new Intent(MainActivity.this, AddStateActivity.class));
             }
         });
@@ -121,29 +114,14 @@ public class MainActivity extends AppCompatActivity {
         fabMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                Log.d("alarm", "time" + calendar.getTime());
+                calendar.add(Calendar.MILLISECOND, 3600000);
+                Log.d("alarm", "time" + calendar.getTime());
 
-
-
-
-
-                Toast.makeText(MainActivity.this, "Start Alarm",
-                        Toast.LENGTH_LONG).show();
             }
         });
-
-
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(MainActivity.this, MyReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0,
-                intent, PendingIntent.FLAG_CANCEL_CURRENT );
-        // На случай, если мы ранее запускали активити, а потом поменяли время,
-        // откажемся от уведомления
-        alarmManager.cancel(pendingIntent);
-        // Устанавливаем разовое напоминание
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.add(Calendar.SECOND, 10);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),60*1000, pendingIntent);
 
 
     }
@@ -151,10 +129,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadDB();           // заргузка данных из базы данных
-
         new RewriteFragment().execute();
-
-
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -202,19 +177,17 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-//        fragmentManager = getFragmentManager(); //отображение 1 фрагмента
-//        navigateID = R.id.navigation_scan;
-//        rewriteFragment();
+
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Intent intent = new Intent(getApplicationContext(), Scanning.class);
-        stopService(intent);
+
         Log.d("alarm", "destroy");
     }
+
 
     public void rewriteFragment() {
         if (navigateID == R.id.navigation_scan) {
@@ -222,8 +195,8 @@ public class MainActivity extends AppCompatActivity {
             Bundle arg = new Bundle();
             arg.putInt("battery", batteryChange);
             arg.putInt("sound", 5);
-            arg.putBoolean("wifi", wifiManager.isWifiEnabled());
-            arg.putBoolean("bluetooth", btAdapter.isEnabled());
+            arg.putBoolean("wifiSwitch", wifiManager.isWifiEnabled());
+            arg.putBoolean("bluetoothSwitch", btAdapter.isEnabled());
             fragment = new ScanFragment();
             fragment.setArguments(arg);
             fragmentTransaction = fragmentManager.beginTransaction();
@@ -232,10 +205,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("test1", "rewrite scan");
         }
     }                                        //пересоздание фрагментов для отображения измененной информации
-
-//    public ArrayList<State> updateListView() {
-//        return stateLoadArr;
-//    }
 
     public static int getCountState() {
         return countState;
@@ -283,9 +252,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestPermission(String[] permission, int requestCode) {
-        ActivityCompat.requestPermissions(this, permission , requestCode);
+        ActivityCompat.requestPermissions(this, permission, requestCode);
     }
-
 
 
 }

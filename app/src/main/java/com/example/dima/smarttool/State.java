@@ -28,7 +28,7 @@ public class State {
         this.startTime = startTime;
         this.latlng = latlng;
 
-        Log.d("test","new state name ="+name);
+        Log.d("test","new state nameEditText ="+name);
 
     }
     public State(){}
@@ -79,9 +79,9 @@ public class State {
     public String toString() {
         return "State{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", wifi='" + wifiState + '\'' +
-                ", bluetooth='" + bluetoothState + '\'' +
+                ", nameEditText='" + name + '\'' +
+                ", wifiSwitch='" + wifiState + '\'' +
+                ", bluetoothSwitch='" + bluetoothState + '\'' +
                 ", mediaSound='" + mediaSoundState + '\'' +
                 ", systemSound='" + systemSoundState + '\'' +
                 '}'+"\n";

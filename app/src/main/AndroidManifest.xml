@@ -32,13 +32,6 @@
         </activity>
         <activity android:name=".AddStateActivity" />
 
-         <service
-         android:name=".Scanning"
-          />
-
-        <service android:name=".TimeService" />
-        <!-- android:enabled="true" -->
-        <!-- android:exported="true"/> -->
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
