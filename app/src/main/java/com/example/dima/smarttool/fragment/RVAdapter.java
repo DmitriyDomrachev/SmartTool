@@ -47,7 +47,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
         holder.txtName.setText(holder.txtName.getText() + String.valueOf(state.getName()));
-        holder.txtStartTime.setText(holder.txtStartTime.getText() + String.valueOf(hour) + ":" + String.valueOf(minute));
+        if (state.getLat() == 0)
+            holder.txtStart.setText("Strat time: " + String.valueOf(hour) + ":" + String.valueOf(minute));
+        else holder.txtStart.setText("Start by GPS");
         holder.cvListener.setRecord(state);                                                             // как-то надо понимать с каким состоянием работаем
         holder.btnClickListener.setRecord(state);                                                       // как-то надо понимать с состоянием  работаем
 
@@ -61,8 +63,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
     //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtName, /*txtWiFi, txtBluetooth,*/
-                txtStartTime;
+        TextView txtName, txtStart;
         Button btnRefactor;
         CardView cv;
 
@@ -74,7 +75,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
             super(itemView);
 
             txtName = itemView.findViewById(R.id.cvNameTextView);
-            txtStartTime = itemView.findViewById(R.id.cvTimeStartTextView);
+            txtStart = itemView.findViewById(R.id.cvStartTextView);
             btnRefactor = itemView.findViewById(R.id.cvButton);
 
             cv = itemView.findViewById(R.id.cv_rv);
@@ -106,7 +107,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
 
             Toast.makeText(context, "Name: " + state.getName() + "\nWifi: " + wifi
                     + "\nBluetooth: " + bt + "\nMedia: " + state.getMediaSoundState()
-                    + "%\nSystem: " + state.getSystemSoundState()+"%", Toast.LENGTH_SHORT).show();
+                    + "%\nSystem: " + state.getSystemSoundState() + "%", Toast.LENGTH_SHORT).show();
 
         }
 

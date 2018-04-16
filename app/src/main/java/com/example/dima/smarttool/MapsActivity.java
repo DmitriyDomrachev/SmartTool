@@ -1,6 +1,8 @@
 package com.example.dima.smarttool;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -77,8 +79,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                mMap.addMarker(new MarkerOptions().position(latLng).title("касание"));
-
+                mMap.addMarker(new MarkerOptions().position(latLng));
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("lat", latLng.latitude);
+                returnIntent.putExtra("lng", latLng.longitude);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
                 Log.d("map", "LatLng:" + latLng);
             }
         });

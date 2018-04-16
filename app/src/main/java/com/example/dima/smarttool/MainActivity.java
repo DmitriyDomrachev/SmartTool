@@ -33,7 +33,6 @@ import com.example.dima.smarttool.fragment.SettingFragment;
 import com.example.dima.smarttool.fragment.UserFragment;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     static AudioManager audioManager;
     static BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     static WifiManager wifiManager;
-    static FloatingActionButton fab, fabMap;
+    FloatingActionButton fab;
     private PendingIntent pendingIntent;
     AlarmManager alarmManager;
     static ArrayList<State> stateLoadArr = new ArrayList<>();
@@ -109,19 +108,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        fabMap = findViewById(R.id.fab2);
-
-        fabMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                Log.d("alarm", "time" + calendar.getTime());
-                calendar.add(Calendar.MILLISECOND, 3600000);
-                Log.d("alarm", "time" + calendar.getTime());
-
-            }
-        });
 
 
     }
@@ -195,8 +181,9 @@ public class MainActivity extends AppCompatActivity {
             Bundle arg = new Bundle();
             arg.putInt("battery", batteryChange);
             arg.putInt("sound", 5);
-            arg.putBoolean("wifiSwitch", wifiManager.isWifiEnabled());
-            arg.putBoolean("bluetoothSwitch", btAdapter.isEnabled());
+            arg.putBoolean("wifi", wifiManager.isWifiEnabled());
+            arg.putBoolean("bluetooth", btAdapter.isEnabled());
+            Log.d("rewrite", wifiManager.isWifiEnabled()+" "+btAdapter.isEnabled());
             fragment = new ScanFragment();
             fragment.setArguments(arg);
             fragmentTransaction = fragmentManager.beginTransaction();

@@ -10,23 +10,24 @@ public class State {
 
 
     private boolean wifiState, bluetoothState;
-    private int batteryState, mediaSoundState, systemSoundState, id;
+    private int  mediaSoundState, systemSoundState, id;
     private long startTime;
-    private String name, latlng;
+    private String name;
+    private double lat, lng;
 
 
 
 
-    public State(int id, String name, boolean wifiState, boolean bluetoothState, int batteryState, int mediaSoundState, int systemSoundState, long startTime, String latlng) {
+    public State(int id, String name, boolean wifiState, boolean bluetoothState, int mediaSoundState, int systemSoundState, long startTime, double lat, double lng) {
         this.id = id;
         this.name = name;
         this.wifiState = wifiState;
         this.bluetoothState = bluetoothState;
-        this.batteryState = batteryState;
         this.mediaSoundState = mediaSoundState;
         this.systemSoundState = systemSoundState;
         this.startTime = startTime;
-        this.latlng = latlng;
+        this.lat = lat;
+        this.lng = lng;
 
         Log.d("test","new state nameEditText ="+name);
 
@@ -41,10 +42,6 @@ public class State {
 
     public boolean isBluetoothState() {
         return bluetoothState;
-    }
-
-    public int getBatteryState() {
-        return batteryState;
     }
 
     public int getMediaSoundState() {
@@ -67,12 +64,16 @@ public class State {
         return startTime;
     }
 
-    public void setWifiState(boolean wifiState) {
-        this.wifiState = wifiState;
+//    public void setWifiState(boolean wifiState) {
+//        this.wifiState = wifiState;
+//    }
+
+    public double getLat() {
+        return lat;
     }
 
-    public String getLatlng() {
-        return latlng;
+    public double getLng() {
+        return lng;
     }
 
     @Override
@@ -84,6 +85,8 @@ public class State {
                 ", bluetoothSwitch='" + bluetoothState + '\'' +
                 ", mediaSound='" + mediaSoundState + '\'' +
                 ", systemSound='" + systemSoundState + '\'' +
+                ", lat='" + lat + '\'' +
+                ", lng='" + lng + '\'' +
                 '}'+"\n";
     }
 

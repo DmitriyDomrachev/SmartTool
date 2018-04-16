@@ -14,8 +14,8 @@ import com.example.dima.smarttool.R;
  */
 
 public class ScanFragment extends Fragment {
-    boolean WiFiState =true, BluetoothState=true;
-    int BatteryState=0, SoundState=0;
+    boolean WiFiState = true, BluetoothState = true;
+    int BatteryState = 0, SoundState = 0;
 
 
     @Override
@@ -34,20 +34,19 @@ public class ScanFragment extends Fragment {
             BatteryState = getArguments().getInt("battery");
             SoundState = getArguments().getInt("sound");
         }
-        battery.setText(battery.getText() + "" + BatteryState);
-        wifi.setText(wifi.getText() + "" +  WiFiState);
-        bluetooth.setText(bluetooth.getText() + "" + BluetoothState);
-        sound.setText(sound.getText() + "" + SoundState);
+        battery.setText(battery.getText() + " " + BatteryState + "%");
+        wifi.setText(wifi.getText() + boolToString(WiFiState));
+        bluetooth.setText(bluetooth.getText() + boolToString(BluetoothState));
+        sound.setText(sound.getText() + " " + SoundState + "%");
         return view;
     }
 
-
-
-
-
-
-
-
+    private String boolToString(boolean in) {
+        if (in)
+            return " on";
+        else
+            return " off";
+    }
 
 
 }

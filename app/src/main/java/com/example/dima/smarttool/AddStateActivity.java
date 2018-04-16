@@ -1,5 +1,6 @@
 package com.example.dima.smarttool;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
@@ -28,13 +29,14 @@ public class AddStateActivity extends AppCompatActivity {
     Button saveBtn, closeBtn;
     static Switch wifiSwitch, bluetoothSwitch, conditionSwitch;
     static TextView conditionTextView, setConditionTextView;
-    String name, latlng;
+    String name;
     Long startTime, time;
     static int mediaI, systemI, hour, minute;
     Boolean wifi, bluetooth;
     static long milliseconds;
     SeekBar mediaSeekBar, systemSeekBar;
     AlarmManager alarmManager;
+    static double lat, lng;
 
 
     @Override
@@ -64,33 +66,37 @@ public class AddStateActivity extends AppCompatActivity {
                 startTime = milliseconds;
                 mediaI = mediaSeekBar.getProgress();
                 systemI = systemSeekBar.getProgress();
-                latlng = "ufd";
+
                 if (name.length() == 0)
                     Toast.makeText(getApplicationContext(), "enter nameEditText", Toast.LENGTH_SHORT).show();
                 else {
-                    sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, latlng);
-
-                    alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                    Intent intent = new Intent(AddStateActivity.this, MyReceiver.class);
-                    intent.putExtra("nameEditText", name);
-                    PendingIntent pendingIntent;
-                    Random r = new Random();
-                    pendingIntent = PendingIntent.getBroadcast(AddStateActivity.this, r.nextInt(),
-                            intent, PendingIntent.FLAG_CANCEL_CURRENT);
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(Calendar.HOUR_OF_DAY, hour);
-                    calendar.set(Calendar.MINUTE, minute);
-                    time = (calendar.getTimeInMillis() - (calendar.getTimeInMillis() % 60000));
-                    if (System.currentTimeMillis() > time) {
-                        if (calendar.AM_PM == 0)
-                            time = time + (1000 * 60 * 60 * 12);
-                        else
-                            time = time + (1000 * 60 * 60 * 24);
+                    if (lat != 0)
+                        sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, lat, lng);
+                    if (lat == 0) {
+                        sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, 0, 0);
+                        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                        Intent intent = new Intent(AddStateActivity.this, MyReceiver.class);
+                        intent.putExtra("nameEditText", name);
+                        PendingIntent pendingIntent;
+                        Random r = new Random();
+                        pendingIntent = PendingIntent.getBroadcast(AddStateActivity.this, r.nextInt(),
+                                intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(Calendar.HOUR_OF_DAY, hour);
+                        calendar.set(Calendar.MINUTE, minute);
+                        time = (calendar.getTimeInMillis() - (calendar.getTimeInMillis() % 60000));
+                        if (System.currentTimeMillis() > time) {
+                            if (calendar.AM_PM == 0)
+                                time = time + (1000 * 60 * 60 * 12);
+                            else
+                                time = time + (1000 * 60 * 60 * 24);
+                        }
+                        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
                     }
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+
                     Log.d("DB", "add: " + sh.getAll().toString());
-                    startActivity(new Intent(AddStateActivity.this, MainActivity.class));
-                    finish();
+                        startActivity(new Intent(AddStateActivity.this, MainActivity.class));
+                        finish();
                 }
             }
         });
@@ -117,17 +123,27 @@ public class AddStateActivity extends AppCompatActivity {
         setConditionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!conditionSwitch.isChecked()){
+                if (!conditionSwitch.isChecked()) {
                     DialogFragment newFragment = new TimePickerFragment();
                     newFragment.show(getFragmentManager(), "timePicker");
+                } else {
+                    startActivityForResult(new Intent(AddStateActivity.this, MapsActivity.class), 1);
                 }
-                else startActivity(new Intent(AddStateActivity.this, MapsActivity.class));
 
 
             }
         });
 
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            lat = data.getDoubleExtra("lat", 0);
+            lng = data.getDoubleExtra("lng", 0);
+        }
     }
 
     public static void setTime(int hour, int minute) {
