@@ -32,7 +32,6 @@
         </activity>
         <activity android:name=".AddStateActivity" />
 
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -44,7 +43,12 @@
         <receiver
             android:name=".MyReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+
+        <service
+            android:name=".GPSService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

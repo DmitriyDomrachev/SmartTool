@@ -108,6 +108,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        startService(new Intent(MainActivity
+                .this, GPSService.class));
+
 
 
     }
