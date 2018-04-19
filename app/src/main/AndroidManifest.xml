@@ -41,14 +41,21 @@
             android:label="@string/title_activity_maps" />
 
         <receiver
-            android:name=".MyReceiver"
+            android:name=".StateAlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <service
             android:name=".GPSService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".AddNoteActivity" />
+
+        <receiver
+            android:name=".NoteAlarmReceiver"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

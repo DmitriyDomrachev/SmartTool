@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyReceiver extends BroadcastReceiver {
+public class StateAlarmReceiver extends BroadcastReceiver {
     static Map<String, State> stateTimeMap = new HashMap<String, State>();                       //зраниение значиний времени старта и номера состояния
     String name;
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -33,8 +33,6 @@ public class MyReceiver extends BroadcastReceiver {
         loadStates(sh.getAll());
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-//        wifiManager.setWifiEnabled(false);
-//        btAdapter.enable();
         Toast.makeText(context, "receive",
                 Toast.LENGTH_LONG).show();
         if (stateTimeMap.get(name) != null) {

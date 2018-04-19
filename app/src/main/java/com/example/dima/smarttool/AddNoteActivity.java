@@ -13,28 +13,26 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.dima.smarttool.DB.StateHelper;
+import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.fragment.TimePickerFragment;
 
 import java.util.Calendar;
 import java.util.Random;
 
-public class AddStateActivity extends AppCompatActivity {
-    EditText nameEditText;
+public class AddNoteActivity extends AppCompatActivity {
+
+    EditText nameEditText, textEditText;
     Button saveBtn, closeBtn;
-    static Switch wifiSwitch, bluetoothSwitch, conditionSwitch;
+    static Switch conditionSwitch;
     static TextView conditionTextView, setConditionTextView;
-    String name;
+    String name, text;
     Long startTime, time;
-    static int mediaI, systemI, hour, minute;
-    Boolean wifi, bluetooth;
+    static int hour, minute;
     static long milliseconds;
-    SeekBar mediaSeekBar, systemSeekBar;
     AlarmManager alarmManager;
     static double lat, lng;
 
@@ -42,44 +40,37 @@ public class AddStateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        final Intent intent = getIntent();
-        setContentView(R.layout.activity_add_state);
-        conditionTextView = findViewById(R.id.addStateConditionTextView);
-        setConditionTextView = findViewById(R.id.addStateSetTextView);
-        nameEditText = findViewById(R.id.addStateNameEditText);
-        wifiSwitch = findViewById(R.id.addStateWiFiSwitch);
-        bluetoothSwitch = findViewById(R.id.addStateBluetoothSwitch);
-        conditionSwitch = findViewById(R.id.addStateConditionSwitch);
-        saveBtn = findViewById(R.id.addStateSaveButton);
-        closeBtn = findViewById(R.id.addStateCloseButton);
-        mediaSeekBar = findViewById(R.id.addStateMediaSoundSeekBar);
-        systemSeekBar = findViewById(R.id.addStateSystemSoundSeekBar);
+        setContentView(R.layout.activity_add_note);
+        conditionTextView = findViewById(R.id.addNoteConditionTextView);
+        setConditionTextView = findViewById(R.id.addNoteSetTextView);
+        nameEditText = findViewById(R.id.addNoteNameEditText);
+        textEditText = findViewById(R.id.addNoteTextEditText);
+        conditionSwitch = findViewById(R.id.addNoteConditionSwitch);
+        saveBtn = findViewById(R.id.addNoteSaveButton);
+        closeBtn = findViewById(R.id.addNoteCloseButton);
 
-        final StateHelper sh = new StateHelper(getApplicationContext());
+        final NoteHelper nh = new NoteHelper(getApplicationContext());
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wifi = wifiSwitch.isChecked();
-                bluetooth = bluetoothSwitch.isChecked();
-                name = (nameEditText.getText()).toString();
+                name = nameEditText.getText().toString();
+                text = textEditText.getText().toString();
                 startTime = milliseconds;
-                mediaI = mediaSeekBar.getProgress();
-                systemI = systemSeekBar.getProgress();
 
                 if (name.length() == 0)
                     Toast.makeText(getApplicationContext(), "enter nameEditText", Toast.LENGTH_SHORT).show();
                 else {
                     if (lat != 0)
-                        sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, lat, lng);
+                        nh.insert(name, text, startTime, lat, lng);
                     if (lat == 0) {
-                        sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, 0, 0);
+                        nh.insert(name, text, startTime, 0, 0);
                         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        Intent intent = new Intent(AddStateActivity.this, StateAlarmReceiver.class);
+                        Intent intent = new Intent(AddNoteActivity.this, StateAlarmReceiver.class);
                         intent.putExtra("nameEditText", name);
                         PendingIntent pendingIntent;
                         Random r = new Random();
-                        pendingIntent = PendingIntent.getBroadcast(AddStateActivity.this, r.nextInt(),
+                        pendingIntent = PendingIntent.getBroadcast(AddNoteActivity.this, r.nextInt(),
                                 intent, PendingIntent.FLAG_CANCEL_CURRENT);
                         Calendar calendar = Calendar.getInstance();
                         calendar.set(Calendar.HOUR_OF_DAY, hour);
@@ -94,9 +85,9 @@ public class AddStateActivity extends AppCompatActivity {
                         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
                     }
 
-                    Log.d("DB", "add: " + sh.getAll().toString());
-                        startActivity(new Intent(AddStateActivity.this, MainActivity.class));
-                        finish();
+                    Log.d("DB", "add: " + nh.getAll().toString());
+                    startActivity(new Intent(AddNoteActivity.this, MainActivity.class));
+                    finish();
                 }
             }
         });
@@ -113,7 +104,7 @@ public class AddStateActivity extends AppCompatActivity {
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AddStateActivity.this, MainActivity.class));
+                startActivity(new Intent(AddNoteActivity.this, MainActivity.class));
                 finish();
 
 
@@ -127,7 +118,7 @@ public class AddStateActivity extends AppCompatActivity {
                     DialogFragment newFragment = new TimePickerFragment();
                     newFragment.show(getFragmentManager(), "timePicker");
                 } else {
-                    startActivityForResult(new Intent(AddStateActivity.this, MapsActivity.class), 1);
+                    startActivityForResult(new Intent(AddNoteActivity.this, MapsActivity.class), 1);
                 }
 
 

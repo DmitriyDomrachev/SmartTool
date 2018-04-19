@@ -26,11 +26,13 @@ public class NoteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list, container, false);
-        rv = view.findViewById(R.id.rvList);
+        View view = inflater.inflate(R.layout.fragment_note, container, false);
+        rv = view.findViewById(R.id.rvNote);
         rv.setLayoutManager(new LinearLayoutManager(view.getContext())); // устанавливаем разметку для списка.
-        rv.setItemAnimator(new DefaultItemAnimator()); //устанавливаем класс, отвечающий за анимации в списке
-        rv.setAdapter(new NoteRVAdapter(noteArrayList, view.getContext())); //устанавливаем наш адаптер
+        rv.setItemAnimator(new DefaultItemAnimator());          //устанавливаем класс, отвечающий за анимации в списке
+        rv.setAdapter(new NoteRVAdapter(noteArrayList,       view.getContext())); //устанавливаем наш адаптер
+
+
         return view;
     }
 }

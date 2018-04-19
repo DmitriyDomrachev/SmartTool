@@ -10,7 +10,7 @@ public class Note {
     private double lat, lng;
     private long startTime;
 
-    public Note( int id, String text, String name,double lat, double lng, long startTime) {
+    public Note( int id, String name, String text,double lat, double lng, long startTime) {
         this.text = text;
         this.name = name;
         this.id = id;

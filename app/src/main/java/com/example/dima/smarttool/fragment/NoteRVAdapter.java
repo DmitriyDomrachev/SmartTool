@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.Note;
@@ -46,11 +47,12 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         long millis = calendar.getTimeInMillis();
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
-        holder.txtName.setText(holder.txtName.getText() + String.valueOf(note.getName()));
+        holder.txtName.setText(String.valueOf(note.getName()));
         if (note.getLat() == 0)
             holder.txtStart.setText("Strat time: " + String.valueOf(hour) + ":" + String.valueOf(minute));
         else holder.txtStart.setText("Start by GPS");
-        holder.cvListener.setRecord(note);                                                             // как-то надо понимать с каким состоянием работаем
+        holder.cvListener.setRecord(note);// как-то надо понимать с каким состоянием работаем
+        holder.txtText.setText(note.getText());
         holder.btnClickListener.setRecord(note);                                                       // как-то надо понимать с состоянием  работаем
 
     }
@@ -74,10 +76,10 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         ContactsViewHolder(View itemView) {
             super(itemView);
 
-            txtName = itemView.findViewById(R.id.cvRuleNameTextView);
-            txtStart = itemView.findViewById(R.id.cvRuleStartTextView);
-            btnRefactor = itemView.findViewById(R.id.cvRuleButton);
-
+            txtName = itemView.findViewById(R.id.cvNoteNameTextView);
+            txtStart = itemView.findViewById(R.id.cvNoteStartTextView);
+            txtText = itemView.findViewById(R.id.cvNoteTextTextView);
+            btnRefactor = itemView.findViewById(R.id.cvNoteButton);
             cv = itemView.findViewById(R.id.note_rv);
 
             //цепляем слушатели
@@ -96,8 +98,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
 
         @Override
         public void onClick(View v) {
-
-
+            Toast.makeText(context,"click", Toast.LENGTH_SHORT);
         }
 
         void setRecord(Note note) {
@@ -105,17 +106,19 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         }
     }
 
+
+
     class ButtonRemoveClickListener implements View.OnClickListener {
         Note note;
 
         @Override
         public void onClick(View v) {
-            int position = notes.indexOf(note); // получаем индекс удаляемого элемента
+            int position = notes.indexOf(note);        // получаем индекс удаляемого элемента
             NoteHelper nh = new NoteHelper(context);
             nh.deleteState(String.valueOf(note.getId()));
             Log.d("DB", nh.getAll().toString());
-            notes.remove(note); // удаляем его из списка
-            notifyItemRemoved(position); // метод для удалаении из самого RecyclerView. Именно он отвечает за анимации
+            notes.remove(note);                     // удаляем его из списка
+            notifyItemRemoved(position);            // метод для удалаении из самого RecyclerView. Именно он отвечает за анимации
 
         }
 

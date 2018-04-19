@@ -8,6 +8,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.TimePicker;
 
+import com.example.dima.smarttool.AddNoteActivity;
 import com.example.dima.smarttool.AddStateActivity;
 
 import java.util.Calendar;
@@ -30,12 +31,21 @@ public class TimePickerFragment extends DialogFragment
         return new TimePickerDialog(getActivity(), this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
     }
+    // TODO: start this activity for result
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         Log.d ("time"," set time: "+String.valueOf(hourOfDay)+":"+String.valueOf(minute));
-        AddStateActivity.setTime(hourOfDay, minute);
-        AddStateActivity.setHour(hourOfDay);
-        AddStateActivity.setMinute(minute);
+        try {
+            AddStateActivity.setTime(hourOfDay, minute);
+            AddStateActivity.setHour(hourOfDay);
+            AddStateActivity.setMinute(minute);
+        } catch (Throwable t){}
+
+        try {
+            AddNoteActivity.setTime(hourOfDay, minute);
+            AddNoteActivity.setHour(hourOfDay);
+            AddNoteActivity.setMinute(minute);
+        } catch (Throwable t){}
     }
 }
 

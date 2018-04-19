@@ -105,8 +105,13 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                startActivity(new Intent(MainActivity.this, AddStateActivity.class));
+                switch (navigateID) {
+                    case R.id.navigation_list:
+                        startActivity(new Intent(MainActivity.this, AddStateActivity.class));
+                        return;
+                    case R.id.navigation_note:
+                        startActivity(new Intent(MainActivity.this, AddNoteActivity.class));
+                }
             }
         });
 
@@ -137,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.navigation_list:
                         fab.show();
-
                         fragmentManager = getFragmentManager();
                         navigateID = R.id.navigation_list;
                         fragment = new ListFragment();
@@ -147,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.navigation_note:
-                        fab.hide();
+                        fab.show();
                         fragmentManager = getFragmentManager();
                         navigateID = R.id.navigation_note;
                         fragment = new NoteFragment();
@@ -219,9 +223,7 @@ public class MainActivity extends AppCompatActivity {
         noteLoadArr.clear();
         noteLoadArr.addAll(nh.getAll());
         countNote = noteLoadArr.size();
-//        Intent intent = new Intent(this, Scanning.class);
-//        intent.putExtra("arrayList", stateLoadArr);
-//        startService(new Intent(this, Scanning.class));                                 //сканирование состояния
+                                                                                                    //сканирование состояния
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
     }
