@@ -9,61 +9,61 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.dima.smarttool.DB.StateHelper;
+import com.example.dima.smarttool.DB.NoteHelper;
+import com.example.dima.smarttool.Note;
 import com.example.dima.smarttool.R;
-import com.example.dima.smarttool.State;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by dima on 19.03.2018.
+ * Created by dima on 19.04.2018.
  */
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder> {
 
-    private static ArrayList<State> states;
+public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsViewHolder> {
+
+    private static ArrayList<Note> notes;
     private Context context;
 
-    RVAdapter(ArrayList<State> states, Context context) {
-        this.states = states;
+    NoteRVAdapter(ArrayList<Note> notes, Context context) {
+        this.notes = notes;
         this.context = context;
     }
 
     @Override
     public ContactsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rule_cv, parent, false); // создаём вьюшку для кажого элемента
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_cv, parent, false); // создаём вьюшку для кажого элемента
         return new ContactsViewHolder(view); //передаём вьюшку в качестве аргумента для холдера
     }
 
     @Override
     public void onBindViewHolder(final ContactsViewHolder holder, int position) {                       //тут будет просходить обработка каждого элемента, кога он появится на экране
-        final State state = states.get(position);                                                       // получаем элемент для удобства использования
+        final Note note = notes.get(position);                                                       // получаем элемент для удобства использования
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(state.getStartTime());
+        calendar.setTimeInMillis(note.getStartTime());
         long millis = calendar.getTimeInMillis();
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
-        holder.txtName.setText(holder.txtName.getText() + String.valueOf(state.getName()));
-        if (state.getLat() == 0)
+        holder.txtName.setText(holder.txtName.getText() + String.valueOf(note.getName()));
+        if (note.getLat() == 0)
             holder.txtStart.setText("Strat time: " + String.valueOf(hour) + ":" + String.valueOf(minute));
         else holder.txtStart.setText("Start by GPS");
-        holder.cvListener.setRecord(state);                                                             // как-то надо понимать с каким состоянием работаем
-        holder.btnClickListener.setRecord(state);                                                       // как-то надо понимать с состоянием  работаем
+        holder.cvListener.setRecord(note);                                                             // как-то надо понимать с каким состоянием работаем
+        holder.btnClickListener.setRecord(note);                                                       // как-то надо понимать с состоянием  работаем
 
     }
 
     @Override
     public int getItemCount() {
-        return states.size();
+        return notes.size();
     }
 
     //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtName, txtStart;
+        TextView txtName, txtText, txtStart;
         Button btnRefactor;
         CardView cv;
 
@@ -74,11 +74,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
         ContactsViewHolder(View itemView) {
             super(itemView);
 
-            txtName = itemView.findViewById(R.id.cvNameTextView);
-            txtStart = itemView.findViewById(R.id.cvStartTextView);
-            btnRefactor = itemView.findViewById(R.id.cvButton);
+            txtName = itemView.findViewById(R.id.cvRuleNameTextView);
+            txtStart = itemView.findViewById(R.id.cvRuleStartTextView);
+            btnRefactor = itemView.findViewById(R.id.cvRuleButton);
 
-            cv = itemView.findViewById(R.id.cv_rv);
+            cv = itemView.findViewById(R.id.note_rv);
 
             //цепляем слушатели
             cv.setOnClickListener(cvListener);
@@ -92,46 +92,35 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.ContactsViewHolder
 
     class CardViewClickListener implements View.OnClickListener {
 
-        private State state;
+        private Note note;
 
         @Override
         public void onClick(View v) {
-            String bt, wifi;
-            if (!state.isBluetoothState())
-                bt = "off";
-            else bt = "on";
 
-            if (!state.isWiFiState())
-                wifi = "off";
-            else wifi = "on";
-
-            Toast.makeText(context, "Name: " + state.getName() + "\nWifi: " + wifi
-                    + "\nBluetooth: " + bt + "\nMedia: " + state.getMediaSoundState()
-                    + "%\nSystem: " + state.getSystemSoundState() + "%", Toast.LENGTH_SHORT).show();
 
         }
 
-        void setRecord(State state) {
-            this.state = state;
+        void setRecord(Note note) {
+            this.note = note;
         }
     }
 
     class ButtonRemoveClickListener implements View.OnClickListener {
-        State state;
+        Note note;
 
         @Override
         public void onClick(View v) {
-            int position = states.indexOf(state); // получаем индекс удаляемого элемента
-            StateHelper sh = new StateHelper(context);
-            sh.deleteState(String.valueOf(state.getId()));
-            Log.d("DB", sh.getAll().toString());
-            states.remove(state); // удаляем его из списка
+            int position = notes.indexOf(note); // получаем индекс удаляемого элемента
+            NoteHelper nh = new NoteHelper(context);
+            nh.deleteState(String.valueOf(note.getId()));
+            Log.d("DB", nh.getAll().toString());
+            notes.remove(note); // удаляем его из списка
             notifyItemRemoved(position); // метод для удалаении из самого RecyclerView. Именно он отвечает за анимации
 
         }
 
-        void setRecord(State state) {
-            this.state = state;
+        void setRecord(Note note) {
+            this.note = note;
         }
     }
 

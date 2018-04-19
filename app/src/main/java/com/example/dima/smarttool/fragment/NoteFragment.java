@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.dima.smarttool.MainActivity;
+import com.example.dima.smarttool.Note;
 import com.example.dima.smarttool.R;
-import com.example.dima.smarttool.State;
 
 import java.util.ArrayList;
 
@@ -19,19 +19,20 @@ import java.util.ArrayList;
  * Created by dima on 27.02.2018.
  */
 
-public class ListFragment extends Fragment {
-    ArrayList<State> stateArrayList = new ArrayList<>(MainActivity.getStateArr());
+public class NoteFragment extends Fragment {
+    ArrayList<Note> noteArrayList = new ArrayList<>(MainActivity.getNoteArr());
     RecyclerView rv;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-
         rv = view.findViewById(R.id.rvList);
         rv.setLayoutManager(new LinearLayoutManager(view.getContext())); // устанавливаем разметку для списка.
         rv.setItemAnimator(new DefaultItemAnimator()); //устанавливаем класс, отвечающий за анимации в списке
-        rv.setAdapter(new RuleRVAdapter(stateArrayList, view.getContext())); //устанавливаем наш адаптер
+        rv.setAdapter(new NoteRVAdapter(noteArrayList, view.getContext())); //устанавливаем наш адаптер
         return view;
     }
 }
+
+

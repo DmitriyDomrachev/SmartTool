@@ -64,9 +64,6 @@ public class State {
         return startTime;
     }
 
-//    public void setWifiState(boolean wifiState) {
-//        this.wifiState = wifiState;
-//    }
 
     public double getLat() {
         return lat;

@@ -11,9 +11,9 @@
         android:title="@string/title_add" />
 
     <item
-        android:id="@+id/navigation_user"
-        android:icon="@drawable/user"
-        android:title="@string/title_user" />
+        android:id="@+id/navigation_note"
+        android:icon="@drawable/note"
+        android:title="@string/title_note" />
     <item
         android:id="@+id/navigation_setting"
         android:icon="@drawable/setting"

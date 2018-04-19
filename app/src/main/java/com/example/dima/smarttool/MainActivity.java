@@ -26,11 +26,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.fragment.ListFragment;
 import com.example.dima.smarttool.fragment.ScanFragment;
 import com.example.dima.smarttool.fragment.SettingFragment;
-import com.example.dima.smarttool.fragment.UserFragment;
+import com.example.dima.smarttool.fragment.NoteFragment;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private PendingIntent pendingIntent;
     AlarmManager alarmManager;
     static ArrayList<State> stateLoadArr = new ArrayList<>();
-    static int countState;
+    static ArrayList<Note> noteLoadArr = new ArrayList<>();
+    static int countState, countNote;
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -144,11 +146,11 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.commitAllowingStateLoss();
                         return true;
 
-                    case R.id.navigation_user:
+                    case R.id.navigation_note:
                         fab.hide();
                         fragmentManager = getFragmentManager();
-                        navigateID = R.id.navigation_user;
-                        fragment = new UserFragment();
+                        navigateID = R.id.navigation_note;
+                        fragment = new NoteFragment();
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.container, fragment);
                         fragmentTransaction.commitAllowingStateLoss();
@@ -204,11 +206,19 @@ public class MainActivity extends AppCompatActivity {
         return stateLoadArr;
     }
 
+    public static ArrayList<Note> getNoteArr() {
+        return noteLoadArr;
+    }
+
     public void loadDB() {
         StateHelper sh = new StateHelper(getApplicationContext());                                     // инициализация помощника управления состояниямив базе данных
         stateLoadArr.clear();
         stateLoadArr.addAll(sh.getAll());                                                              // сохранениесех состаяний из БД в ArrayList
         countState = stateLoadArr.size();
+        NoteHelper nh = new NoteHelper(getApplicationContext());
+        noteLoadArr.clear();
+        noteLoadArr.addAll(nh.getAll());
+        countNote = noteLoadArr.size();
 //        Intent intent = new Intent(this, Scanning.class);
 //        intent.putExtra("arrayList", stateLoadArr);
 //        startService(new Intent(this, Scanning.class));                                 //сканирование состояния

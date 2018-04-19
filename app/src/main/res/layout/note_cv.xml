@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
-    android:id="@+id/rule_rv"
+    android:id="@+id/note_rv"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/cvRuleNameTextView"
+            android:id="@+id/cvNoteTextTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -24,19 +24,9 @@
             android:textAllCaps="true"
             android:textSize="24sp" />
 
-           <TextView
-            android:id="@+id/cvRuleStartTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="start time: "
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textSize="24sp" />
-
 
         <Button
-            android:id="@+id/cvRuleButton"
+            android:id="@+id/cvNoteButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
