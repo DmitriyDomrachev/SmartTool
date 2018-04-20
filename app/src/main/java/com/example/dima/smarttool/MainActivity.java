@@ -29,9 +29,9 @@ import android.view.View;
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.fragment.ListFragment;
+import com.example.dima.smarttool.fragment.NoteFragment;
 import com.example.dima.smarttool.fragment.ScanFragment;
 import com.example.dima.smarttool.fragment.SettingFragment;
-import com.example.dima.smarttool.fragment.NoteFragment;
 
 import java.util.ArrayList;
 

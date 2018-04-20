@@ -44,6 +44,10 @@
             android:name=".StateAlarmReceiver"
             android:enabled="true"
             android:exported="true" />
+        <receiver
+            android:name=".NoteAlarmReceiver"
+            android:enabled="true"
+            android:exported="true" />
 
         <service
             android:name=".GPSService"
@@ -51,11 +55,7 @@
             android:exported="true" />
 
         <activity android:name=".AddNoteActivity" />
-
-        <receiver
-            android:name=".NoteAlarmReceiver"
-            android:enabled="true"
-            android:exported="true" />
+        <activity android:name=".ShowNoteActivity"></activity>
     </application>
 
 </manifest>

@@ -61,12 +61,13 @@ public class AddNoteActivity extends AppCompatActivity {
                 if (name.length() == 0)
                     Toast.makeText(getApplicationContext(), "enter nameEditText", Toast.LENGTH_SHORT).show();
                 else {
-                    if (lat != 0)
+                    if (lat != 0) {
                         nh.insert(name, text, startTime, lat, lng);
+                    }
                     if (lat == 0) {
                         nh.insert(name, text, startTime, 0, 0);
                         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                        Intent intent = new Intent(AddNoteActivity.this, StateAlarmReceiver.class);
+                        Intent intent = new Intent(AddNoteActivity.this, NoteAlarmReceiver.class);
                         intent.putExtra("nameEditText", name);
                         PendingIntent pendingIntent;
                         Random r = new Random();
@@ -141,14 +142,15 @@ public class AddNoteActivity extends AppCompatActivity {
         setConditionTextView.setText(hour + ":" + minute);
         milliseconds = hour * 3_600_000 + minute * 60_000;
 
+
     }
 
     public static void setHour(int hour) {
-        AddStateActivity.hour = hour;
+        AddNoteActivity.hour = hour;
     }
 
     public static void setMinute(int minute) {
-        AddStateActivity.minute = minute;
+        AddNoteActivity.minute = minute;
     }
 
 }
