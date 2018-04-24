@@ -25,19 +25,32 @@ import java.util.Calendar;
 import java.util.Random;
 
 public class AddStateActivity extends AppCompatActivity {
-    EditText nameEditText;
-    Button saveBtn, closeBtn;
     static Switch wifiSwitch, bluetoothSwitch, conditionSwitch;
     static TextView conditionTextView, setConditionTextView;
+    static int mediaI, systemI, hour, minute;
+    static long milliseconds;
+    static double lat, lng;
+    EditText nameEditText;
+    Button saveBtn;
     String name;
     Long startTime, time;
-    static int mediaI, systemI, hour, minute;
     Boolean wifi, bluetooth;
-    static long milliseconds;
     SeekBar mediaSeekBar, systemSeekBar;
     AlarmManager alarmManager;
-    static double lat, lng;
 
+    public static void setTime(int hour, int minute) {
+        setConditionTextView.setText(hour + ":" + minute);
+        milliseconds = hour * 3_600_000 + minute * 60_000;
+
+    }
+
+    public static void setHour(int hour) {
+        AddStateActivity.hour = hour;
+    }
+
+    public static void setMinute(int minute) {
+        AddStateActivity.minute = minute;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +64,6 @@ public class AddStateActivity extends AppCompatActivity {
         bluetoothSwitch = findViewById(R.id.addStateBluetoothSwitch);
         conditionSwitch = findViewById(R.id.addStateConditionSwitch);
         saveBtn = findViewById(R.id.addStateSaveButton);
-        closeBtn = findViewById(R.id.addStateCloseButton);
         mediaSeekBar = findViewById(R.id.addStateMediaSoundSeekBar);
         systemSeekBar = findViewById(R.id.addStateSystemSoundSeekBar);
 
@@ -68,7 +80,7 @@ public class AddStateActivity extends AppCompatActivity {
                 systemI = systemSeekBar.getProgress();
 
                 if (name.length() == 0)
-                    Toast.makeText(getApplicationContext(), "enter nameEditText", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
                 else {
                     if (lat != 0)
                         sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, lat, lng);
@@ -95,8 +107,8 @@ public class AddStateActivity extends AppCompatActivity {
                     }
 
                     Log.d("DB", "add: " + sh.getAll().toString());
-                        startActivity(new Intent(AddStateActivity.this, MainActivity.class));
-                        finish();
+                    startActivity(new Intent(AddStateActivity.this, MainActivity.class));
+                    finish();
                 }
             }
         });
@@ -106,19 +118,10 @@ public class AddStateActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked)
                     conditionTextView.setText("GPS");
-                else conditionTextView.setText("TIME");
+                else conditionTextView.setText("Время");
             }
         });
 
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(AddStateActivity.this, MainActivity.class));
-                finish();
-
-
-            }
-        });
 
         setConditionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,8 +136,10 @@ public class AddStateActivity extends AppCompatActivity {
 
             }
         });
+    }
 
-
+    public void onBackPressed() {
+        finish();
     }
 
     @Override
@@ -144,20 +149,6 @@ public class AddStateActivity extends AppCompatActivity {
             lat = data.getDoubleExtra("lat", 0);
             lng = data.getDoubleExtra("lng", 0);
         }
-    }
-
-    public static void setTime(int hour, int minute) {
-        setConditionTextView.setText(hour + ":" + minute);
-        milliseconds = hour * 3_600_000 + minute * 60_000;
-
-    }
-
-    public static void setHour(int hour) {
-        AddStateActivity.hour = hour;
-    }
-
-    public static void setMinute(int minute) {
-        AddStateActivity.minute = minute;
     }
 
 }

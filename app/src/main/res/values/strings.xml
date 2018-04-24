@@ -4,11 +4,11 @@
     <string name="title_add">List</string>
     <string name="title_note">Note</string>
     <string name="title_settings">Settings</string>
-    <string name="Battery">Battery charge: </string>
-    <string name="WiFi">WiFi status: </string>
-    <string name="Bluetooth">Bluetooth status: </string>
-    <string name="Mobile">Mobile data status: </string>
-    <string name="Sound">Sound status: </string>
+    <string name="Battery">Заряд батареи: </string>
+    <string name="WiFi">Состояние WiFi: </string>
+    <string name="Bluetooth">Состояние Bluetooth: </string>
+    <!--<string name="Mobile">Mobile data status: </string>-->
+    <string name="Sound">Громкость звука: </string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
 </resources>

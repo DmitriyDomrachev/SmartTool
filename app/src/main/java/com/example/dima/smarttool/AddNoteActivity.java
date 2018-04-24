@@ -26,7 +26,7 @@ import java.util.Random;
 public class AddNoteActivity extends AppCompatActivity {
 
     EditText nameEditText, textEditText;
-    Button saveBtn, closeBtn;
+    Button saveBtn;
     static Switch conditionSwitch;
     static TextView conditionTextView, setConditionTextView;
     String name, text;
@@ -47,7 +47,6 @@ public class AddNoteActivity extends AppCompatActivity {
         textEditText = findViewById(R.id.addNoteTextEditText);
         conditionSwitch = findViewById(R.id.addNoteConditionSwitch);
         saveBtn = findViewById(R.id.addNoteSaveButton);
-        closeBtn = findViewById(R.id.addNoteCloseButton);
 
         final NoteHelper nh = new NoteHelper(getApplicationContext());
 
@@ -59,7 +58,7 @@ public class AddNoteActivity extends AppCompatActivity {
                 startTime = milliseconds;
 
                 if (name.length() == 0)
-                    Toast.makeText(getApplicationContext(), "enter nameEditText", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
                 else {
                     if (lat != 0) {
                         nh.insert(name, text, startTime, lat, lng);
@@ -98,19 +97,10 @@ public class AddNoteActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked)
                     conditionTextView.setText("GPS");
-                else conditionTextView.setText("TIME");
+                else conditionTextView.setText("Время");
             }
         });
 
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(AddNoteActivity.this, MainActivity.class));
-                finish();
-
-
-            }
-        });
 
         setConditionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +118,11 @@ public class AddNoteActivity extends AppCompatActivity {
 
 
     }
+
+    public void onBackPressed() {
+        finish();
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

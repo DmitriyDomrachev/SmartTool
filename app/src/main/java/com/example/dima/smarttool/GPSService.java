@@ -8,6 +8,7 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,11 +22,14 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 public class GPSService extends Service {
@@ -119,6 +123,7 @@ public class GPSService extends Service {
 
             if (stateGpsMap.get(checkLatLngState(lat, lng)) != null)
                 setState(stateGpsMap.get(checkLatLngState(lat, lng)));
+
             if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null){
                 Note note = noteGpsMap.get(checkLatLngNote(lat, lng));
 
@@ -139,6 +144,10 @@ public class GPSService extends Service {
                         .setAutoCancel(true)
                         .setContentIntent(notifyPendingIntent);
                 notificationManager.notify(note.getId(), builder.build());
+
+                HistoryHelper hh = new HistoryHelper(getApplicationContext());
+                hh.insert("Заметка: "+ note.getText()+ "\nВремя включения: "+ getTime());
+
                 Toast.makeText(getApplicationContext(), "setNote: "+note.getName(),Toast.LENGTH_SHORT).show();
             }
 
@@ -182,14 +191,26 @@ public class GPSService extends Service {
     }
 
     private void setState(State state) {
+
+        HistoryHelper hh = new HistoryHelper(getApplicationContext());
+        hh.insert("Состояние: "+ state.getName()+ "\nВремя включения: "+ getTime());
+
         wifiManager.setWifiEnabled(state.isWiFiState());
+
         if (state.isBluetoothState()) btAdapter.enable();
         else btAdapter.disable();
+
+
 
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.getMediaSoundState(),
                 audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
         audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progInex(state.getSystemSoundState(),
                 audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("myPrefs",
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = prefs.edit();
+        ed.putString("stateName", state.getName());
+        ed.commit();
         Log.d(TAG, "setState: " + state.getName());
 
     }
@@ -231,5 +252,12 @@ public class GPSService extends Service {
         return 999;
     }
 
+
+    private String getTime() {                                                          // используйте метод для вывода текущего времени
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        date.setTime(calendar.getTimeInMillis());
+        return date.getHours() + ":" + date.getMinutes();
+    }
 
 }

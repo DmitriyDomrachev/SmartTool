@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/fab_margin"
     android:orientation="vertical"
-    tools:context="com.example.dima.smarttool.fragment.ScanFragment"
-    android:layout_margin="@dimen/fab_margin">
+    tools:context="com.example.dima.smarttool.fragment.ScanFragment">
 
     <TextView
         android:id="@+id/ScanFragmentBatteryTextView"
@@ -40,4 +39,10 @@
         android:text="@string/Sound"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
         android:textSize="30sp" />
+
+    <ListView
+        android:id="@+id/ScanFragmentListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </LinearLayout>

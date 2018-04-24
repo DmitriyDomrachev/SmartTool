@@ -11,6 +11,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.DB.NoteHelper;
 
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
         if (noteTimeMap.get(name) != null) {
             this.note = (noteTimeMap.get(name));
             Log.d("alarm", "setNote: " + name);
+            HistoryHelper hh = new HistoryHelper(context);
+            hh.insert("Заметка: "+ note.getText()+ "\nВремя включения: "+ getTime());
 
 
             Intent notifyIntent = new Intent(context, ShowNoteActivity.class);

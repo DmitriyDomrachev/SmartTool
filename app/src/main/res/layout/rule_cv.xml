@@ -19,20 +19,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="name: "
+            android:text=""
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textSize="24sp" />
 
-           <TextView
+        <TextView
             android:id="@+id/cvRuleStartTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="start time: "
             android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textSize="24sp" />
+            android:textAllCaps="false"
+            android:textColor="@color/secondary_text"
+            android:textSize="10sp" />
 
 
         <Button

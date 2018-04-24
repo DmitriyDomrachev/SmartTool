@@ -4,11 +4,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.DB.StateHelper;
 
 import java.util.ArrayList;
@@ -19,10 +21,10 @@ import java.util.Map;
 
 public class StateAlarmReceiver extends BroadcastReceiver {
     static Map<String, State> stateTimeMap = new HashMap<String, State>();                       //зраниение значиний времени старта и номера состояния
+    static AudioManager audioManager;
     String name;
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
-    static AudioManager audioManager;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -36,7 +38,17 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         Toast.makeText(context, "receive",
                 Toast.LENGTH_LONG).show();
         if (stateTimeMap.get(name) != null) {
-            setState(stateTimeMap.get(name));
+            State state = stateTimeMap.get(name);
+            setState(state);
+            SharedPreferences prefs = context.getSharedPreferences("myPrefs",
+                    Context.MODE_PRIVATE);
+            SharedPreferences.Editor ed = prefs.edit();
+            ed.putString("stateName", state.getName());
+            ed.commit();
+
+            HistoryHelper hh = new HistoryHelper(context);
+            hh.insert("Состояние: "+ state.getName()+ "\nВремя включения: "+ getTime());
+
             Log.d("alarm", "setState: " + name);
         }
 
@@ -76,5 +88,10 @@ public class StateAlarmReceiver extends BroadcastReceiver {
     private int progInex(float in, int max) {
         in = in / 100;
         return (int) (max * in);
+    }
+
+    private String boolToString (boolean in){
+        if (in) return "on";
+        else  return "off";
     }
 }

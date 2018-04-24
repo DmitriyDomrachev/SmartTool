@@ -21,16 +21,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Name"
+            android:text="Имя"
             android:textColor="@android:color/background_dark"
             android:textSize="30sp" />
 
         <EditText
             android:id="@+id/addStateNameEditText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
             android:ems="10"
+            android:hint="Введите имя"
             android:inputType="textPersonName" />
 
     </LinearLayout>
@@ -75,7 +77,7 @@
             android:layout_width="193dp"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Media Sound"
+            android:text="Громкость медиа"
             android:textColor="@android:color/background_dark"
             android:textSize="30sp" />
 
@@ -95,10 +97,10 @@
 
         <TextView
             android:id="@+id/addStateSystemSoundTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="193dp"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="System Sound"
+            android:text="Системная громкость"
             android:textColor="@android:color/background_dark"
             android:textSize="30sp" />
 
@@ -112,9 +114,9 @@
 
     <Switch
         android:id="@+id/addStateConditionSwitch"
-        android:layout_width="200dp"
+        android:layout_width="193dp"
         android:layout_height="wrap_content"
-        android:text="Change condition"
+        android:text="Изменить условие запуска"
         android:textSize="30sp" />
 
     <LinearLayout
@@ -127,7 +129,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Time"
+            android:text="Время"
             android:textColor="@android:color/background_dark"
             android:textSize="30sp" />
 
@@ -136,10 +138,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:hint="Click to enter"
-            android:textAlignment="center"
+            android:hint="Введите условие"
+            android:gravity="center_vertical"
             android:textColor="@android:color/background_dark"
-            android:textSize="30sp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 
@@ -155,12 +157,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="save" />
-
-        <Button
-            android:id="@+id/addStateCloseButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="close" />
 
     </LinearLayout>
 

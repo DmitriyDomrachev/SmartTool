@@ -18,20 +18,21 @@
             android:id="@+id/cvNoteNameTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Name"
+            android:text=" "
             android:textSize="24sp" />
 
         <TextView
             android:id="@+id/cvNoteTextTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text=" " />
 
         <TextView
             android:id="@+id/cvNoteStartTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp" />
+            android:textColor="@color/secondary_text"
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/cvNoteButton"

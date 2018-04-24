@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -42,25 +41,23 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 public class MainActivity extends AppCompatActivity {
 
-    FragmentManager fragmentManager;
-    static FragmentTransaction fragmentTransaction;
-    Fragment fragment;
-
-    private static int navigateID = R.id.navigation_scan;
-    private static int REQUEST_READ_ACCESS_FINE = 3;
     private static final String[] READ_ACCESS_FINE = new String[]{READ_CONTACTS, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION};
-    final int REQUEST_SAVE = 1;
     public static int batteryChange;
+    static FragmentTransaction fragmentTransaction;
     static AudioManager audioManager;
     static BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     static WifiManager wifiManager;
-    FloatingActionButton fab;
-    private PendingIntent pendingIntent;
-    AlarmManager alarmManager;
     static ArrayList<State> stateLoadArr = new ArrayList<>();
     static ArrayList<Note> noteLoadArr = new ArrayList<>();
     static int countState, countNote;
-
+    private static int navigateID = R.id.navigation_scan;
+    private static int REQUEST_READ_ACCESS_FINE = 3;
+    final int REQUEST_SAVE = 1;
+    FragmentManager fragmentManager;
+    Fragment fragmentSc, fragmentL, fragmentN, fragmentS;
+    FloatingActionButton fab;
+    AlarmManager alarmManager;
+    //    private PendingIntent pendingIntent;
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -71,6 +68,18 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public static int getCountState() {
+        return countState;
+    }
+
+    public static ArrayList<State> getStateArr() {
+        return stateLoadArr;
+    }
+
+    public static ArrayList<Note> getNoteArr() {
+        return noteLoadArr;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,15 +88,14 @@ public class MainActivity extends AppCompatActivity {
         requestPermission(READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);
 
 
-        NotificationManager notificationManager =
-                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE); //запрос разрешения на изменения состояния не беспокоить
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext()
+                .getSystemService(Context.NOTIFICATION_SERVICE); //запрос разрешения на изменения состояния не беспокоить
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && !notificationManager.isNotificationPolicyAccessGranted()) {
 
-            Intent intent = new Intent(
-                    android.provider.Settings
-                            .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+            Intent intent = new Intent(android.provider.Settings
+                    .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
             startActivity(intent);
         }
 
@@ -95,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         setContentView(R.layout.activity_main);
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);                         //IntentFilter батареи
-        Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);                            //текущее состояние батареи, mBroadcastReceiver в качестве преемника
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);                      //IntentFilter батареи
+        Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);                       //текущее состояние батареи, mBroadcastReceiver в качестве преемника
 
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
@@ -119,12 +127,17 @@ public class MainActivity extends AppCompatActivity {
                 .this, GPSService.class));
 
 
-
     }
 
     protected void onResume() {
         super.onResume();
         loadDB();           // заргузка данных из базы данных
+        fragmentL = new ListFragment();
+        fragmentN = new NoteFragment();
+        fragmentS = new SettingFragment();
+        fragmentManager = getFragmentManager();
+
+
         new RewriteFragment().execute();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -142,37 +155,38 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.navigation_list:
                         fab.show();
-                        fragmentManager = getFragmentManager();
                         navigateID = R.id.navigation_list;
-                        fragment = new ListFragment();
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.container, fragment);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        loadFragment(fragmentL);
                         return true;
 
                     case R.id.navigation_note:
                         fab.show();
-                        fragmentManager = getFragmentManager();
                         navigateID = R.id.navigation_note;
-                        fragment = new NoteFragment();
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.container, fragment);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        loadFragment(fragmentN);
                         return true;
 
                     case R.id.navigation_setting:
                         fab.hide();
-                        fragmentManager = getFragmentManager();
-                        fragment = new SettingFragment();
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.container, fragment);
-                        fragmentTransaction.commitAllowingStateLoss();
+                        navigateID = R.id.navigation_setting;
+                        loadFragment(fragmentS);
+
                         return true;
                 }
                 return false;
             }
         });
 
+        switch (navigation.getSelectedItemId()) {
+            case R.id.navigation_list:
+                loadFragment(fragmentL);
+                return;
+            case R.id.navigation_note:
+                loadFragment(fragmentN);
+                return;
+            case R.id.navigation_setting:
+                loadFragment(fragmentS);
+                return;
+        }
 
     }
 
@@ -183,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("alarm", "destroy");
     }
 
-
     public void rewriteFragment() {
         if (navigateID == R.id.navigation_scan) {
             fragmentManager = getFragmentManager();
@@ -192,27 +205,14 @@ public class MainActivity extends AppCompatActivity {
             arg.putInt("sound", 5);
             arg.putBoolean("wifi", wifiManager.isWifiEnabled());
             arg.putBoolean("bluetooth", btAdapter.isEnabled());
-            Log.d("rewrite", wifiManager.isWifiEnabled()+" "+btAdapter.isEnabled());
-            fragment = new ScanFragment();
-            fragment.setArguments(arg);
+            fragmentSc = new ScanFragment();
+            fragmentSc.setArguments(arg);
             fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container, fragment);
+            fragmentTransaction.replace(R.id.container, fragmentSc);
             fragmentTransaction.commitAllowingStateLoss();
             Log.d("test1", "rewrite scan");
         }
     }                                        //пересоздание фрагментов для отображения измененной информации
-
-    public static int getCountState() {
-        return countState;
-    }
-
-    public static ArrayList<State> getStateArr() {
-        return stateLoadArr;
-    }
-
-    public static ArrayList<Note> getNoteArr() {
-        return noteLoadArr;
-    }
 
     public void loadDB() {
         StateHelper sh = new StateHelper(getApplicationContext());                                     // инициализация помощника управления состояниямив базе данных
@@ -223,30 +223,9 @@ public class MainActivity extends AppCompatActivity {
         noteLoadArr.clear();
         noteLoadArr.addAll(nh.getAll());
         countNote = noteLoadArr.size();
-                                                                                                    //сканирование состояния
+        //сканирование состояния
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-    }
-
-    private class RewriteFragment extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        protected Void doInBackground(Void... args) {
-
-            Log.d("test", "поток");
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            navigateID = R.id.navigation_scan;
-            rewriteFragment();
-
-            return null;
-        }
     }
 
     protected void onPostExecute(Void image) {
@@ -257,7 +236,44 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, permission, requestCode);
     }
 
+    private void loadFragment(Fragment fragment) {
+        fragmentTransaction = fragmentManager.beginTransaction();// вызов транзакции
+        fragmentTransaction.replace(R.id.container, fragment);// замена фрагмента
+        fragmentTransaction.commitAllowingStateLoss();// завершение транзакции
 
+    }
+
+    private class RewriteFragment extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onPreExecute() {
+
+            super.onPreExecute();
+        }
+
+        protected Void doInBackground(Void... args) {
+            boolean wifi = wifiManager.isWifiEnabled();
+            boolean bt = btAdapter.isEnabled();
+
+            if (navigateID == R.id.navigation_scan)
+                rewriteFragment();
+
+            while (navigateID == R.id.navigation_scan) {
+                if (wifi != wifiManager.isWifiEnabled() || bt != btAdapter.isEnabled()) {
+                    rewriteFragment();
+                    wifi = wifiManager.isWifiEnabled();
+                    bt = btAdapter.isEnabled();
+                }
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+            return null;
+        }
+    }
 }
 
 
