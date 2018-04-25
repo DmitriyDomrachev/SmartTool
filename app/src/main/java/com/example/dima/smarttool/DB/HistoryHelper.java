@@ -28,8 +28,6 @@ public class HistoryHelper {
     public long insert(String text) {
         ContentValues cv = new ContentValues();// хранилище с принципом ключ-значени
         cv.put(COLUMN_TEXT, text);
-
-
         Log.d("DB", "insert: "+ text);
 
         return db.insert(TABLE_NAME, null, cv); // метод insert возвращает id, помещенного объекта в таблицу.
@@ -60,8 +58,12 @@ public class HistoryHelper {
             } while (mCursor.moveToNext());
         }
 
-        db.close(); // закрыли транзакцию
+         db.close(); // закрыли транзакцию
         return arr; // вернули коллекцию
+    }
+
+    public void clearTable(){
+        db.execSQL("DELETE FROM "+TABLE_NAME);
     }
 
 

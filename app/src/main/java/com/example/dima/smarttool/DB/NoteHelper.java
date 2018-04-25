@@ -39,6 +39,7 @@ public class NoteHelper {
         cv.put(NoteDBHelper.COLUMN_TIME_START, startTime);
         cv.put(NoteDBHelper.COLUMN_LAT, lat);
         cv.put(NoteDBHelper.COLUMN_LNG, lng);
+        
         Log.d("DB", "insert: " + name + " " + text + " " + startTime + " " + lat + " " + lng);
 
         return db.insert(TABLE_NAME, null, cv); // метод insert возвращает id, помещенного объекта в таблицу.

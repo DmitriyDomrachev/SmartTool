@@ -107,7 +107,6 @@ public class AddStateActivity extends AppCompatActivity {
                     }
 
                     Log.d("DB", "add: " + sh.getAll().toString());
-                    startActivity(new Intent(AddStateActivity.this, MainActivity.class));
                     finish();
                 }
             }

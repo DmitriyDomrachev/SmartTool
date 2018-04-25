@@ -40,10 +40,12 @@ public class GPSService extends Service {
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
     static HashMap<Integer, Note> noteGpsMap = new HashMap<>();
     static ArrayList<LatLng> noteGpsList = new ArrayList<LatLng>();
-    static final long MIN_INTERVAL = 60 * 1000;                               // время обновления
+    static final long MIN_INTERVAL =  1000;                               // время обновления
     private static final String TAG = "mygps";
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
+    static State currentState;
+    static Note currentNote;
     static AudioManager audioManager;
     private static final String NOTIFICATION_CHANNEL_ID = "note_notification_channel";
     static  NotificationManager notificationManager;
@@ -124,12 +126,13 @@ public class GPSService extends Service {
             if (stateGpsMap.get(checkLatLngState(lat, lng)) != null)
                 setState(stateGpsMap.get(checkLatLngState(lat, lng)));
 
-            if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null){
-                Note note = noteGpsMap.get(checkLatLngNote(lat, lng));
+            if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
+                if(currentNote ==null || currentNote.getId() != noteGpsMap.get(checkLatLngNote(lat, lng)).getId()) {
+                currentNote = noteGpsMap.get(checkLatLngNote(lat, lng));
 
                 Intent notifyIntent = new Intent(getApplicationContext(), ShowNoteActivity.class);
-                notifyIntent.putExtra("name", note.getName());
-                notifyIntent.putExtra("note", note.getText());
+                notifyIntent.putExtra("name", currentNote.getName());
+                notifyIntent.putExtra("note", currentNote.getText());
                 notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 PendingIntent notifyPendingIntent = PendingIntent.getActivity(
                         getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
@@ -140,15 +143,16 @@ public class GPSService extends Service {
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setSmallIcon(R.drawable.note)
                         .setContentTitle("Note time")
-                        .setContentText("Note: " + note.getName())
+                        .setContentText("Note: " + currentNote.getName())
                         .setAutoCancel(true)
                         .setContentIntent(notifyPendingIntent);
-                notificationManager.notify(note.getId(), builder.build());
+                notificationManager.notify(currentNote.getId(), builder.build());
 
                 HistoryHelper hh = new HistoryHelper(getApplicationContext());
-                hh.insert("Заметка: "+ note.getText()+ "\nВремя включения: "+ getTime());
+                hh.insert("Заметка: " + currentNote.getText() + "\nВремя включения: " + getTime());
 
-                Toast.makeText(getApplicationContext(), "setNote: "+note.getName(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "setNote: " + currentNote.getName(), Toast.LENGTH_SHORT).show();
+            }
             }
 
 
@@ -170,11 +174,13 @@ public class GPSService extends Service {
 
     private void loadStates(ArrayList<State> states) {
         for (int i = 0; i < states.size(); i++) {
-            State state = states.get(i);
-            LatLng latLng = new LatLng(state.getLat(), state.getLng());
-            stateGpsList.add(latLng);
-            stateGpsMap.put(i, state);
-            Log.d(TAG, "loadState: " + state.getName());
+            if (currentState.getId() != states.get(i).getId()) {
+                currentState = states.get(i);
+                LatLng latLng = new LatLng(currentState.getLat(), currentState.getLng());
+                stateGpsList.add(latLng);
+                stateGpsMap.put(i, currentState);
+                Log.d(TAG, "loadState: " + currentState.getName());
+            }
         }
 
     }
@@ -199,8 +205,6 @@ public class GPSService extends Service {
 
         if (state.isBluetoothState()) btAdapter.enable();
         else btAdapter.disable();
-
-
 
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.getMediaSoundState(),
                 audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
@@ -246,9 +250,7 @@ public class GPSService extends Service {
             Log.d(TAG, Math.pow((lat - noteGpsList.get(i).latitude), 2) + Math.pow((lng - noteGpsList.get(i).latitude), 2) + "    " + Math.pow(4.986137129513397E-4, 2));
             Log.d(TAG, noteGpsList.get(i).latitude + "");
             Log.d(TAG, noteGpsList.get(i).longitude + "");
-
         }
-
         return 999;
     }
 

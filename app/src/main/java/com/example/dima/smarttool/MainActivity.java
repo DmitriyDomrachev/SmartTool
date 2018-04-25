@@ -137,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentS = new SettingFragment();
         fragmentManager = getFragmentManager();
 
-
         new RewriteFragment().execute();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);

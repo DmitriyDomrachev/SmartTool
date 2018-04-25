@@ -86,7 +86,6 @@ public class AddNoteActivity extends AppCompatActivity {
                     }
 
                     Log.d("DB", "add: " + nh.getAll().toString());
-                    startActivity(new Intent(AddNoteActivity.this, MainActivity.class));
                     finish();
                 }
             }
