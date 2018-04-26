@@ -6,7 +6,7 @@
     android:layout_margin="@dimen/fab_margin"
     android:orientation="vertical"
     tools:context="com.example.dima.smarttool.fragment.ScanFragment">
-
+<!--TODO: карта с сотояниями при слайде вправо-->
     <TextView
         android:id="@+id/ScanFragmentBatteryTextView"
         android:layout_width="wrap_content"

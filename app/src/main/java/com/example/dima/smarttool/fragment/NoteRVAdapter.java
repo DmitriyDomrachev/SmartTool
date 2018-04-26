@@ -9,7 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,7 +69,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtName, txtText, txtStart;
-        Button btnRefactor;
+        ImageButton btnRefactor;
         CardView cv;
 
         //Инициализируем слушатели
@@ -82,7 +82,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
             txtName = itemView.findViewById(R.id.cvNoteNameTextView);
             txtStart = itemView.findViewById(R.id.cvNoteStartTextView);
             txtText = itemView.findViewById(R.id.cvNoteTextTextView);
-            btnRefactor = itemView.findViewById(R.id.cvNoteButton);
+            btnRefactor = itemView.findViewById(R.id.cvNoteRemoveButton);
             cv = itemView.findViewById(R.id.note_rv);
 
             //цепляем слушатели

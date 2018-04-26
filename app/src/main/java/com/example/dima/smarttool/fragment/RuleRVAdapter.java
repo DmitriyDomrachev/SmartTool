@@ -7,7 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,9 +48,15 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
         holder.txtName.setText(holder.txtName.getText() + String.valueOf(state.getName()));
-        if (state.getLat() == 0)
-            holder.txtStart.setText("Strat time: " + String.valueOf(hour) + ":" + String.valueOf(minute));
-        else holder.txtStart.setText("Start by GPS");
+        if (state.getLat() == 0) {
+            holder.txtStart.setText("Время включения: " + String.valueOf(hour) + ":" + String.valueOf(minute));
+            holder.imageView.setImageResource(R.drawable.alarm);
+        }
+        else {
+            holder.txtStart.setText("");
+            holder.imageView.setImageResource(R.drawable.my_location);
+
+        }
         holder.cvListener.setRecord(state);                                                             // как-то надо понимать с каким состоянием работаем
         holder.btnClickListener.setRecord(state);                                                       // как-то надо понимать с состоянием  работаем
 
@@ -64,8 +71,9 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtName, txtStart;
-        Button btnRefactor;
+        ImageButton btnRefactor;
         CardView cv;
+        ImageView imageView;
 
         //Инициализируем слушатели
         CardViewClickListener cvListener = new CardViewClickListener();
@@ -76,7 +84,8 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
 
             txtName = itemView.findViewById(R.id.cvRuleNameTextView);
             txtStart = itemView.findViewById(R.id.cvRuleStartTextView);
-            btnRefactor = itemView.findViewById(R.id.cvRuleButton);
+            btnRefactor = itemView.findViewById(R.id.cvRuleRemoveButton);
+            imageView = itemView.findViewById(R.id.cvRuleImageView);
 
             cv = itemView.findViewById(R.id.rule_rv);
 

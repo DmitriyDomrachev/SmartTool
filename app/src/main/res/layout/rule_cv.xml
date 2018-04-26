@@ -1,47 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rule_rv"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?android:selectableItemBackground" >
+    android:foreground="?android:selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="50dp"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/cvRuleNameTextView"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/cvRuleImageView"
+            android:layout_width="47dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_weight="0"
+            android:tint="@color/divider"
+            app:srcCompat="@drawable/alarm" />
+
+        <Space
+            android:layout_width="15dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text=""
-            android:textAlignment="center"
-            android:textAllCaps="true"
-            android:textSize="24sp" />
+            android:layout_weight="0" />
 
-        <TextView
-            android:id="@+id/cvRuleStartTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="start time: "
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textColor="@color/secondary_text"
-            android:textSize="10sp" />
+        <LinearLayout
+            android:layout_width="265dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/cvRuleNameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text=""
+                android:textAlignment="viewStart"
+                android:textAllCaps="true"
+                android:textColor="@color/primary_text"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/cvRuleStartTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Время включения: "
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary_text"
+                android:textSize="10sp" />
 
 
-        <Button
-            android:id="@+id/cvRuleButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Remove" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/cvRuleRemoveButton"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:layout_width="25dp"
+            android:layout_height="26dp"
+            android:layout_weight="0"
+            android:adjustViewBounds="false"
+            android:backgroundTint="@color/cardview_shadow_end_color"
+            android:cropToPadding="false"
+            android:tint="@color/divider"
+            app:srcCompat="@android:drawable/ic_delete" />
+
     </LinearLayout>
+
 
 </android.support.v7.widget.CardView>

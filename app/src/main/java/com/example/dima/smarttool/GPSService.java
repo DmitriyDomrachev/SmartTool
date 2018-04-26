@@ -33,27 +33,85 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class GPSService extends Service {
-    public GPSService() {
-    }
-
+    static final long MIN_INTERVAL = 1000;                               // время обновления
+    private static final String TAG = "mygps";
+    private static final String NOTIFICATION_CHANNEL_ID = "note_notification_channel";
     static HashMap<Integer, State> stateGpsMap = new HashMap<>();
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
     static HashMap<Integer, Note> noteGpsMap = new HashMap<>();
     static ArrayList<LatLng> noteGpsList = new ArrayList<LatLng>();
-    static final long MIN_INTERVAL =  1000;                               // время обновления
-    private static final String TAG = "mygps";
-    BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-    WifiManager wifiManager;
     static State currentState;
     static Note currentNote;
     static AudioManager audioManager;
-    private static final String NOTIFICATION_CHANNEL_ID = "note_notification_channel";
-    static  NotificationManager notificationManager;
+    static NotificationManager notificationManager;
+    BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+    WifiManager wifiManager;
+    private LocationListener locationListener = new LocationListener() {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            Log.d(TAG, "широта:" + location.getLatitude());
+            Log.d(TAG, "долгота:" + location.getLongitude());
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
+
+
+            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null)
+                setState(stateGpsMap.get(checkLatLngState(lat, lng)));
+
+            if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
+                if (currentNote == null || currentNote.getId() != noteGpsMap.get(checkLatLngNote(lat, lng)).getId()) {
+                    currentNote = noteGpsMap.get(checkLatLngNote(lat, lng));
+
+                    Intent notifyIntent = new Intent(getApplicationContext(), ShowNoteActivity.class);
+                    notifyIntent.putExtra("name", currentNote.getName());
+                    notifyIntent.putExtra("note", currentNote.getText());
+                    notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                            getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+
+
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
+                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                            .setSmallIcon(R.drawable.note)
+                            .setContentTitle("Note time")
+                            .setContentText("Note: " + currentNote.getName())
+                            .setAutoCancel(true)
+                            .setContentIntent(notifyPendingIntent);
+                    notificationManager.notify(currentNote.getId(), builder.build());
+
+                    HistoryHelper hh = new HistoryHelper(getApplicationContext());
+                    hh.insert("Заметка: " + currentNote.getText() + "\nВремя включения: " + getTime());
+
+                    Toast.makeText(getApplicationContext(), "setNote: " + currentNote.getName(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+    };
+
+    public GPSService() {
+    }
+
     @SuppressLint("MissingPermission")
     @Override
     public void onCreate() {
 
-       notificationManager = (NotificationManager) getApplicationContext()
+        notificationManager = (NotificationManager) getApplicationContext()
                 .getSystemService(NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -91,7 +149,6 @@ public class GPSService extends Service {
         Log.d(TAG, "createService");
     }
 
-
     @Override
     public void onStart(Intent intent, int startId) {
         Log.d(TAG, "startService");
@@ -105,7 +162,6 @@ public class GPSService extends Service {
         return null;
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -113,68 +169,10 @@ public class GPSService extends Service {
 
     }
 
-    private LocationListener locationListener = new LocationListener() {
-
-        @Override
-        public void onLocationChanged(Location location) {
-            Log.d(TAG, "широта:" + location.getLatitude());
-            Log.d(TAG, "долгота:" + location.getLongitude());
-            double lat = location.getLatitude();
-            double lng = location.getLongitude();
-
-
-            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null)
-                setState(stateGpsMap.get(checkLatLngState(lat, lng)));
-
-            if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
-                if(currentNote ==null || currentNote.getId() != noteGpsMap.get(checkLatLngNote(lat, lng)).getId()) {
-                currentNote = noteGpsMap.get(checkLatLngNote(lat, lng));
-
-                Intent notifyIntent = new Intent(getApplicationContext(), ShowNoteActivity.class);
-                notifyIntent.putExtra("name", currentNote.getName());
-                notifyIntent.putExtra("note", currentNote.getText());
-                notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                PendingIntent notifyPendingIntent = PendingIntent.getActivity(
-                        getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                        .setSmallIcon(R.drawable.note)
-                        .setContentTitle("Note time")
-                        .setContentText("Note: " + currentNote.getName())
-                        .setAutoCancel(true)
-                        .setContentIntent(notifyPendingIntent);
-                notificationManager.notify(currentNote.getId(), builder.build());
-
-                HistoryHelper hh = new HistoryHelper(getApplicationContext());
-                hh.insert("Заметка: " + currentNote.getText() + "\nВремя включения: " + getTime());
-
-                Toast.makeText(getApplicationContext(), "setNote: " + currentNote.getName(), Toast.LENGTH_SHORT).show();
-            }
-            }
-
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-    };
-
-
     private void loadStates(ArrayList<State> states) {
         for (int i = 0; i < states.size(); i++) {
-            if (currentState.getId() != states.get(i).getId()) {
+
+            if (currentState == null || currentState.getId() != states.get(i).getId()) {
                 currentState = states.get(i);
                 LatLng latLng = new LatLng(currentState.getLat(), currentState.getLng());
                 stateGpsList.add(latLng);
@@ -199,7 +197,7 @@ public class GPSService extends Service {
     private void setState(State state) {
 
         HistoryHelper hh = new HistoryHelper(getApplicationContext());
-        hh.insert("Состояние: "+ state.getName()+ "\nВремя включения: "+ getTime());
+        hh.insert("Состояние: " + state.getName() + "\nВремя включения: " + getTime());
 
         wifiManager.setWifiEnabled(state.isWiFiState());
 
