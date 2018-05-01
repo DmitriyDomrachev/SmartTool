@@ -1,6 +1,5 @@
 package com.example.dima.smarttool.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.Note;
@@ -113,11 +111,10 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(context, "click", Toast.LENGTH_SHORT);
             Intent intent = new Intent(context, ShowNoteActivity.class);
             intent.putExtra("name", note.getName());
             intent.putExtra("note", note.getText());
-            ((Activity) context).startActivity(intent);
+            context.startActivity(intent);
         }
 
         void setRecord(Note note) {

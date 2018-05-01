@@ -231,11 +231,11 @@ public class GPSService extends Service {
     private int checkLatLngState(double lat, double lng) {
 
         for (int i = 0; i < stateGpsList.size(); i++) {
-            if (Math.pow((stateGpsList.get(i).latitude - lat), 2) + Math.pow((stateGpsList.get(i).longitude - lng), 2) <= Math.pow(4.986137129513397E-4, 2)) {
+            if (Math.pow((stateGpsList.get(i).latitude - lat), 2) + Math.pow((stateGpsList.get(i).longitude - lng), 2) <= Math.pow(9.986137129513397E-4, 2)) {
                 Log.d(TAG, "set " + i + ": " + stateGpsMap.get(i).getName());
                 return i;
             }
-            Log.d(TAG, Math.pow((lat - stateGpsList.get(i).latitude), 2) + Math.pow((lng - stateGpsList.get(i).latitude), 2) + "    " + Math.pow(4.986137129513397E-4, 2));
+            Log.d(TAG, Math.pow((lat - stateGpsList.get(i).latitude), 2) + Math.pow((lng - stateGpsList.get(i).latitude), 2) + "    " + Math.pow(9.986137129513397E-4, 2));
             Log.d(TAG, stateGpsList.get(i).latitude + "");
             Log.d(TAG, stateGpsList.get(i).longitude + "");
 

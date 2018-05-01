@@ -55,7 +55,8 @@
             android:exported="true" />
 
         <activity android:name=".AddNoteActivity" />
-        <activity android:name=".ShowNoteActivity"></activity>
+        <activity android:name=".ShowNoteActivity" />
+        <activity android:name=".ShowStateActivity"></activity>
     </application>
 
 </manifest>

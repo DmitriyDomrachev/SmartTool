@@ -1,6 +1,7 @@
 package com.example.dima.smarttool.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,10 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.R;
+import com.example.dima.smarttool.ShowStateActivity;
 import com.example.dima.smarttool.State;
 
 import java.util.ArrayList;
@@ -48,13 +49,12 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
         holder.txtName.setText(holder.txtName.getText() + String.valueOf(state.getName()));
-        if (state.getLat() == 0 && state.getStartTime()!=999999999) {
+        if (state.getLat() == 0 && state.getStartTime() != 999999999) {
             holder.txtStart.setText("Время включения: " + String.valueOf(hour) + ":" + String.valueOf(minute));
             holder.imageView.setImageResource(R.drawable.alarm);
-        }
-        else if (state.getStartTime()==999999999){
-        holder.imageView.setImageResource(R.drawable.hand);
-    }   else {
+        } else if (state.getStartTime() == 999999999) {
+            holder.imageView.setImageResource(R.drawable.hand);
+        } else {
             holder.imageView.setImageResource(R.drawable.my_location);
 
         }
@@ -115,10 +115,12 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
                 wifi = "off";
             else wifi = "on";
 
-            Toast.makeText(context, "Name: " + state.getName() + "\nWifi: " + wifi
+            Intent intent = new Intent(context, ShowStateActivity.class);
+            intent.putExtra("name", state.getName());
+            intent.putExtra("note", "Wifi: " + wifi
                     + "\nBluetooth: " + bt + "\nMedia: " + state.getMediaSoundState()
-                    + "%\nSystem: " + state.getSystemSoundState() + "%", Toast.LENGTH_SHORT).show();
-
+                    + "%\nSystem: " + state.getSystemSoundState() + "%");
+            context.startActivity(intent);
         }
 
         void setRecord(State state) {
