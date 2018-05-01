@@ -4,10 +4,13 @@
     android:id="@+id/rule_rv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginTop="4dp"
     android:clickable="true"
+    android:elevation="@dimen/cardview_default_elevation"
     android:focusable="true"
-    android:foreground="?android:selectableItemBackground">
+    android:foreground="?android:selectableItemBackground"
+    app:cardCornerRadius="@dimen/radius">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,17 +22,15 @@
             android:layout_width="47dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="15dp"
             android:layout_weight="0"
             android:tint="@color/divider"
             app:srcCompat="@drawable/alarm" />
 
-        <Space
-            android:layout_width="15dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0" />
 
         <LinearLayout
-            android:layout_width="265dp"
+            android:layout_width="260dp"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -37,10 +38,11 @@
                 android:id="@+id/cvRuleNameTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:layout_weight="0"
                 android:text=""
                 android:textAlignment="viewStart"
-                android:textAllCaps="true"
+                android:textAllCaps="false"
                 android:textColor="@color/primary_text"
                 android:textSize="24sp" />
 
@@ -49,11 +51,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Время включения: "
+                android:text=""
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/secondary_text"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                android:textStyle="italic" />
 
 
         </LinearLayout>

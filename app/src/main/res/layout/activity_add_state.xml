@@ -18,12 +18,12 @@
 
         <TextView
             android:id="@+id/addStateNameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="87dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Имя"
-            android:textColor="@android:color/background_dark"
-            android:textSize="30sp" />
+            android:textColor="@color/primary_text"
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/addStateNameEditText"
@@ -38,32 +38,34 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Switch
             android:id="@+id/addStateWiFiSwitch"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="WiFi"
-            android:textSize="30sp" />
+            android:textColor="@color/primary_text"
+            android:textSize="24sp" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Switch
             android:id="@+id/addStateBluetoothSwitch"
-            android:layout_width="200dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Bluetooth"
-            android:textSize="30sp" />
+            android:textColor="@color/primary_text"
+            android:textSize="24sp" />
 
     </LinearLayout>
 
@@ -78,8 +80,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:text="Громкость медиа"
-            android:textColor="@android:color/background_dark"
-            android:textSize="30sp" />
+            android:textColor="@color/primary_text"
+            android:textSize="24sp" />
 
         <SeekBar
             android:id="@+id/addStateMediaSoundSeekBar"
@@ -101,8 +103,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:text="Системная громкость"
-            android:textColor="@android:color/background_dark"
-            android:textSize="30sp" />
+            android:textColor="@color/primary_text"
+            android:textSize="24sp" />
 
 
         <SeekBar
@@ -114,10 +116,11 @@
 
     <Switch
         android:id="@+id/addStateConditionSwitch"
-        android:layout_width="193dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Изменить условие запуска"
-        android:textSize="30sp" />
+        android:textColor="@color/primary_text"
+        android:textSize="24sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -126,12 +129,12 @@
 
         <TextView
             android:id="@+id/addStateConditionTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="16dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Время"
-            android:textColor="@android:color/background_dark"
-            android:textSize="30sp" />
+            android:textColor="@color/primary_text"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/addStateSetTextView"
@@ -156,7 +159,7 @@
             android:id="@+id/addStateSaveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="save" />
+            android:text="Сохранить" />
 
     </LinearLayout>
 

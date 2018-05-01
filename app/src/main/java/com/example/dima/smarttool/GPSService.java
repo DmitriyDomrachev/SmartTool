@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class GPSService extends Service {
     static final long MIN_INTERVAL = 1000;                               // время обновления
@@ -40,10 +41,10 @@ public class GPSService extends Service {
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
     static HashMap<Integer, Note> noteGpsMap = new HashMap<>();
     static ArrayList<LatLng> noteGpsList = new ArrayList<LatLng>();
-    static State currentState;
-    static Note currentNote;
+    static String currentStateName, currentNoteName;
     static AudioManager audioManager;
     static NotificationManager notificationManager;
+    static SharedPreferences prefs;
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
     private LocationListener locationListener = new LocationListener() {
@@ -60,36 +61,41 @@ public class GPSService extends Service {
                 setState(stateGpsMap.get(checkLatLngState(lat, lng)));
 
             if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
-                if (currentNote == null || currentNote.getId() != noteGpsMap.get(checkLatLngNote(lat, lng)).getId()) {
-                    currentNote = noteGpsMap.get(checkLatLngNote(lat, lng));
+                Note note = noteGpsMap.get(checkLatLngNote(lat, lng));
+                Log.d(TAG, "try noteName: " + note.getName());
+                Log.d(TAG, "pref noteName: " + prefs.getString("noteName", ""));
 
+                if ((!Objects.equals(String.valueOf(prefs.getString("noteName", "")), note.getName()))) {
                     Intent notifyIntent = new Intent(getApplicationContext(), ShowNoteActivity.class);
-                    notifyIntent.putExtra("name", currentNote.getName());
-                    notifyIntent.putExtra("note", currentNote.getText());
+                    notifyIntent.putExtra("name", note.getName());
+                    notifyIntent.putExtra("note", note.getText());
                     notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     PendingIntent notifyPendingIntent = PendingIntent.getActivity(
-                            getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
-                    );
+                            getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                             .setSmallIcon(R.drawable.note)
                             .setContentTitle("Note time")
-                            .setContentText("Note: " + currentNote.getName())
+                            .setContentText("Note: " + note.getName())
                             .setAutoCancel(true)
                             .setContentIntent(notifyPendingIntent);
-                    notificationManager.notify(currentNote.getId(), builder.build());
+                    notificationManager.notify(note.getId(), builder.build());
 
                     HistoryHelper hh = new HistoryHelper(getApplicationContext());
-                    hh.insert("Заметка: " + currentNote.getText() + "\nВремя включения: " + getTime());
+                    hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getTime());
 
-                    Toast.makeText(getApplicationContext(), "setNote: " + currentNote.getName(), Toast.LENGTH_SHORT).show();
+                    SharedPreferences.Editor ed = prefs.edit();
+                    ed.putString("noteName", note.getName());
+                    ed.apply();
+
+                    Log.d(TAG, "noteName: " + note.getName());
+                    Toast.makeText(getApplicationContext(), "setNote: " + note.getName(), Toast.LENGTH_SHORT).show();
                 }
             }
-
-
         }
+
 
         @Override
         public void onProviderDisabled(String provider) {
@@ -110,6 +116,8 @@ public class GPSService extends Service {
     @SuppressLint("MissingPermission")
     @Override
     public void onCreate() {
+        prefs = getApplicationContext().getSharedPreferences("myPrefs",
+                Context.MODE_PRIVATE);
 
         notificationManager = (NotificationManager) getApplicationContext()
                 .getSystemService(NOTIFICATION_SERVICE);
@@ -133,7 +141,7 @@ public class GPSService extends Service {
 
         LocationManager locationManager =
                 (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
+        assert locationManager != null;
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_INTERVAL,
                 100, locationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_INTERVAL,
@@ -142,7 +150,6 @@ public class GPSService extends Service {
         loadStates(sh.getAll());
         NoteHelper nh = new NoteHelper(getApplicationContext());
         loadNotes(nh.getAll());
-
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
@@ -171,14 +178,11 @@ public class GPSService extends Service {
 
     private void loadStates(ArrayList<State> states) {
         for (int i = 0; i < states.size(); i++) {
-
-            if (currentState == null || currentState.getId() != states.get(i).getId()) {
-                currentState = states.get(i);
-                LatLng latLng = new LatLng(currentState.getLat(), currentState.getLng());
-                stateGpsList.add(latLng);
-                stateGpsMap.put(i, currentState);
-                Log.d(TAG, "loadState: " + currentState.getName());
-            }
+            State state = states.get(i);
+            LatLng latLng = new LatLng(state.getLat(), state.getLng());
+            stateGpsList.add(latLng);
+            stateGpsMap.put(i, state);
+            Log.d(TAG, "loadState: " + state.getName());
         }
 
     }
@@ -196,24 +200,26 @@ public class GPSService extends Service {
 
     private void setState(State state) {
 
-        HistoryHelper hh = new HistoryHelper(getApplicationContext());
-        hh.insert("Состояние: " + state.getName() + "\nВремя включения: " + getTime());
+        if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
 
-        wifiManager.setWifiEnabled(state.isWiFiState());
+            HistoryHelper hh = new HistoryHelper(getApplicationContext());
+            hh.insert("Состояние: " + state.getName() + "\nВремя включения: " + getTime());
+            Toast.makeText(getApplicationContext(), "set:" + state.getName(), Toast.LENGTH_SHORT).show();
+            wifiManager.setWifiEnabled(state.isWiFiState());
 
-        if (state.isBluetoothState()) btAdapter.enable();
-        else btAdapter.disable();
+            if (state.isBluetoothState()) btAdapter.enable();
+            else btAdapter.disable();
 
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.getMediaSoundState(),
-                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
-        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progInex(state.getSystemSoundState(),
-                audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("myPrefs",
-                Context.MODE_PRIVATE);
-        SharedPreferences.Editor ed = prefs.edit();
-        ed.putString("stateName", state.getName());
-        ed.commit();
-        Log.d(TAG, "setState: " + state.getName());
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.getMediaSoundState(),
+                    audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progInex(state.getSystemSoundState(),
+                    audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
+
+            SharedPreferences.Editor ed = prefs.edit();
+            ed.putString("stateName", state.getName());
+            ed.apply();
+            Log.d(TAG, "setState: " + state.getName());
+        }
 
     }
 

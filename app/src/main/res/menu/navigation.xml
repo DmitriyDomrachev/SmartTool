@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_scan"
         android:icon="@drawable/scan"
-        android:title="@string/title_scan" />
+        android:title="" />
 
     <item
         android:id="@+id/navigation_list"
         android:icon="@drawable/list"
-        android:title="@string/title_add" />
+        android:title="" />
 
     <item
         android:id="@+id/navigation_note"
         android:icon="@drawable/note"
-        android:title="@string/title_note" />
+        android:title="" />
     <item
         android:id="@+id/navigation_setting"
         android:icon="@drawable/setting"
-        android:title="@string/title_settings" />
+        android:title="" />
 
 </menu>

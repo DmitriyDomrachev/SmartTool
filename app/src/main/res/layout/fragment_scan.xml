@@ -3,46 +3,117 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/fab_margin"
+    android:layout_margin="@dimen/cardview_compat_inset_shadow"
     android:orientation="vertical"
     tools:context="com.example.dima.smarttool.fragment.ScanFragment">
-<!--TODO: карта с сотояниями при слайде вправо-->
-    <TextView
-        android:id="@+id/ScanFragmentBatteryTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Battery"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="30sp" />
+    <!--TODO: карта с сотояниями при слайде вправо-->
 
 
-    <TextView
-        android:id="@+id/ScanFragmentWiFiTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/WiFi"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/ScanFragmentBleutoothTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Bluetooth"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/ScanFragmentSoundTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Sound"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="30sp" />
-
-    <ListView
-        android:id="@+id/ScanFragmentListView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="103dp"
+        android:background="@drawable/head"
+
+        android:elevation="2dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/ScanFragmentStateTextView"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Текущее состояние: "
+            android:textColor="@color/primary_text"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <ImageButton
+                android:id="@+id/ScanFragmentWiFiImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/cardview_light_background"
+                android:scaleType="fitCenter"
+                android:src="@drawable/wif"
+                android:tint="@color/colorAccent" />
+
+            <ImageButton
+                android:id="@+id/ScanFragmentBluetoothImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="14dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/cardview_light_background"
+                android:scaleType="fitCenter"
+                android:src="@drawable/bluetooth"
+                android:tint="@color/colorAccent" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#FFF">
+
+                <ImageButton
+                    android:id="@+id/ScanFragmentBatteryImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/cardview_light_background"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/battery"
+                    android:tint="@color/colorAccent" />
+
+                <TextView
+                    android:id="@+id/ScanFragmentBatteryTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:text="51"
+                    android:textAlignment="center"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="396dp"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@drawable/content"
+        android:elevation="2dp"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginStart="@dimen/text_margin"
+            android:text="История "
+            android:textColor="@color/primary_text"
+            android:textSize="18sp" />
+
+        <ListView
+            android:id="@+id/ScanFragmentListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="?attr/dividerHorizontal" />
+    </LinearLayout>
+
 
 </LinearLayout>

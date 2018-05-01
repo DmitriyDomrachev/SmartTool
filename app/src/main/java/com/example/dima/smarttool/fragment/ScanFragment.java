@@ -1,11 +1,16 @@
 package com.example.dima.smarttool.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,8 +28,10 @@ public class ScanFragment extends Fragment {
     int BatteryState = 0, SoundState = 0;
     String[] names;
     ArrayList<String> nameList;
+    TextView stateName;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -34,10 +41,11 @@ public class ScanFragment extends Fragment {
         names = nameList.toArray(names);
 
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
-        TextView battery = view.findViewById(R.id.ScanFragmentBatteryTextView);
-        TextView wifi = view.findViewById(R.id.ScanFragmentWiFiTextView);
-        TextView bluetooth = view.findViewById(R.id.ScanFragmentBleutoothTextView);
-        TextView sound = view.findViewById(R.id.ScanFragmentSoundTextView);
+        TextView batteryText = view.findViewById(R.id.ScanFragmentBatteryTextView);
+        ImageButton wifi = view.findViewById(R.id.ScanFragmentWiFiImageButton);
+        ImageButton bluetooth = view.findViewById(R.id.ScanFragmentBluetoothImageButton);
+        ImageButton battery = view.findViewById(R.id.ScanFragmentBatteryImageButton);
+        TextView stateName = view.findViewById(R.id.ScanFragmentStateTextView);
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -46,10 +54,21 @@ public class ScanFragment extends Fragment {
             BatteryState = getArguments().getInt("battery");
             SoundState = getArguments().getInt("sound");
         }
-        battery.setText(battery.getText() + " " + BatteryState + "%");
-        wifi.setText(wifi.getText() + boolToString(WiFiState));
-        bluetooth.setText(bluetooth.getText() + boolToString(BluetoothState));
-        sound.setText(sound.getText() + " " + SoundState + "%");
+        batteryText.setText("" + BatteryState);
+        if (WiFiState)
+            wifi.setColorFilter(Color.argb(255, 124, 75, 255));
+        else wifi.setColorFilter(Color.argb(255, 189, 189, 189));
+        if (BluetoothState)
+            bluetooth.setColorFilter(Color.argb(255, 124, 75, 255));
+        else bluetooth.setColorFilter(Color.argb(255, 189, 189, 189));
+        if (BatteryState > 50)
+            battery.setColorFilter(Color.argb(255, 124, 75, 255));
+        else battery.setColorFilter(Color.argb(255, 189, 189, 189));
+
+
+        SharedPreferences prefs = getActivity().getSharedPreferences("myPrefs",
+                Context.MODE_PRIVATE);
+        stateName.setText("Последнее состояние: " + String.valueOf(prefs.getString("stateName", "")));
 
         // находим список
         ListView lvMain = (ListView) view.findViewById(R.id.ScanFragmentListView);
@@ -62,8 +81,6 @@ public class ScanFragment extends Fragment {
         lvMain.setAdapter(adapter);
 
         return view;
-
-
 
 
     }

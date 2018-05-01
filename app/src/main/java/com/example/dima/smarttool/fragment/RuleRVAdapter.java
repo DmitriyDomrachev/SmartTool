@@ -48,12 +48,13 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
         holder.txtName.setText(holder.txtName.getText() + String.valueOf(state.getName()));
-        if (state.getLat() == 0) {
+        if (state.getLat() == 0 && state.getStartTime()!=999999999) {
             holder.txtStart.setText("Время включения: " + String.valueOf(hour) + ":" + String.valueOf(minute));
             holder.imageView.setImageResource(R.drawable.alarm);
         }
-        else {
-            holder.txtStart.setText("");
+        else if (state.getStartTime()==999999999){
+        holder.imageView.setImageResource(R.drawable.hand);
+    }   else {
             holder.imageView.setImageResource(R.drawable.my_location);
 
         }

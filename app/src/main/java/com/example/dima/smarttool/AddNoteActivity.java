@@ -32,7 +32,7 @@ public class AddNoteActivity extends AppCompatActivity {
     String name, text;
     Long startTime, time;
     static int hour, minute;
-    static long milliseconds;
+    static long milliseconds = 999999999;
     AlarmManager alarmManager;
     static double lat, lng;
 
@@ -63,7 +63,7 @@ public class AddNoteActivity extends AppCompatActivity {
                     if (lat != 0) {
                         nh.insert(name, text, startTime, lat, lng);
                     }
-                    if (lat == 0) {
+                    if (lat == 0 ) {
                         nh.insert(name, text, startTime, 0, 0);
                         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         Intent intent = new Intent(AddNoteActivity.this, NoteAlarmReceiver.class);
@@ -84,6 +84,7 @@ public class AddNoteActivity extends AppCompatActivity {
                         }
                         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
                     }
+
 
                     Log.d("DB", "add: " + nh.getAll().toString());
                     finish();

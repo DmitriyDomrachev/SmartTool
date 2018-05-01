@@ -28,7 +28,7 @@ public class AddStateActivity extends AppCompatActivity {
     static Switch wifiSwitch, bluetoothSwitch, conditionSwitch;
     static TextView conditionTextView, setConditionTextView;
     static int mediaI, systemI, hour, minute;
-    static long milliseconds;
+    static long milliseconds = 999999999;
     static double lat, lng;
     EditText nameEditText;
     Button saveBtn;
@@ -147,6 +147,7 @@ public class AddStateActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             lat = data.getDoubleExtra("lat", 0);
             lng = data.getDoubleExtra("lng", 0);
+            setConditionTextView.setText("Страт по GPS");
         }
     }
 

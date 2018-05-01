@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,9 +52,16 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
         holder.txtName.setText(String.valueOf(note.getName()));
-        if (note.getLat() == 0)
-            holder.txtStart.setText("Strat time: " + String.valueOf(hour) + ":" + String.valueOf(minute));
-        else holder.txtStart.setText("Start by GPS");
+        if (note.getLat() == 0 && note.getStartTime()!=999999999) {
+            holder.txtStart.setText("Время включения " + String.valueOf(hour) + ":" + String.valueOf(minute));
+            holder.imageView.setImageResource(R.drawable.alarm);
+        } else if (note.getStartTime()==999999999){
+            holder.imageView.setImageResource(R.drawable.hand);
+        }
+        else {
+            holder.imageView.setImageResource(R.drawable.my_location);
+
+        }
         holder.cvListener.setRecord(note);// как-то надо понимать с каким состоянием работаем
         holder.txtText.setText(note.getText());
         holder.btnClickListener.setRecord(note);                                                       // как-то надо понимать с состоянием  работаем
@@ -71,6 +79,8 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         TextView txtName, txtText, txtStart;
         ImageButton btnRefactor;
         CardView cv;
+        ImageView imageView;
+
 
         //Инициализируем слушатели
         CardViewClickListener cvListener = new CardViewClickListener();
@@ -84,6 +94,8 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
             txtText = itemView.findViewById(R.id.cvNoteTextTextView);
             btnRefactor = itemView.findViewById(R.id.cvNoteRemoveButton);
             cv = itemView.findViewById(R.id.note_rv);
+            imageView = itemView.findViewById(R.id.cvNoteImageView);
+
 
             //цепляем слушатели
             cv.setOnClickListener(cvListener);
@@ -101,7 +113,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(context,"click", Toast.LENGTH_SHORT);
+            Toast.makeText(context, "click", Toast.LENGTH_SHORT);
             Intent intent = new Intent(context, ShowNoteActivity.class);
             intent.putExtra("name", note.getName());
             intent.putExtra("note", note.getText());
@@ -112,7 +124,6 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
             this.note = note;
         }
     }
-
 
 
     class ButtonRemoveClickListener implements View.OnClickListener {
