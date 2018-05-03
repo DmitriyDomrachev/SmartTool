@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     Fragment fragmentSc, fragmentL, fragmentN, fragmentS;
     FloatingActionButton fab;
     AlarmManager alarmManager;
-    //    private PendingIntent pendingIntent;
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -252,15 +251,17 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... args) {
             boolean wifi = wifiManager.isWifiEnabled();
             boolean bt = btAdapter.isEnabled();
+            int battery = batteryChange;
 
             if (navigateID == R.id.navigation_scan)
                 rewriteFragment();
 
             while (navigateID == R.id.navigation_scan) {
-                if (wifi != wifiManager.isWifiEnabled() || bt != btAdapter.isEnabled()) {
+                if (wifi != wifiManager.isWifiEnabled() || bt != btAdapter.isEnabled() || battery != batteryChange) {
                     rewriteFragment();
                     wifi = wifiManager.isWifiEnabled();
                     bt = btAdapter.isEnabled();
+                    battery = batteryChange;
                 }
                 try {
                     Thread.sleep(2000);

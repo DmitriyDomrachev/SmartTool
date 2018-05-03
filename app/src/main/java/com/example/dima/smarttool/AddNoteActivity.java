@@ -25,22 +25,41 @@ import java.util.Random;
 
 public class AddNoteActivity extends AppCompatActivity {
 
-    EditText nameEditText, textEditText;
-    Button saveBtn;
     static Switch conditionSwitch;
     static TextView conditionTextView, setConditionTextView;
-    String name, text;
-    Long startTime, time;
     static int hour, minute;
     static long milliseconds = 999999999;
-    AlarmManager alarmManager;
     static double lat, lng;
+    EditText nameEditText, textEditText;
+    Button saveBtn;
+    String name, text;
+    Long startTime, time;
+    AlarmManager alarmManager;
 
+    public static void setTime(int hour, int minute) {
+        setConditionTextView.setText(hour + ":" + minute);
+        milliseconds = hour * 3_600_000 + minute * 60_000;
+
+
+    }
+
+    public static void setHour(int hour) {
+        AddNoteActivity.hour = hour;
+    }
+
+    public static void setMinute(int minute) {
+        AddNoteActivity.minute = minute;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
+        hour = 0;
+        minute = 0;
+        milliseconds = 0;
+        lat = 0;
+        lng  = 0;
         conditionTextView = findViewById(R.id.addNoteConditionTextView);
         setConditionTextView = findViewById(R.id.addNoteSetTextView);
         nameEditText = findViewById(R.id.addNoteNameEditText);
@@ -60,10 +79,13 @@ public class AddNoteActivity extends AppCompatActivity {
                 if (name.length() == 0)
                     Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
                 else {
-                    if (lat != 0) {
-                        nh.insert(name, text, startTime, lat, lng);
-                    }
-                    if (lat == 0 ) {
+                    if (startTime == 0 && lat == 0 && lng == 0)
+                        nh.insert(name, text, 999999999, 0, 0);
+                        // сохраниние без условия запуска
+                    else if (lat != 0) {
+                        nh.insert(name, text, 999999999, lat, lng);
+                        // сохраниние сохранение с запуском по GPS
+                    } else {
                         nh.insert(name, text, startTime, 0, 0);
                         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         Intent intent = new Intent(AddNoteActivity.this, NoteAlarmReceiver.class);
@@ -83,6 +105,7 @@ public class AddNoteActivity extends AppCompatActivity {
                                 time = time + (1000 * 60 * 60 * 24);
                         }
                         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+                        // сохраниние сохранение с запуском по времени
                     }
 
 
@@ -123,7 +146,6 @@ public class AddNoteActivity extends AppCompatActivity {
         finish();
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -131,21 +153,6 @@ public class AddNoteActivity extends AppCompatActivity {
             lat = data.getDoubleExtra("lat", 0);
             lng = data.getDoubleExtra("lng", 0);
         }
-    }
-
-    public static void setTime(int hour, int minute) {
-        setConditionTextView.setText(hour + ":" + minute);
-        milliseconds = hour * 3_600_000 + minute * 60_000;
-
-
-    }
-
-    public static void setHour(int hour) {
-        AddNoteActivity.hour = hour;
-    }
-
-    public static void setMinute(int minute) {
-        AddNoteActivity.minute = minute;
     }
 
 }

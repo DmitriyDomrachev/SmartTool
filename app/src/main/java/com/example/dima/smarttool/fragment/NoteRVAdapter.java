@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.Note;
 import com.example.dima.smarttool.R;
-import com.example.dima.smarttool.ShowNoteActivity;
+import com.example.dima.smarttool.ShowActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,12 +50,11 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
         holder.txtName.setText(String.valueOf(note.getName()));
-        if (note.getLat() == 0 && note.getStartTime()!=999999999) {
+        if (note.getLat() == 0 && note.getStartTime() != 999999999) {
             holder.txtStart.setText("Время включения " + String.valueOf(hour) + ":" + String.valueOf(minute));
             holder.imageView.setImageResource(R.drawable.alarm);
-        } else if (note.getStartTime()==999999999){
+        } else if (note.getLat() == 0 && note.getLng() == 0 && note.getStartTime() == 999999999)
             holder.imageView.setImageResource(R.drawable.hand);
-        }
         else {
             holder.imageView.setImageResource(R.drawable.my_location);
 
@@ -111,9 +110,12 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(context, ShowNoteActivity.class);
+            Intent intent = new Intent(context, ShowActivity.class);
             intent.putExtra("name", note.getName());
             intent.putExtra("note", note.getText());
+            intent.putExtra("lat", note.getLat());
+            intent.putExtra("lng", note.getLng());
+            intent.putExtra("time", note.getStartTime());
             context.startActivity(intent);
         }
 

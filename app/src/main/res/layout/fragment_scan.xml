@@ -6,7 +6,6 @@
     android:layout_margin="@dimen/cardview_compat_inset_shadow"
     android:orientation="vertical"
     tools:context="com.example.dima.smarttool.fragment.ScanFragment">
-    <!--TODO: карта с сотояниями при слайде вправо-->
 
 
     <LinearLayout
@@ -35,7 +34,7 @@
 
             <ImageButton
                 android:id="@+id/ScanFragmentWiFiImageButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/cardview_light_background"
@@ -45,11 +44,10 @@
 
             <ImageButton
                 android:id="@+id/ScanFragmentBluetoothImageButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="14dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/cardview_light_background"
                 android:scaleType="fitCenter"
@@ -57,13 +55,14 @@
                 android:tint="@color/colorAccent" />
 
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="#FFF">
 
                 <ImageButton
                     android:id="@+id/ScanFragmentBatteryImageButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:backgroundTint="@color/cardview_light_background"
@@ -80,7 +79,7 @@
                     android:gravity="center_vertical"
                     android:text="51"
                     android:textAlignment="center"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </RelativeLayout>
 

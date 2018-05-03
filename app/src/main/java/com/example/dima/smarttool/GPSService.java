@@ -27,8 +27,8 @@ import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
@@ -66,9 +66,12 @@ public class GPSService extends Service {
                 Log.d(TAG, "pref noteName: " + prefs.getString("noteName", ""));
 
                 if ((!Objects.equals(String.valueOf(prefs.getString("noteName", "")), note.getName()))) {
-                    Intent notifyIntent = new Intent(getApplicationContext(), ShowNoteActivity.class);
+                    Intent notifyIntent = new Intent(getApplicationContext(), ShowActivity.class);
                     notifyIntent.putExtra("name", note.getName());
                     notifyIntent.putExtra("note", note.getText());
+                    notifyIntent.putExtra("lat", note.getLat());
+                    notifyIntent.putExtra("lng", note.getLng());
+                    notifyIntent.putExtra("time", note.getStartTime());
                     notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     PendingIntent notifyPendingIntent = PendingIntent.getActivity(
                             getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -84,7 +87,11 @@ public class GPSService extends Service {
                     notificationManager.notify(note.getId(), builder.build());
 
                     HistoryHelper hh = new HistoryHelper(getApplicationContext());
-                    hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getTime());
+
+
+
+
+                    hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getDate());
 
                     SharedPreferences.Editor ed = prefs.edit();
                     ed.putString("noteName", note.getName());
@@ -203,7 +210,7 @@ public class GPSService extends Service {
         if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
 
             HistoryHelper hh = new HistoryHelper(getApplicationContext());
-            hh.insert("Состояние: " + state.getName() + "\nВремя включения: " + getTime());
+            hh.insert("Состояние: " + state.getName() + "\nВремя включения: " + getDate());
             Toast.makeText(getApplicationContext(), "set:" + state.getName(), Toast.LENGTH_SHORT).show();
             wifiManager.setWifiEnabled(state.isWiFiState());
 
@@ -259,11 +266,10 @@ public class GPSService extends Service {
     }
 
 
-    private String getTime() {                                                          // используйте метод для вывода текущего времени
-        Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        date.setTime(calendar.getTimeInMillis());
-        return date.getHours() + ":" + date.getMinutes();
+
+    private String getDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        return dateFormat.format(new Date());
     }
 
 }

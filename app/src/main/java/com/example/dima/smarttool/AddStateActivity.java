@@ -55,8 +55,12 @@ public class AddStateActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        final Intent intent = getIntent();
         setContentView(R.layout.activity_add_state);
+        hour = 0;
+        minute = 0;
+        milliseconds = 0;
+        lat = 0;
+        lng  = 0;
         conditionTextView = findViewById(R.id.addStateConditionTextView);
         setConditionTextView = findViewById(R.id.addStateSetTextView);
         nameEditText = findViewById(R.id.addStateNameEditText);
@@ -79,12 +83,18 @@ public class AddStateActivity extends AppCompatActivity {
                 mediaI = mediaSeekBar.getProgress();
                 systemI = systemSeekBar.getProgress();
 
-                if (name.length() == 0)
+                if (name.length() == 0) {
                     Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
-                else {
-                    if (lat != 0)
-                        sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, lat, lng);
-                    if (lat == 0) {
+                } else {
+                    if (startTime == 0 && lat == 0 && lng == 0) {
+                        sh.insert(name, wifi, bluetooth, 999999999, mediaI, systemI, 0, 0);
+                        // сохраниние без условия запуска
+                    } else if (lat != 0)
+                        sh.insert(name, wifi, bluetooth, 999999999, mediaI, systemI, lat, lng);
+                        // сохраниние сохранение с запуском по GPS
+                    else {
+                        Log.d("addState", String.valueOf(setConditionTextView.getText()));
+                        Log.d("addState", "add time");
                         sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, 0, 0);
                         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         Intent intent = new Intent(AddStateActivity.this, StateAlarmReceiver.class);
@@ -97,6 +107,7 @@ public class AddStateActivity extends AppCompatActivity {
                         calendar.set(Calendar.HOUR_OF_DAY, hour);
                         calendar.set(Calendar.MINUTE, minute);
                         time = (calendar.getTimeInMillis() - (calendar.getTimeInMillis() % 60000));
+
                         if (System.currentTimeMillis() > time) {
                             if (calendar.AM_PM == 0)
                                 time = time + (1000 * 60 * 60 * 12);
@@ -104,6 +115,7 @@ public class AddStateActivity extends AppCompatActivity {
                                 time = time + (1000 * 60 * 60 * 24);
                         }
                         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+                        // сохраниние сохранение с запуском по времени
                     }
 
                     Log.d("DB", "add: " + sh.getAll().toString());
@@ -148,6 +160,7 @@ public class AddStateActivity extends AppCompatActivity {
             lat = data.getDoubleExtra("lat", 0);
             lng = data.getDoubleExtra("lng", 0);
             setConditionTextView.setText("Страт по GPS");
+            Log.d("addState", "add LatLng: " + lat + "   " + lng);
         }
     }
 

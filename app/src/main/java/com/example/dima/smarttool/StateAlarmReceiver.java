@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.DB.StateHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,7 +48,7 @@ public class StateAlarmReceiver extends BroadcastReceiver {
             ed.commit();
 
             HistoryHelper hh = new HistoryHelper(context);
-            hh.insert("Состояние: "+ state.getName()+ "\nВремя включения: "+ getTime());
+            hh.insert("Состояние: "+ state.getName()+ "\nВремя включения: "+ getDate());
 
             Log.d("alarm", "setState: " + name);
         }
@@ -93,5 +94,10 @@ public class StateAlarmReceiver extends BroadcastReceiver {
     private String boolToString (boolean in){
         if (in) return "on";
         else  return "off";
+    }
+
+    private String getDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        return dateFormat.format(new Date());
     }
 }

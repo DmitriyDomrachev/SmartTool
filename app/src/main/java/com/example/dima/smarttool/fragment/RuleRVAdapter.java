@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.R;
-import com.example.dima.smarttool.ShowStateActivity;
+import com.example.dima.smarttool.ShowActivity;
 import com.example.dima.smarttool.State;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
         if (state.getLat() == 0 && state.getStartTime() != 999999999) {
             holder.txtStart.setText("Время включения: " + String.valueOf(hour) + ":" + String.valueOf(minute));
             holder.imageView.setImageResource(R.drawable.alarm);
-        } else if (state.getStartTime() == 999999999) {
+        } else if (state.getLat() == 0 && state.getLng() == 0 && state.getStartTime() == 999999999) {
             holder.imageView.setImageResource(R.drawable.hand);
         } else {
             holder.imageView.setImageResource(R.drawable.my_location);
@@ -115,17 +115,21 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
                 wifi = "off";
             else wifi = "on";
 
-            Intent intent = new Intent(context, ShowStateActivity.class);
+            Intent intent = new Intent(context, ShowActivity.class);
             intent.putExtra("name", state.getName());
             intent.putExtra("note", "Wifi: " + wifi
                     + "\nBluetooth: " + bt + "\nMedia: " + state.getMediaSoundState()
                     + "%\nSystem: " + state.getSystemSoundState() + "%");
+            Log.d("showActivity", "IntentPut lat: "+state.getLat()+ "    lng: "+state.getLng());
+            intent.putExtra("lat", state.getLat());
+            intent.putExtra("lng", state.getLng());
+            intent.putExtra("time", state.getStartTime());
             context.startActivity(intent);
         }
 
         void setRecord(State state) {
             this.state = state;
-        }
+            }
     }
 
     class ButtonRemoveClickListener implements View.OnClickListener {

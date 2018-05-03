@@ -26,6 +26,7 @@ public class TimePickerFragment extends DialogFragment
         final Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
+        Log.d ("addState"," createDialog");
 
         // Create a new instance of TimePickerDialog and return it
         return new TimePickerDialog(getActivity(), this, hour, minute,
@@ -34,7 +35,7 @@ public class TimePickerFragment extends DialogFragment
     // TODO: start this activity for result
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        Log.d ("time"," set time: "+String.valueOf(hourOfDay)+":"+String.valueOf(minute));
+        Log.d ("addState"," set time: "+String.valueOf(hourOfDay)+":"+String.valueOf(minute));
         try {
             AddStateActivity.setTime(hourOfDay, minute);
             AddStateActivity.setHour(hourOfDay);

@@ -18,6 +18,7 @@ import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by dima on 27.02.2018.
@@ -38,6 +39,7 @@ public class ScanFragment extends Fragment {
         HistoryHelper hh = new HistoryHelper(getActivity().getApplicationContext());
         nameList = hh.getAll();
         names = new String[nameList.size()];
+        Collections.reverse(nameList);
         names = nameList.toArray(names);
 
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
@@ -61,7 +63,7 @@ public class ScanFragment extends Fragment {
         if (BluetoothState)
             bluetooth.setColorFilter(Color.argb(255, 124, 75, 255));
         else bluetooth.setColorFilter(Color.argb(255, 189, 189, 189));
-        if (BatteryState > 50)
+        if (BatteryState > 40)
             battery.setColorFilter(Color.argb(255, 124, 75, 255));
         else battery.setColorFilter(Color.argb(255, 189, 189, 189));
 

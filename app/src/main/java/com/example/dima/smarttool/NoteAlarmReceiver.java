@@ -14,6 +14,7 @@ import android.util.Log;
 import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.DB.NoteHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -59,12 +60,15 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
             this.note = (noteTimeMap.get(name));
             Log.d("alarm", "setNote: " + name);
             HistoryHelper hh = new HistoryHelper(context);
-            hh.insert("Заметка: "+ note.getText()+ "\nВремя включения: "+ getTime());
+            hh.insert("Заметка: "+ note.getText()+ "\nВремя включения: "+ getDate());
 
 
-            Intent notifyIntent = new Intent(context, ShowNoteActivity.class);
+            Intent notifyIntent = new Intent(context, ShowActivity.class);
             notifyIntent.putExtra("name", note.getName());
             notifyIntent.putExtra("note", note.getText());
+            notifyIntent.putExtra("lat", note.getLat());
+            notifyIntent.putExtra("lng", note.getLng());
+            notifyIntent.putExtra("time", note.getStartTime());
             notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent notifyPendingIntent = PendingIntent.getActivity(
                     context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
@@ -78,6 +82,7 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
                     .setContentText("Note: " + note.getName())
                     .setAutoCancel(true)
                     .setContentIntent(notifyPendingIntent);
+            assert notificationManager != null;
             notificationManager.notify(note.getId(), builder.build());
         }
 
@@ -97,6 +102,11 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
             Log.d("timeS", "loadNote: " + note.getName());
         }
 
+    }
+
+    private String getDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        return dateFormat.format(new Date());
     }
 
 

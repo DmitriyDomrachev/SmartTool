@@ -56,7 +56,7 @@
 
         <activity android:name=".AddNoteActivity" />
         <activity android:name=".ShowNoteActivity" />
-        <activity android:name=".ShowStateActivity"></activity>
+        <activity android:name=".ShowActivity"></activity>
     </application>
 
 </manifest>
