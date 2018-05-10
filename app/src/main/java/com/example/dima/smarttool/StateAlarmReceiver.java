@@ -29,7 +29,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class StateAlarmReceiver extends BroadcastReceiver {
     private static final String STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel";
-    static Map<String, State> stateTimeMap = new HashMap<String, State>();                       //зраниение значиний времени старта и номера состояния
+    static Map<String, State> stateTimeMap = new HashMap<String, State>();            //храниение значиний времени старта и номера состояния
     static AudioManager audioManager;
     String name;
     State state;
@@ -45,10 +45,8 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         Log.d("alarm", "receive");
         StateHelper sh = new StateHelper(context);                                     // инициализация помощника управления состояниямив базе данных
         loadStates(sh.getAll());
-
         wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         audioManager = (AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-
         notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
 

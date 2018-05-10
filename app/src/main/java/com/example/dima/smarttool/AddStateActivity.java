@@ -119,6 +119,8 @@ public class AddStateActivity extends AppCompatActivity {
                     }
 
                     Log.d("DB", "add: " + sh.getAll().toString());
+                    stopService(new Intent(AddStateActivity.this, GPSService.class));
+                    startService(new Intent(AddStateActivity.this, GPSService.class));
                     finish();
                 }
             }

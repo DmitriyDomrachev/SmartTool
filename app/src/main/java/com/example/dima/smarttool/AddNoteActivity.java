@@ -110,6 +110,8 @@ public class AddNoteActivity extends AppCompatActivity {
 
 
                     Log.d("DB", "add: " + nh.getAll().toString());
+                    stopService(new Intent(AddNoteActivity.this, GPSService.class));
+                    startService(new Intent(AddNoteActivity.this, GPSService.class));
                     finish();
                 }
             }

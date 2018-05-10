@@ -74,10 +74,6 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
     }
 
 
-    private int progInex(float in, int max) {
-        in = in / 100;
-        return (int) (max * in);
-    }
 
     private void sendNotification(Context context) {
 

@@ -33,20 +33,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.READ_CONTACTS;
-
 public class GPSService extends Service {
     private static final String TAG = "mygps";
     private static final String STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel", NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel";
-
-    private static final String[] READ_ACCESS_FINE = new String[]{READ_CONTACTS, ACCESS_FINE_LOCATION};
-    static long minInterval, minDistance;                               // время обновления
     static HashMap<Integer, State> stateGpsMap = new HashMap<>();
     static HashMap<Integer, Note> noteGpsMap = new HashMap<>();
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
     static ArrayList<LatLng> noteGpsList = new ArrayList<LatLng>();
-    static String currentStateName, currentNoteName;
     static AudioManager audioManager;
     static NotificationManager notificationManager;
     static SharedPreferences prefs;
@@ -75,25 +68,6 @@ public class GPSService extends Service {
                 Log.d(TAG, "pref noteName: " + prefs.getString("noteName", ""));
 
                 if ((!Objects.equals(String.valueOf(prefs.getString("noteName", "")), note.getName()))) {
-//                    Intent notifyIntent = new Intent(getApplicationContext(), ShowActivity.class);
-//                    notifyIntent.putExtra("name", note.getName());
-//                    notifyIntent.putExtra("text", note.getText());
-//                    notifyIntent.putExtra("lat", note.getLat());
-//                    notifyIntent.putExtra("lng", note.getLng());
-//                    notifyIntent.putExtra("time", note.getStartTime());
-//                    notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    PendingIntent notifyPendingIntent = PendingIntent.getActivity(
-//                            getApplicationContext(), 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//
-//                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
-//                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-//                            .setSmallIcon(R.drawable.note)
-//                            .setContentTitle("Note time")
-//                            .setContentText("Note: " + note.getName())
-//                            .setAutoCancel(true)
-//                            .setContentIntent(notifyPendingIntent);
-//                    notificationManager.notify(note.getId(), builder.build());
                     sendNotification(getApplicationContext(), note);
                     HistoryHelper hh = new HistoryHelper(getApplicationContext());
                     hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getDate());
@@ -138,14 +112,11 @@ public class GPSService extends Service {
                 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         assert locationManager != null;
-//        if (ContextCompat.checkSelfPermission(getApplicationContext(),
-//                ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, getMinTime(),
                     getMinDistance(), locationListener);
 
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
-//                0, locationListener);
-//        else onDestroy();
+
 
 
         StateHelper sh = new StateHelper(getApplicationContext());

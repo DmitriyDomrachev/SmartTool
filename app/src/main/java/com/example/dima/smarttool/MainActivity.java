@@ -1,5 +1,6 @@
 package com.example.dima.smarttool;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -20,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -35,12 +38,11 @@ import com.example.dima.smarttool.fragment.SettingFragment;
 import java.util.ArrayList;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.READ_CONTACTS;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String[] READ_ACCESS_FINE = new String[]{READ_CONTACTS, ACCESS_FINE_LOCATION};
+    private static final String[] READ_ACCESS_FINE = new String[]{ACCESS_FINE_LOCATION};
     public static int batteryChange;
     static FragmentTransaction fragmentTransaction;
     static AudioManager audioManager;
@@ -91,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            requestPermission(READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);
+
 
         requestPermission(READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);
 
@@ -104,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(android.provider.Settings
                     .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
             startActivity(intent);
-        }
+        } else startService(new Intent(MainActivity.this, GPSService.class));
 
 
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -130,8 +136,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        startService(new Intent(MainActivity
-                .this, GPSService.class));
+
 
 
     }
