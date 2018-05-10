@@ -28,7 +28,7 @@ import java.util.Map;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class StateAlarmReceiver extends BroadcastReceiver {
-    private static final String NOTIFICATION_CHANNEL_ID = "state_notification_channel";
+    private static final String STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel";
     static Map<String, State> stateTimeMap = new HashMap<String, State>();                       //зраниение значиний времени старта и номера состояния
     static AudioManager audioManager;
     String name;
@@ -70,7 +70,6 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         }
 
     }
-
 
     private String getTime() {                                                          // используйте метод для вывода текущего времени
         Date date = new Date();
@@ -119,7 +118,7 @@ public class StateAlarmReceiver extends BroadcastReceiver {
     private void sendNotification(Context context) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+            NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
                     "State notifications", NotificationManager.IMPORTANCE_LOW);
 
             // Configure the notification channel.
@@ -144,7 +143,7 @@ public class StateAlarmReceiver extends BroadcastReceiver {
                 context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setSmallIcon(R.drawable.list)
                 .setContentTitle("State time")

@@ -9,7 +9,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,7 +19,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -40,11 +38,13 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 public class GPSService extends Service {
     private static final String TAG = "mygps";
-    private static final String NOTIFICATION_CHANNEL_ID = "note_notification_channel";
+    private static final String STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel", NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel";
+
+    private static final String[] READ_ACCESS_FINE = new String[]{READ_CONTACTS, ACCESS_FINE_LOCATION};
     static long minInterval, minDistance;                               // время обновления
     static HashMap<Integer, State> stateGpsMap = new HashMap<>();
-    static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
     static HashMap<Integer, Note> noteGpsMap = new HashMap<>();
+    static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
     static ArrayList<LatLng> noteGpsList = new ArrayList<LatLng>();
     static String currentStateName, currentNoteName;
     static AudioManager audioManager;
@@ -52,19 +52,22 @@ public class GPSService extends Service {
     static SharedPreferences prefs;
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
-    private static final String[] READ_ACCESS_FINE = new String[]{READ_CONTACTS, ACCESS_FINE_LOCATION};
     private LocationListener locationListener = new LocationListener() {
 
         @Override
         public void onLocationChanged(Location location) {
-            Log.d(TAG, "широта:" + location.getLatitude());
-            Log.d(TAG, "долгота:" + location.getLongitude());
+            Log.d(TAG, "широта: " + location.getLatitude());
+            Log.d(TAG, "долгота: " + location.getLongitude());
             double lat = location.getLatitude();
             double lng = location.getLongitude();
 
 
-            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null)
-                setState(stateGpsMap.get(checkLatLngState(lat, lng)));
+            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null) {
+                State state = stateGpsMap.get(checkLatLngState(lat, lng));
+                if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
+                    setState(state);
+                }
+            }
 
             if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
                 Note note = noteGpsMap.get(checkLatLngNote(lat, lng));
@@ -91,18 +94,12 @@ public class GPSService extends Service {
 //                            .setAutoCancel(true)
 //                            .setContentIntent(notifyPendingIntent);
 //                    notificationManager.notify(note.getId(), builder.build());
-
                     sendNotification(getApplicationContext(), note);
-
                     HistoryHelper hh = new HistoryHelper(getApplicationContext());
-
-
                     hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getDate());
-
                     SharedPreferences.Editor ed = prefs.edit();
                     ed.putString("noteName", note.getName());
                     ed.apply();
-
                     Log.d(TAG, "noteName: " + note.getName());
                     Toast.makeText(getApplicationContext(), "setNote: " + note.getName(), Toast.LENGTH_SHORT).show();
                 }
@@ -141,11 +138,14 @@ public class GPSService extends Service {
                 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         assert locationManager != null;
-        if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+//        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+//                ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, getMinTime(),
                     getMinDistance(), locationListener);
-        else  onDestroy();
+
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
+//                0, locationListener);
+//        else onDestroy();
 
 
         StateHelper sh = new StateHelper(getApplicationContext());
@@ -204,26 +204,26 @@ public class GPSService extends Service {
 
     private void setState(State state) {
 
-        if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
 
-            HistoryHelper hh = new HistoryHelper(getApplicationContext());
-            hh.insert("Состояние: " + state.getName() + "\nВремя включения: " + getDate());
-            Toast.makeText(getApplicationContext(), "set:" + state.getName(), Toast.LENGTH_SHORT).show();
-            wifiManager.setWifiEnabled(state.isWiFiState());
+        HistoryHelper hh = new HistoryHelper(getApplicationContext());
+        hh.insert("Состояние: " + state.getName() + "\nВремя включения: " + getDate());
+        Toast.makeText(getApplicationContext(), "set:" + state.getName(), Toast.LENGTH_SHORT).show();
+        wifiManager.setWifiEnabled(state.isWiFiState());
 
-            if (state.isBluetoothState()) btAdapter.enable();
-            else btAdapter.disable();
+        if (state.isBluetoothState()) btAdapter.enable();
+        else btAdapter.disable();
 
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, numToPercent(state.getMediaSoundState(),
-                    audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
-            audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, numToPercent(state.getSystemSoundState(),
-                    audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, numToPercent(state.getMediaSoundState(),
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, numToPercent(state.getSystemSoundState(),
+                audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
 
-            SharedPreferences.Editor ed = prefs.edit();
-            ed.putString("stateName", state.getName());
-            ed.apply();
-            Log.d(TAG, "setState: " + state.getName());
-        }
+        SharedPreferences.Editor ed = prefs.edit();
+        ed.putString("stateName", state.getName());
+        ed.apply();
+        Log.d(TAG, "setState: " + state.getName());
+        sendNotification(getApplicationContext(), state);
+
 
     }
 
@@ -256,8 +256,8 @@ public class GPSService extends Service {
                 return i;
             }
             Log.d(TAG, Math.pow((lat - noteGpsList.get(i).latitude), 2) + Math.pow((lng - noteGpsList.get(i).latitude), 2) + "    " + Math.pow(4.986137129513397E-4, 2));
-            Log.d(TAG, noteGpsList.get(i).latitude + "");
-            Log.d(TAG, noteGpsList.get(i).longitude + "");
+            Log.d(TAG, "check" + noteGpsList.get(i).latitude + "");
+            Log.d(TAG, "check" + noteGpsList.get(i).longitude + "");
         }
         return 999;
     }
@@ -287,9 +287,8 @@ public class GPSService extends Service {
     }
 
     private long getMinTime() {
-
-        switch (prefs.getInt("timeLocationSetting", 1)) {
-
+        Log.d(TAG,"getTime: "+ prefs.getInt("timeLocationSetting", 0));
+        switch (prefs.getInt("timeLocationSetting", 0)) {
 
             case 0:
                 return 60 * 1000L;
@@ -304,7 +303,7 @@ public class GPSService extends Service {
             case 5:
                 return 60 * 60 * 1000L;
             default:
-                return 0;
+                return 1;
 
 
         }
@@ -312,6 +311,20 @@ public class GPSService extends Service {
     }
 
     private void sendNotification(Context context, State state) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                    "State notifications", NotificationManager.IMPORTANCE_LOW);
+
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel description");
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(false);
+
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
 
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);
@@ -327,7 +340,7 @@ public class GPSService extends Service {
                 context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setSmallIcon(R.drawable.list)
                 .setContentTitle("Note time")
@@ -341,8 +354,8 @@ public class GPSService extends Service {
     private void sendNotification(Context context, Note note) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                    "Notifications", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel notificationChannel = new NotificationChannel(NOTE_NOTIFICATION_CHANNEL_ID,
+                    "Note notifications", NotificationManager.IMPORTANCE_HIGH);
 
             // Configure the notification channel.
             notificationChannel.setDescription("Channel description");
@@ -367,7 +380,7 @@ public class GPSService extends Service {
                 context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_NOTIFICATION_CHANNEL_ID)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setSmallIcon(R.drawable.note)
                 .setContentTitle("Note time")

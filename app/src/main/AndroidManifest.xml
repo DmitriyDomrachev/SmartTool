@@ -52,10 +52,11 @@
         <service
             android:name=".GPSService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+             />
 
         <activity android:name=".AddNoteActivity" />
-        <activity android:name=".ShowActivity"></activity>
+        <activity android:name=".ShowActivity" />
     </application>
 
 </manifest>
