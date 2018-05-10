@@ -1,14 +1,19 @@
 package com.example.dima.smarttool;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.DB.StateHelper;
@@ -20,12 +25,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+
 public class StateAlarmReceiver extends BroadcastReceiver {
+    private static final String NOTIFICATION_CHANNEL_ID = "state_notification_channel";
     static Map<String, State> stateTimeMap = new HashMap<String, State>();                       //зраниение значиний времени старта и номера состояния
     static AudioManager audioManager;
     String name;
+    State state;
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
+    static NotificationManager notificationManager;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -34,23 +45,28 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         Log.d("alarm", "receive");
         StateHelper sh = new StateHelper(context);                                     // инициализация помощника управления состояниямив базе данных
         loadStates(sh.getAll());
-        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        Toast.makeText(context, "receive",
-                Toast.LENGTH_LONG).show();
+
+        wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        audioManager = (AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+        notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+
+
+
+
         if (stateTimeMap.get(name) != null) {
-            State state = stateTimeMap.get(name);
+            this.state = stateTimeMap.get(name);
             setState(state);
             SharedPreferences prefs = context.getSharedPreferences("myPrefs",
                     Context.MODE_PRIVATE);
             SharedPreferences.Editor ed = prefs.edit();
             ed.putString("stateName", state.getName());
-            ed.commit();
-
+            ed.apply();
             HistoryHelper hh = new HistoryHelper(context);
             hh.insert("Состояние: "+ state.getName()+ "\nВремя включения: "+ getDate());
-
             Log.d("alarm", "setState: " + name);
+            sendNotification(context);
+
         }
 
     }
@@ -62,7 +78,6 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         date.setTime(calendar.getTimeInMillis());
         return date.getHours() + ":" + date.getMinutes();
     }
-
 
     public void loadStates(ArrayList<State> states) {
         for (int i = 0; i < states.size(); i++) {
@@ -78,15 +93,15 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         if (state.isBluetoothState()) btAdapter.enable();
         else btAdapter.disable();
 
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progInex(state.getMediaSoundState(),
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, numToPercent(state.getMediaSoundState(),
                 audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
-        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, progInex(state.getSystemSoundState(),
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, numToPercent(state.getSystemSoundState(),
                 audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
         Log.d("timeS", "setState: " + state.getName());
 
     }
 
-    private int progInex(float in, int max) {
+    private int numToPercent(float in, int max) {
         in = in / 100;
         return (int) (max * in);
     }
@@ -100,4 +115,45 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         return dateFormat.format(new Date());
     }
+
+    private void sendNotification(Context context) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                    "State notifications", NotificationManager.IMPORTANCE_LOW);
+
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel description");
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(false);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
+
+        Intent notifyIntent = new Intent(context, ShowActivity.class);
+        notifyIntent.putExtra("name", state.getName());
+        notifyIntent.putExtra("lat", state.getLat());
+        notifyIntent.putExtra("lng", state.getLng());
+        notifyIntent.putExtra("time", state.getStartTime());
+        notifyIntent.putExtra("text", "Wifi: " + state.isWiFiState()
+                + "\nBluetooth: " + state.isBluetoothState() + "\nMedia: " + state.getMediaSoundState()
+                + "%\nSystem: " + state.getSystemSoundState() + "%");
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setSmallIcon(R.drawable.list)
+                .setContentTitle("State time")
+                .setContentText("State: " + state.getName())
+                .setAutoCancel(true)
+                .setContentIntent(notifyPendingIntent);
+        assert notificationManager != null;
+        notificationManager.notify(state.getId(), builder.build());
+    }
+
+
 }

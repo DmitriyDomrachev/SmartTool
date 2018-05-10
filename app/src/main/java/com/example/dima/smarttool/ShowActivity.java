@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ShowActivity extends AppCompatActivity {
     Intent intent;
-    TextView name, note;
+    TextView name, text;
     Button condition;
     double lat = 0, lng = 0;
     long time = 0;
@@ -28,10 +28,10 @@ public class ShowActivity extends AppCompatActivity {
 
         intent = getIntent();
         name = findViewById(R.id.showNameText);
-        note = findViewById(R.id.showText);
+        text = findViewById(R.id.showText);
         condition = findViewById(R.id.showConditionButton);
         name.setText(intent.getStringExtra("name"));
-        note.setText(intent.getStringExtra("note"));
+        text.setText(intent.getStringExtra("text"));
         lat += intent.getDoubleExtra("lat", 0);
         lng += intent.getDoubleExtra("lng", 0);
         time += intent.getLongExtra("time", 0);

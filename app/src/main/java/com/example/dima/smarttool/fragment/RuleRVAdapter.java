@@ -117,7 +117,7 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
 
             Intent intent = new Intent(context, ShowActivity.class);
             intent.putExtra("name", state.getName());
-            intent.putExtra("note", "Wifi: " + wifi
+            intent.putExtra("text", "Wifi: " + wifi
                     + "\nBluetooth: " + bt + "\nMedia: " + state.getMediaSoundState()
                     + "%\nSystem: " + state.getSystemSoundState() + "%");
             Log.d("showActivity", "IntentPut lat: "+state.getLat()+ "    lng: "+state.getLng());

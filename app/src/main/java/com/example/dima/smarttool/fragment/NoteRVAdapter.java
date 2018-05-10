@@ -60,7 +60,10 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
 
         }
         holder.cvListener.setRecord(note);// как-то надо понимать с каким состоянием работаем
-        holder.txtText.setText(note.getText());
+        String noteText = note.getText();
+        if(noteText.length() > 25)
+            noteText = noteText.substring(0,20) + "...";
+        holder.txtText.setText(noteText);
         holder.btnClickListener.setRecord(note);                                                       // как-то надо понимать с состоянием  работаем
 
     }

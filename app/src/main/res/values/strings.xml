@@ -11,4 +11,28 @@
     <string name="Sound">Громкость звука: </string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
+
+    <string-array name="journalSettingSpinner">
+        <item>Сначала новые записи</item>
+        <item>Сначала старые записи</item>
+    </string-array>
+
+    <string-array name="timeLocation">
+        <item>Каждую минуту</item>
+        <item>Каждые 5 минут</item>
+        <item>Каждые 10 минут</item>
+        <item>Каждые 20 минут</item>
+        <item>Каждые 40 минут</item>
+        <item>Каждые 60 минут</item>
+    </string-array>
+
+    <string-array name="distanceLocation">
+        <item>Каждые 10 метров</item>
+        <item>Каждые 20 метров</item>
+        <item>Каждые 50 метров</item>
+        <item>Каждые 100 метров</item>
+        <item>Каждые 200 метров</item>
+        <item>Каждые 500 метров</item>
+
+    </string-array>
 </resources>

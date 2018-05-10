@@ -10,18 +10,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="103dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/head"
-
         android:elevation="2dp"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/ScanFragmentStateTextView"
-            android:layout_marginLeft="@dimen/text_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="Текущее состояние: "
             android:textColor="@color/primary_text"
             android:textSize="18sp" />
@@ -29,13 +28,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/ScanFragmentWiFiImageButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/cardview_light_background"
                 android:scaleType="fitCenter"
@@ -45,7 +44,7 @@
             <ImageButton
                 android:id="@+id/ScanFragmentBluetoothImageButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_weight="1"
@@ -56,7 +55,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_weight="1"
                 android:background="#FFF">
 
@@ -93,7 +92,7 @@
         android:layout_height="396dp"
         android:layout_marginHorizontal="4dp"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@drawable/content"
+        android:background="@drawable/journal"
         android:elevation="2dp"
         android:orientation="vertical">
 

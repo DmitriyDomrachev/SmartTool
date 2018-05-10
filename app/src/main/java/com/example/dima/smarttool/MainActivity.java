@@ -34,14 +34,13 @@ import com.example.dima.smarttool.fragment.SettingFragment;
 
 import java.util.ArrayList;
 
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.READ_CONTACTS;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String[] READ_ACCESS_FINE = new String[]{READ_CONTACTS, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION};
+    private static final String[] READ_ACCESS_FINE = new String[]{READ_CONTACTS, ACCESS_FINE_LOCATION};
     public static int batteryChange;
     static FragmentTransaction fragmentTransaction;
     static AudioManager audioManager;
@@ -77,6 +76,15 @@ public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<Note> getNoteArr() {
         return noteLoadArr;
+    }
+
+    public static void setWiFi(boolean wifi) {
+        wifiManager.setWifiEnabled(wifi);
+    }
+
+    public static void setBluetooth(boolean bluetooth) {
+        if (bluetooth) btAdapter.enable();
+        else btAdapter.disable();
     }
 
     @Override
@@ -226,10 +234,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    protected void onPostExecute(Void image) {
-
-    }
-
     private void requestPermission(String[] permission, int requestCode) {
         ActivityCompat.requestPermissions(this, permission, requestCode);
     }
@@ -273,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
 
             return null;
         }
+
     }
 }
 
