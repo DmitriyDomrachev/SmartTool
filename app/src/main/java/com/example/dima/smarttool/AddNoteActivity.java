@@ -154,6 +154,7 @@ public class AddNoteActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             lat = data.getDoubleExtra("lat", 0);
             lng = data.getDoubleExtra("lng", 0);
+            setConditionTextView.setText("Страт по GPS");
         }
     }
 

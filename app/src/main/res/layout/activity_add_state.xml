@@ -141,9 +141,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:hint="Введите условие"
             android:gravity="center_vertical"
-            android:textColor="@android:color/background_dark"
+            android:hint="Введите условие"
+            android:textColor="@color/secondary_text"
             android:textSize="18sp" />
 
     </LinearLayout>

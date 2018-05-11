@@ -314,8 +314,8 @@ public class GPSService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setSmallIcon(R.drawable.list)
-                .setContentTitle("Note time")
-                .setContentText("Note: " + state.getName())
+                .setContentTitle("Установлен профиль")
+                .setContentText(state.getName())
                 .setAutoCancel(true)
                 .setContentIntent(notifyPendingIntent);
         assert notificationManager != null;
@@ -354,8 +354,8 @@ public class GPSService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_NOTIFICATION_CHANNEL_ID)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setSmallIcon(R.drawable.note)
-                .setContentTitle("Note time")
-                .setContentText("Note: " + note.getName())
+                .setContentTitle("Напоминание")
+                .setContentText(note.getName())
                 .setAutoCancel(true)
                 .setContentIntent(notifyPendingIntent);
         assert notificationManager != null;

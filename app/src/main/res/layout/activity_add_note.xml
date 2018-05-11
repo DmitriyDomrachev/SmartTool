@@ -79,7 +79,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:hint="Введите условие"
-                android:textColor="@android:color/background_dark"
+                android:textColor="@color/secondary_text"
                 android:textSize="18sp" />
 
         </LinearLayout>
