@@ -32,6 +32,22 @@ public class State {
         Log.d("test","new state nameEditText ="+name);
 
     }
+
+    public State(boolean wifiState, boolean bluetoothState, int mediaSoundState, int systemSoundState) {
+        this.wifiState = wifiState;
+        this.bluetoothState = bluetoothState;
+        this.mediaSoundState = mediaSoundState;
+        this.systemSoundState = systemSoundState;
+    }
+
+    public State(boolean wifiState, boolean bluetoothState, int mediaSoundState, int systemSoundState, String name) {
+        this.wifiState = wifiState;
+        this.bluetoothState = bluetoothState;
+        this.mediaSoundState = mediaSoundState;
+        this.systemSoundState = systemSoundState;
+        this.name = name;
+    }
+
     public State(){}
 
 

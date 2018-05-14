@@ -18,6 +18,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -34,8 +35,10 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class GPSService extends Service {
-    private static final String TAG = "mygps";
-    private static final String STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel", NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel";
+    private static final String TAG = "mygps", WIFI_PREFS = "currentWiFi",
+            BLUETOOTH_PREFS = "currentBluetooth", MEDIA_PREFS = "currentMedia",
+            SYSTEM_PREFS = "currentSYSTEM",STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel",
+            NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel";
     static HashMap<Integer, State> stateGpsMap = new HashMap<>();
     static HashMap<Integer, Note> noteGpsMap = new HashMap<>();
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
@@ -43,8 +46,11 @@ public class GPSService extends Service {
     static AudioManager audioManager;
     static NotificationManager notificationManager;
     static SharedPreferences prefs;
+    static boolean isCurrentStateSetted;
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
+
+
     private LocationListener locationListener = new LocationListener() {
 
         @Override
@@ -55,11 +61,16 @@ public class GPSService extends Service {
             double lng = location.getLongitude();
 
 
-            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null) {
+            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) !=999 && isCurrentStateSetted) {
                 State state = stateGpsMap.get(checkLatLngState(lat, lng));
                 if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
+                    setLastState(getCurrentState());
                     setState(state);
+                    isCurrentStateSetted = false;
                 }
+            }else if (checkLatLngState(lat, lng) ==999 && !isCurrentStateSetted){
+                setState(getLastState());
+                isCurrentStateSetted = true;
             }
 
             if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
@@ -103,20 +114,20 @@ public class GPSService extends Service {
         prefs = getApplicationContext().getSharedPreferences("myPrefs",
                 Context.MODE_PRIVATE);
 
-
         notificationManager = (NotificationManager) getApplicationContext()
                 .getSystemService(NOTIFICATION_SERVICE);
-
 
         LocationManager locationManager
                 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+//        assert locationManager != null;
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, getMinTime(),
+//                    getMinDistance(), locationListener);
+
+
         assert locationManager != null;
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, getMinTime(),
-                    getMinDistance(), locationListener);
-
-
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
+                0, locationListener);
 
 
         StateHelper sh = new StateHelper(getApplicationContext());
@@ -131,24 +142,20 @@ public class GPSService extends Service {
         Log.d(TAG, "getMinTime: " + getMinTime());
     }
 
-    @Override
-    public void onStart(Intent intent, int startId) {
-        Log.d(TAG, "startService");
-
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.d(TAG, "bindService");
-
-        return null;
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "destroyService");
 
+    }
+
+    @Nullable
+
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     private void loadStates(ArrayList<State> states) {
@@ -178,7 +185,6 @@ public class GPSService extends Service {
 
         HistoryHelper hh = new HistoryHelper(getApplicationContext());
         hh.insert("Состояние: " + state.getName() + "\nВремя включения: " + getDate());
-        Toast.makeText(getApplicationContext(), "set:" + state.getName(), Toast.LENGTH_SHORT).show();
         wifiManager.setWifiEnabled(state.isWiFiState());
 
         if (state.isBluetoothState()) btAdapter.enable();
@@ -237,6 +243,31 @@ public class GPSService extends Service {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         return dateFormat.format(new Date());
     }
+
+    private State getLastState(){
+        boolean wifi = prefs.getBoolean(WIFI_PREFS,false);
+        boolean bluetooth = prefs.getBoolean(BLUETOOTH_PREFS,false);
+        int media = prefs.getInt(MEDIA_PREFS,0);
+        int system = prefs.getInt(SYSTEM_PREFS,0);
+        return  new State(wifi,bluetooth,media,system,"Последнее состояние");
+    }
+
+    private State getCurrentState(){
+        return new State(wifiManager.isWifiEnabled(), btAdapter.isEnabled(),
+                audioManager.getStreamVolume(AudioManager.STREAM_MUSIC),
+                audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
+    }
+
+
+    private void setLastState(State lastState){
+        SharedPreferences.Editor ed = prefs.edit();
+        ed.putBoolean(WIFI_PREFS, lastState.isWiFiState());
+        ed.putBoolean(BLUETOOTH_PREFS, lastState.isWiFiState());
+        ed.putInt(MEDIA_PREFS,lastState.getMediaSoundState());
+        ed.putInt(SYSTEM_PREFS,lastState.getSystemSoundState());
+        ed.apply();
+    }
+
 
     private long getMinDistance() {
         switch (prefs.getInt("distanceLocationSetting", 1)) {

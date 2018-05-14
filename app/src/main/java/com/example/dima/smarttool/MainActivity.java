@@ -24,6 +24,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     Fragment fragmentSc, fragmentL, fragmentN, fragmentS;
     FloatingActionButton fab;
     AlarmManager alarmManager;
+    Toolbar toolbar;
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -118,8 +120,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);                      //IntentFilter батареи
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);                       //текущее состояние батареи, mBroadcastReceiver в качестве преемника
-
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        toolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("SmartTool");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.icons));
 
         fab = findViewById(R.id.fab);
         fab.hide();
@@ -159,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.navigation_scan:
                         navigateID = R.id.navigation_scan;
+                        getSupportActionBar().setTitle("SmartTool");
                         rewriteFragment();
                         fab.hide();
 
@@ -167,18 +173,21 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navigation_list:
                         fab.show();
                         navigateID = R.id.navigation_list;
+                        getSupportActionBar().setTitle("Список состояний");
                         loadFragment(fragmentL);
                         return true;
 
                     case R.id.navigation_note:
                         fab.show();
                         navigateID = R.id.navigation_note;
+                        getSupportActionBar().setTitle("Список напоминаий");
                         loadFragment(fragmentN);
                         return true;
 
                     case R.id.navigation_setting:
                         fab.hide();
                         navigateID = R.id.navigation_setting;
+                        getSupportActionBar().setTitle("Настройки");
                         loadFragment(fragmentS);
 
                         return true;
