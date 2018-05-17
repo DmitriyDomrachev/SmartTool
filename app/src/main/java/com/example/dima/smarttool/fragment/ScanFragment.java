@@ -90,7 +90,7 @@ public class ScanFragment extends Fragment {
         });
 
 
-        stateName.setText("Последнее состояние: " + String.valueOf(prefs.getString("stateName", "")));
+        stateName.setText(String.valueOf(stateName.getText() + (prefs.getString("stateName", ""))));
 
         // находим список
         ListView lvMain = (ListView) view.findViewById(R.id.ScanFragmentListView);

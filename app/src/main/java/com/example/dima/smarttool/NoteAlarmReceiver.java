@@ -94,6 +94,7 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
         }
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);
+        notifyIntent.putExtra("type","Note");
         notifyIntent.putExtra("name", note.getName());
         notifyIntent.putExtra("text", note.getText());
         notifyIntent.putExtra("lat", note.getLat());

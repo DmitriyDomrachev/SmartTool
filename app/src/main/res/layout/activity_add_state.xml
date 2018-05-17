@@ -1,166 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.dima.smarttool.AddStateActivity"
-    android:layout_margin="@dimen/fab_margin">
+    tools:context="com.example.dima.smarttool.AddStateActivity">
 
-
-
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/noteToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="Новое состояние"
+        app:titleTextColor="@color/icons" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        app:layout_constraintTop_toBottomOf="@id/noteToolbar">
 
-        <TextView
-            android:id="@+id/addStateNameTextView"
-            android:layout_width="87dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Имя"
-            android:textColor="@color/primary_text"
-            android:textSize="24sp" />
-
-        <EditText
-            android:id="@+id/addStateNameEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:ems="10"
-            android:hint="Введите имя"
-            android:inputType="textPersonName" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Switch
-            android:id="@+id/addStateWiFiSwitch"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="WiFi"
-            android:textColor="@color/primary_text"
-            android:textSize="24sp" />
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/addStateNameTextView"
+                android:layout_width="87dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Имя"
+                android:textColor="@color/primary_text"
+                android:textSize="24sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            <EditText
+                android:id="@+id/addStateNameEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:hint="Введите имя"
+                android:inputType="textPersonName" />
 
-        <Switch
-            android:id="@+id/addStateBluetoothSwitch"
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Bluetooth"
-            android:textColor="@color/primary_text"
-            android:textSize="24sp" />
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/addStateMediaSoundTextView"
+                android:layout_width="193dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="Громкость медиа"
+                android:textColor="@color/primary_text"
+                android:textSize="24sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+            <SeekBar
+                android:id="@+id/addStateMediaSoundSeekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="3" />
 
-        <TextView
-            android:id="@+id/addStateMediaSoundTextView"
-            android:layout_width="193dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Громкость медиа"
-            android:textColor="@color/primary_text"
-            android:textSize="24sp" />
 
-        <SeekBar
-            android:id="@+id/addStateMediaSoundSeekBar"
-            android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="3" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/addStateSystemSoundTextView"
+                android:layout_width="193dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="Системная громкость"
+                android:textColor="@color/primary_text"
+                android:textSize="24sp" />
 
 
-    </LinearLayout>
+            <SeekBar
+                android:id="@+id/addStateSystemSoundSeekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="3" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/addStateSystemSoundTextView"
-            android:layout_width="193dp"
+            <Switch
+                android:id="@+id/addStateWiFiSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="WiFi"
+                android:textColor="@color/primary_text"
+                android:textSize="24sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/addStateBluetoothSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Bluetooth"
+                android:textColor="@color/primary_text"
+                android:textSize="24sp" />
+
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/addStateConditionSwitch"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Системная громкость"
+            android:text="Изменить условие запуска"
             android:textColor="@color/primary_text"
             android:textSize="24sp" />
 
 
-        <SeekBar
-            android:id="@+id/addStateSystemSoundSeekBar"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="3" />
-    </LinearLayout>
+            android:orientation="horizontal">
 
-    <Switch
-        android:id="@+id/addStateConditionSwitch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Изменить условие запуска"
-        android:textColor="@color/primary_text"
-        android:textSize="24sp" />
+            <TextView
+                android:id="@+id/addStateConditionTextView"
+                android:layout_width="16dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Время"
+                android:textColor="@color/primary_text"
+                android:textSize="24sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/addStateSetTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:hint="Введите условие"
+                android:textColor="@color/secondary_text"
+                android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/addStateConditionTextView"
-            android:layout_width="16dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Время"
-            android:textColor="@color/primary_text"
-            android:textSize="24sp" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/addStateSetTextView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:hint="Введите условие"
-            android:textColor="@color/secondary_text"
-            android:textSize="18sp" />
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/addStateSaveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Сохранить" />
+
+        </LinearLayout>
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/addStateSaveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Сохранить" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

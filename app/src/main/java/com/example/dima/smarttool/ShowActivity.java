@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class ShowActivity extends AppCompatActivity {
+    Toolbar toolbar;
     Intent intent;
     TextView name, text;
     Button condition;
@@ -27,6 +29,12 @@ public class ShowActivity extends AppCompatActivity {
         Log.d("showActivity", "Create lat: " + lat + "    lng: " + lng);
 
         intent = getIntent();
+        toolbar = findViewById(R.id.showToolbar);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.icons));
+        if (Objects.equals(intent.getStringExtra("type"), "State"))
+            toolbar.setTitle("Состояние");
+        else
+            toolbar.setTitle("Напоминание");
         name = findViewById(R.id.showNameText);
         text = findViewById(R.id.showText);
         condition = findViewById(R.id.showConditionButton);

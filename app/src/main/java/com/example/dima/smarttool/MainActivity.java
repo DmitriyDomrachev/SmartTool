@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);                      //IntentFilter батареи
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);                       //текущее состояние батареи, mBroadcastReceiver в качестве преемника
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        toolbar = findViewById(R.id.my_toolbar);
+        toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("SmartTool");
         toolbar.setTitleTextColor(getResources().getColor(R.color.icons));

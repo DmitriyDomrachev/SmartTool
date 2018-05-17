@@ -114,6 +114,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(context, ShowActivity.class);
+            intent.putExtra("type","Note");
             intent.putExtra("name", note.getName());
             intent.putExtra("text", note.getText());
             intent.putExtra("lat", note.getLat());

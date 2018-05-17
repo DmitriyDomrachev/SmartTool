@@ -38,7 +38,7 @@ public class GPSService extends Service {
     private static final String TAG = "mygps", WIFI_PREFS = "currentWiFi",
             BLUETOOTH_PREFS = "currentBluetooth", MEDIA_PREFS = "currentMedia",
             SYSTEM_PREFS = "currentSYSTEM",STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel",
-            NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel";
+            NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel", CURRENT_STATE = "currentState";
     static HashMap<Integer, State> stateGpsMap = new HashMap<>();
     static HashMap<Integer, Note> noteGpsMap = new HashMap<>();
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
@@ -60,6 +60,7 @@ public class GPSService extends Service {
             double lat = location.getLatitude();
             double lng = location.getLongitude();
 
+            isCurrentStateSetted = prefs.getBoolean(CURRENT_STATE,true);
 
             if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) !=999 && isCurrentStateSetted) {
                 State state = stateGpsMap.get(checkLatLngState(lat, lng));
@@ -67,10 +68,16 @@ public class GPSService extends Service {
                     setLastState(getCurrentState());
                     setState(state);
                     isCurrentStateSetted = false;
+                    SharedPreferences.Editor ed = prefs.edit();
+                    ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
+                    ed.apply();
                 }
             }else if (checkLatLngState(lat, lng) ==999 && !isCurrentStateSetted){
                 setState(getLastState());
                 isCurrentStateSetted = true;
+                SharedPreferences.Editor ed = prefs.edit();
+                ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
+                ed.apply();
             }
 
             if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
@@ -120,14 +127,14 @@ public class GPSService extends Service {
         LocationManager locationManager
                 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-//        assert locationManager != null;
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, getMinTime(),
-//                    getMinDistance(), locationListener);
-
-
         assert locationManager != null;
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
-                0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, getMinTime(),
+                    getMinDistance(), locationListener);
+
+
+//        assert locationManager != null;
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
+//                0, locationListener);
 
 
         StateHelper sh = new StateHelper(getApplicationContext());
@@ -249,7 +256,7 @@ public class GPSService extends Service {
         boolean bluetooth = prefs.getBoolean(BLUETOOTH_PREFS,false);
         int media = prefs.getInt(MEDIA_PREFS,0);
         int system = prefs.getInt(SYSTEM_PREFS,0);
-        return  new State(wifi,bluetooth,media,system,"Последнее состояние");
+        return  new State(wifi,bluetooth,media,system,"Пользовательский");
     }
 
     private State getCurrentState(){
@@ -257,7 +264,6 @@ public class GPSService extends Service {
                 audioManager.getStreamVolume(AudioManager.STREAM_MUSIC),
                 audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
     }
-
 
     private void setLastState(State lastState){
         SharedPreferences.Editor ed = prefs.edit();
@@ -267,7 +273,6 @@ public class GPSService extends Service {
         ed.putInt(SYSTEM_PREFS,lastState.getSystemSoundState());
         ed.apply();
     }
-
 
     private long getMinDistance() {
         switch (prefs.getInt("distanceLocationSetting", 1)) {
@@ -330,6 +335,7 @@ public class GPSService extends Service {
 
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);
+        notifyIntent.putExtra("type","State");
         notifyIntent.putExtra("name", state.getName());
         notifyIntent.putExtra("lat", state.getLat());
         notifyIntent.putExtra("lng", state.getLng());
@@ -372,6 +378,7 @@ public class GPSService extends Service {
         }
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);
+        notifyIntent.putExtra("type","Note");
         notifyIntent.putExtra("name", note.getName());
         notifyIntent.putExtra("lat", note.getLat());
         notifyIntent.putExtra("lng", note.getLng());

@@ -121,6 +121,7 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
                     + "\nBluetooth: " + bt + "\nMedia: " + state.getMediaSoundState()
                     + "%\nSystem: " + state.getSystemSoundState() + "%");
             Log.d("showActivity", "IntentPut lat: "+state.getLat()+ "    lng: "+state.getLng());
+            intent.putExtra("type","State");
             intent.putExtra("lat", state.getLat());
             intent.putExtra("lng", state.getLng());
             intent.putExtra("time", state.getStartTime());

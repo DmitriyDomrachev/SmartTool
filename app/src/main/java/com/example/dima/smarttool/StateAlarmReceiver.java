@@ -129,6 +129,7 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         }
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);
+        notifyIntent.putExtra("type","State");
         notifyIntent.putExtra("name", state.getName());
         notifyIntent.putExtra("lat", state.getLat());
         notifyIntent.putExtra("lng", state.getLng());

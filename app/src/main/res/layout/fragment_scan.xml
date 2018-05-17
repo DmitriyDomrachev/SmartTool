@@ -19,9 +19,10 @@
             android:id="@+id/ScanFragmentStateTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/text_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="Текущее состояние: "
+            android:layout_marginStart="@dimen/text_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="Текущий профиль: "
             android:textColor="@color/primary_text"
             android:textSize="18sp" />
 
@@ -45,8 +46,6 @@
                 android:id="@+id/ScanFragmentBluetoothImageButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
                 android:layout_weight="1"
                 android:backgroundTint="@color/cardview_light_background"
                 android:scaleType="fitCenter"
@@ -102,7 +101,9 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_marginStart="@dimen/text_margin"
-            android:text="История "
+            android:text="Журнал "
+            android:gravity="center_vertical"
+            android:textAllCaps="false"
             android:textColor="@color/primary_text"
             android:textSize="18sp" />
 
