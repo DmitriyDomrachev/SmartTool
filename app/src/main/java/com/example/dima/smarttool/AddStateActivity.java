@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,6 +24,8 @@ import com.example.dima.smarttool.fragment.TimePickerFragment;
 
 import java.util.Calendar;
 import java.util.Random;
+
+import static com.example.dima.smarttool.fragment.StateFragment.FIRST_START_STATES;
 
 public class AddStateActivity extends AppCompatActivity {
     static Switch wifiSwitch, bluetoothSwitch, conditionSwitch;
@@ -70,6 +73,9 @@ public class AddStateActivity extends AppCompatActivity {
         saveBtn = findViewById(R.id.addStateSaveButton);
         mediaSeekBar = findViewById(R.id.addStateMediaSoundSeekBar);
         systemSeekBar = findViewById(R.id.addStateSystemSoundSeekBar);
+        SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor ed = prefs.edit();
+
 
         final StateHelper sh = new StateHelper(getApplicationContext());
 
@@ -82,6 +88,8 @@ public class AddStateActivity extends AppCompatActivity {
                 startTime = milliseconds;
                 mediaI = mediaSeekBar.getProgress();
                 systemI = systemSeekBar.getProgress();
+                ed.putBoolean(FIRST_START_STATES, false);
+                ed.apply();
 
                 if (name.length() == 0) {
                     Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();

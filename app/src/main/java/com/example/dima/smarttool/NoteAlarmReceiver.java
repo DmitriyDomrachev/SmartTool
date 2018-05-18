@@ -108,8 +108,8 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setSmallIcon(R.drawable.note)
-                .setContentTitle("Note time")
-                .setContentText("Note: " + note.getName())
+                .setContentTitle("Напоминание")
+                .setContentText(note.getName())
                 .setAutoCancel(true)
                 .setContentIntent(notifyPendingIntent);
         assert notificationManager != null;

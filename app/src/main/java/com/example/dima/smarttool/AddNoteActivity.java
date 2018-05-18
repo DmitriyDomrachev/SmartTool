@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,6 +23,8 @@ import com.example.dima.smarttool.fragment.TimePickerFragment;
 
 import java.util.Calendar;
 import java.util.Random;
+
+import static com.example.dima.smarttool.fragment.NoteFragment.FIRST_START_NOTES;
 
 public class AddNoteActivity extends AppCompatActivity {
 
@@ -66,6 +69,8 @@ public class AddNoteActivity extends AppCompatActivity {
         textEditText = findViewById(R.id.addNoteTextEditText);
         conditionSwitch = findViewById(R.id.addNoteConditionSwitch);
         saveBtn = findViewById(R.id.addNoteSaveButton);
+        SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        final SharedPreferences.Editor ed = prefs.edit();
 
         final NoteHelper nh = new NoteHelper(getApplicationContext());
 
@@ -75,7 +80,8 @@ public class AddNoteActivity extends AppCompatActivity {
                 name = nameEditText.getText().toString();
                 text = textEditText.getText().toString();
                 startTime = milliseconds;
-
+                ed.putBoolean(FIRST_START_NOTES, false);
+                ed.apply();
                 if (name.length() == 0)
                     Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
                 else {

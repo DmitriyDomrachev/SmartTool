@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.dima.smarttool.MainActivity;
-import com.example.dima.smarttool.Note;
 import com.example.dima.smarttool.R;
+import com.example.dima.smarttool.State;
 
 import java.util.ArrayList;
 
@@ -22,9 +22,9 @@ import java.util.ArrayList;
  * Created by dima on 27.02.2018.
  */
 
-public class NoteFragment extends Fragment {
-    public static final String FIRST_START_NOTES = "firstNotes";
-    ArrayList<Note> noteArrayList = new ArrayList<>(MainActivity.getNoteArr());
+public class StateFragment extends Fragment {
+    public static final String FIRST_START_STATES = "firstStates";
+    ArrayList<State> stateArrayList = new ArrayList<>(MainActivity.getStateArr());
     RecyclerView rv;
     TextView firstTextView;
     Boolean firstStart;
@@ -32,23 +32,20 @@ public class NoteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_notes, container, false);
-        firstTextView = view.findViewById(R.id.stateFragmentStartTextView);
+        View view = inflater.inflate(R.layout.fragment_states, container, false);
+
+        firstTextView = view.findViewById(R.id.ruleFragmentStartTextView);
         SharedPreferences prefs = getActivity().getSharedPreferences("myPrefs",
                 Context.MODE_PRIVATE);
-        firstStart = prefs.getBoolean(FIRST_START_NOTES, true);
+        firstStart = prefs.getBoolean(FIRST_START_STATES, true);
         if (firstStart)
             firstTextView.setVisibility(View.VISIBLE);
         //текст подсказка при первом запуске
 
-
-        rv = view.findViewById(R.id.rvNote);
-        rv.setLayoutManager(new LinearLayoutManager(view.getContext())); // устанавливаем разметку для списка.
-        rv.setItemAnimator(new DefaultItemAnimator());          //устанавливаем класс, отвечающий за анимации в списке
-        rv.setAdapter(new NoteRVAdapter(noteArrayList, view.getContext())); //устанавливаем наш адаптер
-
+        rv = view.findViewById(R.id.rvList);
+        rv.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        rv.setItemAnimator(new DefaultItemAnimator());
+        rv.setAdapter(new StateRVAdapter(stateArrayList, view.getContext()));
         return view;
     }
 }
-
-

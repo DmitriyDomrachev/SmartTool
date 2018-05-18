@@ -51,7 +51,10 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         holder.txtName.setText(String.valueOf(note.getName()));
         if (note.getLat() == 0 && note.getStartTime() != 999999999) {
             holder.iconImageView.setImageResource(R.drawable.alarm);
-            holder.txtTime.setText(String.valueOf(hour + ":" + minute));
+            if (minute < 10)
+                holder.txtTime.setText(String.valueOf(hour + ":0" + minute));
+            else holder.txtTime.setText(String.valueOf(hour + ":" + minute));
+
             holder.txtTime.setVisibility(View.VISIBLE);
         } else if (note.getLat() == 0 && note.getLng() == 0 && note.getStartTime() == 999999999) {
             holder.iconImageView.setImageResource(R.drawable.hand);
@@ -79,7 +82,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
 
         TextView txtName, txtText, txtStart, txtTime, txtDelete;
         CardView cv;
-            ImageView iconImageView, gpsImageView, noteImageView;
+        ImageView iconImageView, gpsImageView, noteImageView;
 
 
         //Инициализируем слушатели

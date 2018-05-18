@@ -33,6 +33,12 @@
         <item>Каждые 100 метров</item>
         <item>Каждые 200 метров</item>
         <item>Каждые 500 метров</item>
-
     </string-array>
+
+    <string-array name="startCondition">
+        <item>Выберите условие</item>
+        <item>Старт по GPS</item>
+        <item>Старт по времени</item>
+    </string-array>
+
 </resources>

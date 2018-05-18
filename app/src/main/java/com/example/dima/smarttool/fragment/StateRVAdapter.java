@@ -23,12 +23,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by dima on 19.03.2018.
  */
-public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsViewHolder> {
+public class StateRVAdapter extends RecyclerView.Adapter<StateRVAdapter.ContactsViewHolder> {
 
     private static ArrayList<State> states;
     private Context context;
 
-    RuleRVAdapter(ArrayList<State> states, Context context) {
+    StateRVAdapter(ArrayList<State> states, Context context) {
         this.states = states;
         this.context = context;
     }
@@ -47,9 +47,12 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
         long millis = calendar.getTimeInMillis();
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
-        holder.txtName.setText(holder.txtName.getText() + String.valueOf(state.getName()));
+        holder.txtName.setText(String.valueOf(holder.txtName.getText() + state.getName()));
         if (state.getLat() == 0 && state.getStartTime() != 999999999) {
-            holder.txtTime.setText(String.valueOf(hour + ":" + minute));
+            if (minute > 10)
+                holder.txtTime.setText(String.valueOf(hour + ":" + minute));
+            else holder.txtTime.setText(String.valueOf(hour + ":0" + minute));
+
             holder.txtTime.setVisibility(View.VISIBLE);
             holder.iconImageView.setImageResource(R.drawable.alarm);
         } else if (state.getLat() == 0 && state.getLng() == 0 && state.getStartTime() == 999999999) {

@@ -31,10 +31,10 @@ import android.view.View;
 
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
-import com.example.dima.smarttool.fragment.ListFragment;
 import com.example.dima.smarttool.fragment.NoteFragment;
 import com.example.dima.smarttool.fragment.ScanFragment;
 import com.example.dima.smarttool.fragment.SettingFragment;
+import com.example.dima.smarttool.fragment.StateFragment;
 
 import java.util.ArrayList;
 
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadDB();           // заргузка данных из базы данных
-        fragmentL = new ListFragment();
+        fragmentL = new StateFragment();
         fragmentN = new NoteFragment();
         fragmentS = new SettingFragment();
         fragmentManager = getFragmentManager();

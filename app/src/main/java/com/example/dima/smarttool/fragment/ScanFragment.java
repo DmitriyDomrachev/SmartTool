@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,14 +63,14 @@ public class ScanFragment extends Fragment {
         }
         batteryText.setText("" + BatteryState);
         if (WiFiState)
-            wifi.setColorFilter(Color.argb(255, 124, 75, 255));
-        else wifi.setColorFilter(Color.argb(255, 189, 189, 189));
+            wifi.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
+        else wifi.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
         if (BluetoothState)
-            bluetooth.setColorFilter(Color.argb(255, 124, 75, 255));
-        else bluetooth.setColorFilter(Color.argb(255, 189, 189, 189));
+            bluetooth.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
+        else bluetooth.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
         if (BatteryState > 30)
-            battery.setColorFilter(Color.argb(255, 124, 75, 255));
-        else battery.setColorFilter(Color.argb(255, 189, 189, 189));
+            battery.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
+        else battery.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
 
         wifi.setOnClickListener(new View.OnClickListener() {
             @Override

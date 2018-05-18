@@ -41,7 +41,7 @@
                 android:backgroundTint="@color/colorSecondaryLight"
                 android:scaleType="fitCenter"
                 android:src="@drawable/wif"
-                android:tint="@color/colorAccent" />
+                android:tint="@color/colorPrimaryLight" />
 
             <ImageButton
                 android:id="@+id/ScanFragmentBluetoothImageButton"
@@ -51,7 +51,7 @@
                 android:backgroundTint="@color/colorSecondaryLight"
                 android:scaleType="fitCenter"
                 android:src="@drawable/bluetooth"
-                android:tint="@color/colorAccent" />
+                android:tint="@color/colorPrimaryLight" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                     android:backgroundTint="@color/colorSecondaryLight"
                     android:scaleType="fitCenter"
                     android:src="@drawable/battery"
-                    android:tint="@color/colorAccent" />
+                    android:tint="@color/colorPrimaryLight" />
 
                 <TextView
                     android:id="@+id/ScanFragmentBatteryTextView"
@@ -117,13 +117,26 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </android.support.constraint.ConstraintLayout>
 
-        <ListView
-            android:id="@+id/ScanFragmentListView"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="?attr/dividerHorizontal" />
+            android:layout_height="match_parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.constraint.ConstraintLayout>
+
+            <ListView
+                android:id="@+id/ScanFragmentListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="?attr/dividerHorizontal" />
+        </FrameLayout>
+
     </LinearLayout>
 
 
