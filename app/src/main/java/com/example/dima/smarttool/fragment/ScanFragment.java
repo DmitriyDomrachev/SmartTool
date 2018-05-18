@@ -104,7 +104,7 @@ public class ScanFragment extends Fragment {
 
                 TextView tv = view.findViewById(android.R.id.text1);
 
-                tv.setTextColor(getResources().getColor(R.color.secondary_text));
+                tv.setTextColor(getResources().getColor(R.color.secondaryTextColor));
 
                 return view;
             }

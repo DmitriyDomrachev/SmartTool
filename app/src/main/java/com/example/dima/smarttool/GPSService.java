@@ -62,7 +62,7 @@ public class GPSService extends Service {
 
             isCurrentStateSetted = prefs.getBoolean(CURRENT_STATE,true);
 
-            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) !=999 && isCurrentStateSetted) {
+            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) !=999) {
                 State state = stateGpsMap.get(checkLatLngState(lat, lng));
                 if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
                     setLastState(getCurrentState());
@@ -101,6 +101,7 @@ public class GPSService extends Service {
 
         @Override
         public void onProviderDisabled(String provider) {
+
         }
 
         @Override
@@ -127,14 +128,16 @@ public class GPSService extends Service {
         LocationManager locationManager
                 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        assert locationManager != null;
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, getMinTime(),
-                    getMinDistance(), locationListener);
-
-
 //        assert locationManager != null;
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
-//                0, locationListener);
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, getMinTime(),
+//                    getMinDistance(), locationListener);
+
+
+        assert locationManager != null;
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000,
+                10, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000,
+                10, locationListener);
 
 
         StateHelper sh = new StateHelper(getApplicationContext());
@@ -219,11 +222,11 @@ public class GPSService extends Service {
     private int checkLatLngState(double lat, double lng) {
 
         for (int i = 0; i < stateGpsList.size(); i++) {
-            if (Math.pow((stateGpsList.get(i).latitude - lat), 2) + Math.pow((stateGpsList.get(i).longitude - lng), 2) <= Math.pow(9.986137129513397E-4, 2)) {
+            if (Math.pow((stateGpsList.get(i).latitude - lat), 2) + Math.pow((stateGpsList.get(i).longitude - lng), 2) <= Math.pow(16.986137129513397E-4, 2)) {
                 Log.d(TAG, "set " + i + ": " + stateGpsMap.get(i).getName());
                 return i;
             }
-            Log.d(TAG, Math.pow((lat - stateGpsList.get(i).latitude), 2) + Math.pow((lng - stateGpsList.get(i).latitude), 2) + "    " + Math.pow(9.986137129513397E-4, 2));
+            Log.d(TAG, Math.pow((lat - stateGpsList.get(i).latitude), 2) + Math.pow((lng - stateGpsList.get(i).latitude), 2) + "    " + Math.pow(16.986137129513397E-4, 2));
             Log.d(TAG, stateGpsList.get(i).latitude + "");
             Log.d(TAG, stateGpsList.get(i).longitude + "");
 
@@ -235,11 +238,11 @@ public class GPSService extends Service {
     private int checkLatLngNote(double lat, double lng) {
 
         for (int i = 0; i < noteGpsList.size(); i++) {
-            if (Math.pow((noteGpsList.get(i).latitude - lat), 2) + Math.pow((noteGpsList.get(i).longitude - lng), 2) <= Math.pow(4.986137129513397E-4, 2)) {
+            if (Math.pow((noteGpsList.get(i).latitude - lat), 2) + Math.pow((noteGpsList.get(i).longitude - lng), 2) <= Math.pow(16.986137129513397E-4, 2)) {
                 Log.d(TAG, "set " + i + ": " + noteGpsMap.get(i).getName());
                 return i;
             }
-            Log.d(TAG, Math.pow((lat - noteGpsList.get(i).latitude), 2) + Math.pow((lng - noteGpsList.get(i).latitude), 2) + "    " + Math.pow(4.986137129513397E-4, 2));
+            Log.d(TAG, Math.pow((lat - noteGpsList.get(i).latitude), 2) + Math.pow((lng - noteGpsList.get(i).latitude), 2) + "    " + Math.pow(16.986137129513397E-4, 2));
             Log.d(TAG, "check" + noteGpsList.get(i).latitude + "");
             Log.d(TAG, "check" + noteGpsList.get(i).longitude + "");
         }

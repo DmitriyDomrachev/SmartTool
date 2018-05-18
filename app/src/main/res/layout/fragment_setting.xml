@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"
             android:text="Журнал"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/primaryTextColor"
             android:textSize="24sp" />
 
         <Button
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/text_margin"
             android:text="Местоположение"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/primaryTextColor"
             android:textSize="24sp" />
 
         <TextView
@@ -62,7 +62,7 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginStart="@dimen/text_margin"
             android:text="Обновление данных о местоположении"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/secondaryTextColor"
             android:textSize="14sp" />
 
         <Spinner

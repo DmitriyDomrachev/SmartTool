@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,13 +49,15 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
         holder.txtName.setText(holder.txtName.getText() + String.valueOf(state.getName()));
         if (state.getLat() == 0 && state.getStartTime() != 999999999) {
-            holder.txtStart.setText("Время включения: " + String.valueOf(hour) + ":" + String.valueOf(minute));
-            holder.imageView.setImageResource(R.drawable.alarm);
+            holder.txtTime.setText(String.valueOf(hour + ":" + minute));
+            holder.txtTime.setVisibility(View.VISIBLE);
+            holder.iconImageView.setImageResource(R.drawable.alarm);
         } else if (state.getLat() == 0 && state.getLng() == 0 && state.getStartTime() == 999999999) {
-            holder.imageView.setImageResource(R.drawable.hand);
+            holder.iconImageView.setImageResource(R.drawable.hand);
+            holder.settingImageView.setVisibility(View.VISIBLE);
         } else {
-            holder.imageView.setImageResource(R.drawable.my_location);
-
+            holder.iconImageView.setImageResource(R.drawable.my_location);
+            holder.gpsImageView.setVisibility(View.VISIBLE);
         }
         holder.cvListener.setRecord(state);                                                             // как-то надо понимать с каким состоянием работаем
         holder.btnClickListener.setRecord(state);                                                       // как-то надо понимать с состоянием  работаем
@@ -71,10 +72,9 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
     //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtName, txtStart;
-        ImageButton btnRefactor;
+        TextView txtName, txtDelete, txtTime;
         CardView cv;
-        ImageView imageView;
+        ImageView iconImageView, gpsImageView, settingImageView;
 
         //Инициализируем слушатели
         CardViewClickListener cvListener = new CardViewClickListener();
@@ -84,15 +84,17 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
             super(itemView);
 
             txtName = itemView.findViewById(R.id.cvRuleNameTextView);
-            txtStart = itemView.findViewById(R.id.cvRuleStartTextView);
-            btnRefactor = itemView.findViewById(R.id.cvRuleRemoveButton);
-            imageView = itemView.findViewById(R.id.cvRuleImageView);
+            txtDelete = itemView.findViewById(R.id.cvRuleDeleteTextView);
+            txtTime = itemView.findViewById(R.id.сvRuleTimeTextView);
+            iconImageView = itemView.findViewById(R.id.cvRuleImageView);
+            gpsImageView = itemView.findViewById(R.id.cvRuleMapImageView);
+            settingImageView = itemView.findViewById(R.id.cvRuleSettingImageView);
 
             cv = itemView.findViewById(R.id.rule_rv);
 
             //цепляем слушатели
             cv.setOnClickListener(cvListener);
-            btnRefactor.setOnClickListener(btnClickListener);
+            txtDelete.setOnClickListener(btnClickListener);
 
 
         }
@@ -120,8 +122,8 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
             intent.putExtra("text", "Wifi: " + wifi
                     + "\nBluetooth: " + bt + "\nMedia: " + state.getMediaSoundState()
                     + "%\nSystem: " + state.getSystemSoundState() + "%");
-            Log.d("showActivity", "IntentPut lat: "+state.getLat()+ "    lng: "+state.getLng());
-            intent.putExtra("type","State");
+            Log.d("showActivity", "IntentPut lat: " + state.getLat() + "    lng: " + state.getLng());
+            intent.putExtra("type", "State");
             intent.putExtra("lat", state.getLat());
             intent.putExtra("lng", state.getLng());
             intent.putExtra("time", state.getStartTime());
@@ -130,7 +132,7 @@ public class RuleRVAdapter extends RecyclerView.Adapter<RuleRVAdapter.ContactsVi
 
         void setRecord(State state) {
             this.state = state;
-            }
+        }
     }
 
     class ButtonRemoveClickListener implements View.OnClickListener {

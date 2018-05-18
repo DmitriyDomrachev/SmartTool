@@ -24,9 +24,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/noteToolbar">
 
         <LinearLayout
@@ -40,7 +40,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Имя"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="24sp" />
 
             <EditText
@@ -51,7 +51,8 @@
                 android:background="@android:color/transparent"
                 android:ems="10"
                 android:hint="Введите имя"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textColor="@color/secondaryTextColor" />
 
         </LinearLayout>
 
@@ -66,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:text="Громкость медиа"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="24sp" />
 
             <SeekBar
@@ -89,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:text="Системная громкость"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="24sp" />
 
 
@@ -111,7 +112,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="WiFi"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="24sp" />
 
         </LinearLayout>
@@ -127,7 +128,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Bluetooth"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="24sp" />
 
         </LinearLayout>
@@ -137,9 +138,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Изменить условие запуска"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/secondaryTextColor"
             android:textSize="24sp" />
-
 
 
         <LinearLayout
@@ -153,7 +153,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Время"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="24sp" />
 
             <TextView
@@ -163,24 +163,22 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:hint="Введите условие"
-                android:textColor="@color/secondary_text"
+                android:textColor="@color/secondaryTextColor"
                 android:textSize="18sp" />
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+
+        <Button
+            android:id="@+id/addStateSaveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:layout_weight="0"
+            android:text="Сохранить"
+            android:textAlignment="center" />
 
-            <Button
-                android:id="@+id/addStateSaveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Сохранить" />
 
-        </LinearLayout>
     </LinearLayout>
 
 

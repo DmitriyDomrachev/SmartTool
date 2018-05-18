@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,18 +50,20 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
         holder.txtName.setText(String.valueOf(note.getName()));
         if (note.getLat() == 0 && note.getStartTime() != 999999999) {
-            holder.txtStart.setText("Время включения " + String.valueOf(hour) + ":" + String.valueOf(minute));
-            holder.imageView.setImageResource(R.drawable.alarm);
-        } else if (note.getLat() == 0 && note.getLng() == 0 && note.getStartTime() == 999999999)
-            holder.imageView.setImageResource(R.drawable.hand);
-        else {
-            holder.imageView.setImageResource(R.drawable.my_location);
-
+            holder.iconImageView.setImageResource(R.drawable.alarm);
+            holder.txtTime.setText(String.valueOf(hour + ":" + minute));
+            holder.txtTime.setVisibility(View.VISIBLE);
+        } else if (note.getLat() == 0 && note.getLng() == 0 && note.getStartTime() == 999999999) {
+            holder.iconImageView.setImageResource(R.drawable.hand);
+            holder.noteImageView.setVisibility(View.VISIBLE);
+        } else {
+            holder.iconImageView.setImageResource(R.drawable.my_location);
+            holder.gpsImageView.setVisibility(View.VISIBLE);
         }
         holder.cvListener.setRecord(note);// как-то надо понимать с каким состоянием работаем
         String noteText = note.getText();
-        if(noteText.length() > 25)
-            noteText = noteText.substring(0,20) + "...";
+        if (noteText.length() > 100)
+            noteText = noteText.substring(0, 100) + "...";
         holder.txtText.setText(noteText);
         holder.btnClickListener.setRecord(note);                                                       // как-то надо понимать с состоянием  работаем
 
@@ -76,10 +77,9 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
     //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtName, txtText, txtStart;
-        ImageButton btnRefactor;
+        TextView txtName, txtText, txtStart, txtTime, txtDelete;
         CardView cv;
-        ImageView imageView;
+            ImageView iconImageView, gpsImageView, noteImageView;
 
 
         //Инициализируем слушатели
@@ -92,14 +92,17 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
             txtName = itemView.findViewById(R.id.cvNoteNameTextView);
             txtStart = itemView.findViewById(R.id.cvNoteStartTextView);
             txtText = itemView.findViewById(R.id.cvNoteTextTextView);
-            btnRefactor = itemView.findViewById(R.id.cvNoteRemoveButton);
+            txtTime = itemView.findViewById(R.id.сvNoteTimeTextView);
+            txtDelete = itemView.findViewById(R.id.cvNoteDeleteTextView);
             cv = itemView.findViewById(R.id.note_rv);
-            imageView = itemView.findViewById(R.id.cvNoteImageView);
+            iconImageView = itemView.findViewById(R.id.cvNoteImageView);
+            gpsImageView = itemView.findViewById(R.id.cvNoteMapImageView);
+            noteImageView = itemView.findViewById(R.id.cvNoteNoteImageView);
 
 
             //цепляем слушатели
             cv.setOnClickListener(cvListener);
-            btnRefactor.setOnClickListener(btnClickListener);
+            txtDelete.setOnClickListener(btnClickListener);
 
 
         }
@@ -114,7 +117,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(context, ShowActivity.class);
-            intent.putExtra("type","Note");
+            intent.putExtra("type", "Note");
             intent.putExtra("name", note.getName());
             intent.putExtra("text", note.getText());
             intent.putExtra("lat", note.getLat());
