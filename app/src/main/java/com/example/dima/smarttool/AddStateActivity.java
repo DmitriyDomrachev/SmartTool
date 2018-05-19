@@ -11,12 +11,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.StateHelper;
@@ -29,8 +30,7 @@ import static com.example.dima.smarttool.fragment.StateFragment.FIRST_START_STAT
 
 public class AddStateActivity extends AppCompatActivity {
     static Switch wifiSwitch, bluetoothSwitch, conditionSwitch;
-    static TextView conditionTextView, setConditionTextView;
-    static int mediaI, systemI, hour, minute;
+    static int mediaI, systemI, hour, minute, condition = 0;
     static long milliseconds = 999999999;
     static double lat, lng;
     EditText nameEditText;
@@ -40,9 +40,10 @@ public class AddStateActivity extends AppCompatActivity {
     Boolean wifi, bluetooth;
     SeekBar mediaSeekBar, systemSeekBar;
     AlarmManager alarmManager;
+    Spinner conditionSpinner;
+
 
     public static void setTime(int hour, int minute) {
-        setConditionTextView.setText(hour + ":" + minute);
         milliseconds = hour * 3_600_000 + minute * 60_000;
 
     }
@@ -63,21 +64,53 @@ public class AddStateActivity extends AppCompatActivity {
         minute = 0;
         milliseconds = 0;
         lat = 0;
-        lng  = 0;
-        conditionTextView = findViewById(R.id.addStateConditionTextView);
-        setConditionTextView = findViewById(R.id.addStateSetTextView);
+        lng = 0;
+        conditionSpinner = findViewById(R.id.addStateConditionSpinner);
         nameEditText = findViewById(R.id.addStateNameEditText);
         wifiSwitch = findViewById(R.id.addStateWiFiSwitch);
         bluetoothSwitch = findViewById(R.id.addStateBluetoothSwitch);
-        conditionSwitch = findViewById(R.id.addStateConditionSwitch);
         saveBtn = findViewById(R.id.addStateSaveButton);
         mediaSeekBar = findViewById(R.id.addStateMediaSoundSeekBar);
         systemSeekBar = findViewById(R.id.addStateSystemSoundSeekBar);
+
         SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         final SharedPreferences.Editor ed = prefs.edit();
 
-
         final StateHelper sh = new StateHelper(getApplicationContext());
+
+        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(getApplicationContext(),
+                R.array.startCondition, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        conditionSpinner.setAdapter(adapter);
+        //создание аддаптеров для spinner
+
+        conditionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(), "" + position, Toast.LENGTH_SHORT).show();
+                switch (position) {
+                    case 0:
+                        condition = 0;
+                        break;
+                    case 1:
+                        startActivityForResult(new Intent(AddStateActivity.this,
+                                MapsActivity.class), 1);
+                        condition = 1;
+                        break;
+                    case 2:
+                        DialogFragment newFragment = new TimePickerFragment();
+                        newFragment.show(getFragmentManager(), "timePicker");
+                        condition = 2;
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,14 +127,16 @@ public class AddStateActivity extends AppCompatActivity {
                 if (name.length() == 0) {
                     Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (startTime == 0 && lat == 0 && lng == 0) {
+                    if (condition == 0) {
                         sh.insert(name, wifi, bluetooth, 999999999, mediaI, systemI, 0, 0);
+                        Log.d("addState","condition= "+condition);
                         // сохраниние без условия запуска
-                    } else if (lat != 0)
+                    }else if (condition == 1) {
                         sh.insert(name, wifi, bluetooth, 999999999, mediaI, systemI, lat, lng);
+                        Log.d("addState","condition= "+condition);
+
                         // сохраниние сохранение с запуском по GPS
-                    else {
-                        Log.d("addState", String.valueOf(setConditionTextView.getText()));
+                    }else if (condition == 2) {
                         Log.d("addState", "add time");
                         sh.insert(name, wifi, bluetooth, startTime, mediaI, systemI, 0, 0);
                         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -134,29 +169,7 @@ public class AddStateActivity extends AppCompatActivity {
             }
         });
 
-        conditionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    conditionTextView.setText("GPS");
-                else conditionTextView.setText("Время");
-            }
-        });
 
-
-        setConditionTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!conditionSwitch.isChecked()) {
-                    DialogFragment newFragment = new TimePickerFragment();
-                    newFragment.show(getFragmentManager(), "timePicker");
-                } else {
-                    startActivityForResult(new Intent(AddStateActivity.this, MapsActivity.class), 1);
-                }
-
-
-            }
-        });
     }
 
     public void onBackPressed() {
@@ -169,7 +182,6 @@ public class AddStateActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             lat = data.getDoubleExtra("lat", 0);
             lng = data.getDoubleExtra("lng", 0);
-            setConditionTextView.setText("Страт по GPS");
             Log.d("addState", "add LatLng: " + lat + "   " + lng);
         }
     }

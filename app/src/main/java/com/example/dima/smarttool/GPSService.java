@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
@@ -37,8 +36,10 @@ import java.util.Objects;
 public class GPSService extends Service {
     private static final String TAG = "mygps", WIFI_PREFS = "currentWiFi",
             BLUETOOTH_PREFS = "currentBluetooth", MEDIA_PREFS = "currentMedia",
-            SYSTEM_PREFS = "currentSYSTEM",STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel",
+            SYSTEM_PREFS = "currentSYSTEM", STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel",
             NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel", CURRENT_STATE = "currentState";
+    private static final int LOCATION_INTERVAL = 0;
+    private static final float LOCATION_DISTANCE = 0;
     static HashMap<Integer, State> stateGpsMap = new HashMap<>();
     static HashMap<Integer, Note> noteGpsMap = new HashMap<>();
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
@@ -50,71 +51,78 @@ public class GPSService extends Service {
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
 
-
-    private LocationListener locationListener = new LocationListener() {
-
-        @Override
-        public void onLocationChanged(Location location) {
-            Log.d(TAG, "широта: " + location.getLatitude());
-            Log.d(TAG, "долгота: " + location.getLongitude());
-            double lat = location.getLatitude();
-            double lng = location.getLongitude();
-
-            isCurrentStateSetted = prefs.getBoolean(CURRENT_STATE,true);
-
-            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) !=999) {
-                State state = stateGpsMap.get(checkLatLngState(lat, lng));
-                if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
-                    setLastState(getCurrentState());
-                    setState(state);
-                    isCurrentStateSetted = false;
-                    SharedPreferences.Editor ed = prefs.edit();
-                    ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
-                    ed.apply();
-                }
-            }else if (checkLatLngState(lat, lng) ==999 && !isCurrentStateSetted){
-                setState(getLastState());
-                isCurrentStateSetted = true;
-                SharedPreferences.Editor ed = prefs.edit();
-                ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
-                ed.apply();
-            }
-
-            if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
-                Note note = noteGpsMap.get(checkLatLngNote(lat, lng));
-                Log.d(TAG, "try noteName: " + note.getName());
-                Log.d(TAG, "pref noteName: " + prefs.getString("noteName", ""));
-
-                if ((!Objects.equals(String.valueOf(prefs.getString("noteName", "")), note.getName()))) {
-                    sendNotification(getApplicationContext(), note);
-                    HistoryHelper hh = new HistoryHelper(getApplicationContext());
-                    hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getDate());
-                    SharedPreferences.Editor ed = prefs.edit();
-                    ed.putString("noteName", note.getName());
-                    ed.apply();
-                    Log.d(TAG, "noteName: " + note.getName());
-                    Toast.makeText(getApplicationContext(), "setNote: " + note.getName(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
+    Location mLastLocation;
+    LocationListener[] mLocationListeners = new LocationListener[]{
+            new LocationListener(LocationManager.GPS_PROVIDER),
+            new LocationListener(LocationManager.NETWORK_PROVIDER)
     };
+    private LocationManager mLocationManager = null;
 
     public GPSService() {
     }
+
+
+//    private LocationListener locationListener = new LocationListener() {
+//
+//        @Override
+//        public void onLocationChanged(Location location) {
+//            Log.d(TAG, "широта: " + location.getLatitude());
+//            Log.d(TAG, "долгота: " + location.getLongitude());
+//            double lat = location.getLatitude();
+//            double lng = location.getLongitude();
+//
+//            isCurrentStateSetted = prefs.getBoolean(CURRENT_STATE,true);
+//
+//            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) !=999) {
+//                State state = stateGpsMap.get(checkLatLngState(lat, lng));
+//                if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
+//                    setLastState(getCurrentState());
+//                    setState(state);
+//                    isCurrentStateSetted = false;
+//                    SharedPreferences.Editor ed = prefs.edit();
+//                    ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
+//                    ed.apply();
+//                }
+//            }else if (checkLatLngState(lat, lng) ==999 && !isCurrentStateSetted){
+//                setState(getLastState());
+//                isCurrentStateSetted = true;
+//                SharedPreferences.Editor ed = prefs.edit();
+//                ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
+//                ed.apply();
+//            }
+//
+//            if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
+//                Note note = noteGpsMap.get(checkLatLngNote(lat, lng));
+//                Log.d(TAG, "try noteName: " + note.getName());
+//                Log.d(TAG, "pref noteName: " + prefs.getString("noteName", ""));
+//
+//                if ((!Objects.equals(String.valueOf(prefs.getString("noteName", "")), note.getName()))) {
+//                    sendNotification(getApplicationContext(), note);
+//                    HistoryHelper hh = new HistoryHelper(getApplicationContext());
+//                    hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getDate());
+//                    SharedPreferences.Editor ed = prefs.edit();
+//                    ed.putString("noteName", note.getName());
+//                    ed.apply();
+//                    Log.d(TAG, "noteName: " + note.getName());
+//                    Toast.makeText(getApplicationContext(), "setNote: " + note.getName(), Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        }
+//
+//
+//        @Override
+//        public void onProviderDisabled(String provider) {
+//
+//        }
+//
+//        @Override
+//        public void onProviderEnabled(String provider) {
+//        }
+//
+//        @Override
+//        public void onStatusChanged(String provider, int status, Bundle extras) {
+//        }
+//    };
 
     @SuppressLint("MissingPermission")
     @Override
@@ -133,11 +141,33 @@ public class GPSService extends Service {
 //                    getMinDistance(), locationListener);
 
 
-        assert locationManager != null;
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000,
-                10, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000,
-                10, locationListener);
+//        assert locationManager != null;
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000,
+//                10, locationListener);
+//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000,
+//                10, locationListener);
+
+
+        Log.e(TAG, "onCreate");
+        initializeLocationManager();
+        try {
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    mLocationListeners[1]);
+        } catch (java.lang.SecurityException ex) {
+            Log.i(TAG, "fail to request location update, ignore", ex);
+        } catch (IllegalArgumentException ex) {
+            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
+        }
+        try {
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    mLocationListeners[0]);
+        } catch (java.lang.SecurityException ex) {
+            Log.i(TAG, "fail to request location update, ignore", ex);
+        } catch (IllegalArgumentException ex) {
+            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+        }
 
 
         StateHelper sh = new StateHelper(getApplicationContext());
@@ -152,12 +182,19 @@ public class GPSService extends Service {
         Log.d(TAG, "getMinTime: " + getMinTime());
     }
 
-
     @Override
     public void onDestroy() {
+        Log.e(TAG, "onDestroy");
         super.onDestroy();
-        Log.d(TAG, "destroyService");
-
+        if (mLocationManager != null) {
+            for (int i = 0; i < mLocationListeners.length; i++) {
+                try {
+                    mLocationManager.removeUpdates(mLocationListeners[i]);
+                } catch (Exception ex) {
+                    Log.i(TAG, "fail to remove location listners, ignore", ex);
+                }
+            }
+        }
     }
 
     @Nullable
@@ -254,27 +291,27 @@ public class GPSService extends Service {
         return dateFormat.format(new Date());
     }
 
-    private State getLastState(){
-        boolean wifi = prefs.getBoolean(WIFI_PREFS,false);
-        boolean bluetooth = prefs.getBoolean(BLUETOOTH_PREFS,false);
-        int media = prefs.getInt(MEDIA_PREFS,0);
-        int system = prefs.getInt(SYSTEM_PREFS,0);
-        return  new State(wifi,bluetooth,media,system,"Пользовательский");
+    private State getLastState() {
+        boolean wifi = prefs.getBoolean(WIFI_PREFS, false);
+        boolean bluetooth = prefs.getBoolean(BLUETOOTH_PREFS, false);
+        int media = prefs.getInt(MEDIA_PREFS, 0);
+        int system = prefs.getInt(SYSTEM_PREFS, 0);
+        return new State(wifi, bluetooth, media, system, "Пользовательский");
     }
 
-    private State getCurrentState(){
-        return new State(wifiManager.isWifiEnabled(), btAdapter.isEnabled(),
-                audioManager.getStreamVolume(AudioManager.STREAM_MUSIC),
-                audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
-    }
-
-    private void setLastState(State lastState){
+    private void setLastState(State lastState) {
         SharedPreferences.Editor ed = prefs.edit();
         ed.putBoolean(WIFI_PREFS, lastState.isWiFiState());
         ed.putBoolean(BLUETOOTH_PREFS, lastState.isWiFiState());
-        ed.putInt(MEDIA_PREFS,lastState.getMediaSoundState());
-        ed.putInt(SYSTEM_PREFS,lastState.getSystemSoundState());
+        ed.putInt(MEDIA_PREFS, lastState.getMediaSoundState());
+        ed.putInt(SYSTEM_PREFS, lastState.getSystemSoundState());
         ed.apply();
+    }
+
+    private State getCurrentState() {
+        return new State(wifiManager.isWifiEnabled(), btAdapter.isEnabled(),
+                audioManager.getStreamVolume(AudioManager.STREAM_MUSIC),
+                audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
     }
 
     private long getMinDistance() {
@@ -297,7 +334,7 @@ public class GPSService extends Service {
     }
 
     private long getMinTime() {
-        Log.d(TAG,"getTime: "+ prefs.getInt("timeLocationSetting", 0));
+        Log.d(TAG, "getTime: " + prefs.getInt("timeLocationSetting", 0));
         switch (prefs.getInt("timeLocationSetting", 0)) {
 
             case 0:
@@ -338,7 +375,7 @@ public class GPSService extends Service {
 
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);
-        notifyIntent.putExtra("type","State");
+        notifyIntent.putExtra("type", "State");
         notifyIntent.putExtra("name", state.getName());
         notifyIntent.putExtra("lat", state.getLat());
         notifyIntent.putExtra("lng", state.getLng());
@@ -381,7 +418,7 @@ public class GPSService extends Service {
         }
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);
-        notifyIntent.putExtra("type","Note");
+        notifyIntent.putExtra("type", "Note");
         notifyIntent.putExtra("name", note.getName());
         notifyIntent.putExtra("lat", note.getLat());
         notifyIntent.putExtra("lng", note.getLng());
@@ -401,5 +438,83 @@ public class GPSService extends Service {
                 .setContentIntent(notifyPendingIntent);
         assert notificationManager != null;
         notificationManager.notify(note.getId(), builder.build());
+    }
+
+    private void initializeLocationManager() {
+        Log.e(TAG, "initializeLocationManager");
+        if (mLocationManager == null) {
+            mLocationManager = (LocationManager) getApplicationContext()
+                    .getSystemService(Context.LOCATION_SERVICE);
+        }
+    }
+
+    private class LocationListener implements android.location.LocationListener {
+        Location mLastLocation;
+
+        public LocationListener(String provider) {
+            Log.e(TAG, "LocationListener " + provider);
+            mLastLocation = new Location(provider);
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+
+
+            double lat = location.getLatitude();
+            double lng = location.getLongitude();
+
+
+            isCurrentStateSetted = prefs.getBoolean(CURRENT_STATE,true);
+            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) !=999) {
+                State state = stateGpsMap.get(checkLatLngState(lat, lng));
+                if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
+                    setLastState(getCurrentState());
+                    setState(state);
+                    isCurrentStateSetted = false;
+                    SharedPreferences.Editor ed = prefs.edit();
+                    ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
+                    ed.apply();
+                }
+            }else if (checkLatLngState(lat, lng) ==999 && !isCurrentStateSetted){
+                setState(getLastState());
+                isCurrentStateSetted = true;
+                SharedPreferences.Editor ed = prefs.edit();
+                ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
+                ed.apply();
+            }
+
+            if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
+                Note note = noteGpsMap.get(checkLatLngNote(lat, lng));
+                Log.d(TAG, "try noteName: " + note.getName());
+                Log.d(TAG, "pref noteName: " + prefs.getString("noteName", ""));
+
+                if ((!Objects.equals(String.valueOf(prefs.getString("noteName", "")), note.getName()))) {
+                    sendNotification(getApplicationContext(), note);
+                    HistoryHelper hh = new HistoryHelper(getApplicationContext());
+                    hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getDate());
+                    SharedPreferences.Editor ed = prefs.edit();
+                    ed.putString("noteName", note.getName());
+                    ed.apply();
+                    Log.d(TAG, "noteName: " + note.getName());
+                    Toast.makeText(getApplicationContext(), "setNote: " + note.getName(), Toast.LENGTH_SHORT).show();
+                }
+            }
+            mLastLocation.set(location);
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.e(TAG, "onProviderDisabled: " + provider);
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.e(TAG, "onProviderEnabled: " + provider);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.e(TAG, "onStatusChanged: " + provider);
+        }
     }
 }

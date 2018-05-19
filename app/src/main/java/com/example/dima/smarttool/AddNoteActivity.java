@@ -9,12 +9,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +30,8 @@ import static com.example.dima.smarttool.fragment.NoteFragment.FIRST_START_NOTES
 
 public class AddNoteActivity extends AppCompatActivity {
 
-    static Switch conditionSwitch;
-    static TextView conditionTextView, setConditionTextView;
-    static int hour, minute;
+    static TextView setConditionTextView;
+    static int hour, minute, condition = 0;
     static long milliseconds = 999999999;
     static double lat, lng;
     EditText nameEditText, textEditText;
@@ -38,6 +39,7 @@ public class AddNoteActivity extends AppCompatActivity {
     String name, text;
     Long startTime, time;
     AlarmManager alarmManager;
+    Spinner conditionSpinner;
 
     public static void setTime(int hour, int minute) {
         setConditionTextView.setText(hour + ":" + minute);
@@ -62,17 +64,51 @@ public class AddNoteActivity extends AppCompatActivity {
         minute = 0;
         milliseconds = 0;
         lat = 0;
-        lng  = 0;
-        conditionTextView = findViewById(R.id.addNoteConditionTextView);
-        setConditionTextView = findViewById(R.id.addNoteSetTextView);
+        lng = 0;
+        conditionSpinner = findViewById(R.id.addNoteConditionSpinner);
         nameEditText = findViewById(R.id.addNoteNameEditText);
         textEditText = findViewById(R.id.addNoteTextEditText);
-        conditionSwitch = findViewById(R.id.addNoteConditionSwitch);
+        textEditText.setMovementMethod(new ScrollingMovementMethod());
         saveBtn = findViewById(R.id.addNoteSaveButton);
+
         SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         final SharedPreferences.Editor ed = prefs.edit();
 
         final NoteHelper nh = new NoteHelper(getApplicationContext());
+
+        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(getApplicationContext(),
+                R.array.startCondition, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        conditionSpinner.setAdapter(adapter);
+        //создание аддаптеров для spinner
+
+        conditionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(), "" + position, Toast.LENGTH_SHORT).show();
+                switch (position) {
+                    case 0:
+                        break;
+                    case 1:
+                        startActivityForResult(new Intent(AddNoteActivity.this,
+                                MapsActivity.class), 1);
+                        condition = 1;
+                        break;
+                    case 2:
+                        DialogFragment newFragment = new TimePickerFragment();
+                        newFragment.show(getFragmentManager(), "timePicker");
+                        condition = 2;
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,16 +118,19 @@ public class AddNoteActivity extends AppCompatActivity {
                 startTime = milliseconds;
                 ed.putBoolean(FIRST_START_NOTES, false);
                 ed.apply();
+                Log.d("addNote", "condition = " + condition);
                 if (name.length() == 0)
                     Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
                 else {
-                    if (startTime == 0 && lat == 0 && lng == 0)
+                    if (condition == 0)
                         nh.insert(name, text, 999999999, 0, 0);
                         // сохраниние без условия запуска
-                    else if (lat != 0) {
+
+                    else if (condition == 1)
                         nh.insert(name, text, 999999999, lat, lng);
                         // сохраниние сохранение с запуском по GPS
-                    } else {
+
+                    else if (condition == 2) {
                         nh.insert(name, text, startTime, 0, 0);
                         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         Intent intent = new Intent(AddNoteActivity.this, NoteAlarmReceiver.class);
@@ -123,29 +162,6 @@ public class AddNoteActivity extends AppCompatActivity {
             }
         });
 
-        conditionSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked)
-                    conditionTextView.setText("GPS");
-                else conditionTextView.setText("Время");
-            }
-        });
-
-
-        setConditionTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!conditionSwitch.isChecked()) {
-                    DialogFragment newFragment = new TimePickerFragment();
-                    newFragment.show(getFragmentManager(), "timePicker");
-                } else {
-                    startActivityForResult(new Intent(AddNoteActivity.this, MapsActivity.class), 1);
-                }
-
-
-            }
-        });
 
 
     }
