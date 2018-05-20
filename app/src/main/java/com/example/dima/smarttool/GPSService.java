@@ -33,6 +33,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
+import static com.example.dima.smarttool.fragment.SettingFragment.NOTIF_STATE_SETTING;
+import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_NOTE_SETTING;
+import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_STATE_SETTING;
+
 public class GPSService extends Service {
     private static final String TAG = "mygps", WIFI_PREFS = "currentWiFi",
             BLUETOOTH_PREFS = "currentBluetooth", MEDIA_PREFS = "currentMedia",
@@ -62,67 +66,7 @@ public class GPSService extends Service {
     }
 
 
-//    private LocationListener locationListener = new LocationListener() {
-//
-//        @Override
-//        public void onLocationChanged(Location location) {
-//            Log.d(TAG, "широта: " + location.getLatitude());
-//            Log.d(TAG, "долгота: " + location.getLongitude());
-//            double lat = location.getLatitude();
-//            double lng = location.getLongitude();
-//
-//            isCurrentStateSetted = prefs.getBoolean(CURRENT_STATE,true);
-//
-//            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) !=999) {
-//                State state = stateGpsMap.get(checkLatLngState(lat, lng));
-//                if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
-//                    setLastState(getCurrentState());
-//                    setState(state);
-//                    isCurrentStateSetted = false;
-//                    SharedPreferences.Editor ed = prefs.edit();
-//                    ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
-//                    ed.apply();
-//                }
-//            }else if (checkLatLngState(lat, lng) ==999 && !isCurrentStateSetted){
-//                setState(getLastState());
-//                isCurrentStateSetted = true;
-//                SharedPreferences.Editor ed = prefs.edit();
-//                ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
-//                ed.apply();
-//            }
-//
-//            if (noteGpsMap.get(checkLatLngNote(lat, lng)) != null) {
-//                Note note = noteGpsMap.get(checkLatLngNote(lat, lng));
-//                Log.d(TAG, "try noteName: " + note.getName());
-//                Log.d(TAG, "pref noteName: " + prefs.getString("noteName", ""));
-//
-//                if ((!Objects.equals(String.valueOf(prefs.getString("noteName", "")), note.getName()))) {
-//                    sendNotification(getApplicationContext(), note);
-//                    HistoryHelper hh = new HistoryHelper(getApplicationContext());
-//                    hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getDate());
-//                    SharedPreferences.Editor ed = prefs.edit();
-//                    ed.putString("noteName", note.getName());
-//                    ed.apply();
-//                    Log.d(TAG, "noteName: " + note.getName());
-//                    Toast.makeText(getApplicationContext(), "setNote: " + note.getName(), Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        }
-//
-//
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//
-//        }
-//
-//        @Override
-//        public void onProviderEnabled(String provider) {
-//        }
-//
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//        }
-//    };
+
 
     @SuppressLint("MissingPermission")
     @Override
@@ -136,16 +80,7 @@ public class GPSService extends Service {
         LocationManager locationManager
                 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-//        assert locationManager != null;
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, getMinTime(),
-//                    getMinDistance(), locationListener);
 
-
-//        assert locationManager != null;
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000,
-//                10, locationListener);
-//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 6000,
-//                10, locationListener);
 
 
         Log.e(TAG, "onCreate");
@@ -360,17 +295,46 @@ public class GPSService extends Service {
     private void sendNotification(Context context, State state) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                    "State notifications", NotificationManager.IMPORTANCE_LOW);
+            if (prefs.getBoolean(NOTIF_STATE_SETTING, true)) {
+                if (prefs.getBoolean(SOUND_NOTIF_STATE_SETTING, false)) {
+                    NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                            "State notifications", NotificationManager.IMPORTANCE_DEFAULT);
+                    // Configure the notification channel.
+                    notificationChannel.setDescription("Channel description");
+                    notificationChannel.enableLights(true);
+                    notificationChannel.enableVibration(false);
 
-            // Configure the notification channel.
-            notificationChannel.setDescription("Channel description");
-            notificationChannel.enableLights(true);
-            notificationChannel.enableVibration(false);
+                    if (notificationManager != null) {
+                        notificationManager.createNotificationChannel(notificationChannel);
+                    }
+                } else {
+                    NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                            "State notifications", NotificationManager.IMPORTANCE_LOW);
+                    // Configure the notification channel.
+                    notificationChannel.setDescription("Channel description");
+                    notificationChannel.enableLights(true);
+                    notificationChannel.enableVibration(false);
 
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(notificationChannel);
+                    if (notificationManager != null) {
+                        notificationManager.createNotificationChannel(notificationChannel);
+                    }
+                }
+
+
+            } else {
+                NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                        "State notifications", NotificationManager.IMPORTANCE_MIN);
+                // Configure the notification channel.
+                notificationChannel.setDescription("Channel description");
+                notificationChannel.enableLights(true);
+                notificationChannel.enableVibration(false);
+
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(notificationChannel);
+                }
             }
+
+
         }
 
 
@@ -399,23 +363,39 @@ public class GPSService extends Service {
         notificationManager.notify(state.getId(), builder.build());
     }
 
+
     private void sendNotification(Context context, Note note) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(NOTE_NOTIFICATION_CHANNEL_ID,
-                    "Note notifications", NotificationManager.IMPORTANCE_HIGH);
 
-            // Configure the notification channel.
-            notificationChannel.setDescription("Channel description");
-            notificationChannel.enableLights(true);
-            notificationChannel.enableVibration(true);
-            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500,
-                    1000});
+            if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, true)) {
 
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(notificationChannel);
+                NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                        "Note notifications", NotificationManager.IMPORTANCE_HIGH);
+                // Configure the notification channel.
+                notificationChannel.setDescription("Channel description");
+                notificationChannel.enableLights(true);
+                notificationChannel.enableVibration(true);
+
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(notificationChannel);
+                }
+            } else {
+                NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                        "Note notifications", NotificationManager.IMPORTANCE_LOW);
+                // Configure the notification channel.
+                notificationChannel.setDescription("Channel description");
+                notificationChannel.enableLights(true);
+                notificationChannel.enableVibration(true);
+
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(notificationChannel);
+                }
             }
+
+
         }
+
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);
         notifyIntent.putExtra("type", "Note");
@@ -464,22 +444,22 @@ public class GPSService extends Service {
             double lng = location.getLongitude();
 
 
-            isCurrentStateSetted = prefs.getBoolean(CURRENT_STATE,true);
-            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) !=999) {
+            isCurrentStateSetted = prefs.getBoolean(CURRENT_STATE, true);
+            if (stateGpsMap.get(checkLatLngState(lat, lng)) != null && checkLatLngState(lat, lng) != 999) {
                 State state = stateGpsMap.get(checkLatLngState(lat, lng));
                 if ((!Objects.equals(String.valueOf(prefs.getString("stateName", "")), state.getName()))) {
                     setLastState(getCurrentState());
                     setState(state);
                     isCurrentStateSetted = false;
                     SharedPreferences.Editor ed = prefs.edit();
-                    ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
+                    ed.putBoolean(CURRENT_STATE, isCurrentStateSetted);
                     ed.apply();
                 }
-            }else if (checkLatLngState(lat, lng) ==999 && !isCurrentStateSetted){
+            } else if (checkLatLngState(lat, lng) == 999 && !isCurrentStateSetted) {
                 setState(getLastState());
                 isCurrentStateSetted = true;
                 SharedPreferences.Editor ed = prefs.edit();
-                ed.putBoolean(CURRENT_STATE,isCurrentStateSetted);
+                ed.putBoolean(CURRENT_STATE, isCurrentStateSetted);
                 ed.apply();
             }
 

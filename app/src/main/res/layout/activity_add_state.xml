@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,15 +8,12 @@
     tools:context="com.example.dima.smarttool.AddStateActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/noteToolbar"
+        android:id="@+id/stateToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="Новое состояние"
         app:titleTextColor="@color/icons" />
@@ -24,8 +21,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/noteToolbar">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,6 +53,7 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:elevation="2dp"
             android:orientation="vertical"
             android:background="@drawable/setting_content">
 
@@ -139,7 +136,7 @@
                 android:orientation="horizontal"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_text_margin">
+                android:layout_marginBottom="@dimen/activity_vertical_margin">
 
                 <Switch
                     android:id="@+id/addStateBluetoothSwitch"
@@ -155,6 +152,19 @@
 
 
 
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_content"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:elevation="2dp">
+
             <Spinner
                 android:id="@+id/addStateConditionSpinner"
                 android:layout_width="match_parent"
@@ -162,24 +172,13 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:spinnerMode="dialog" />
+                android:spinnerMode="dialog"
+                />
 
         </LinearLayout>
-
-
-
-        <Button
-            android:id="@+id/addStateSaveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0"
-            android:text="Сохранить"
-            android:textAlignment="center" />
 
 
     </LinearLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

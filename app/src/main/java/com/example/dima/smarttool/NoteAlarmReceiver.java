@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
@@ -22,13 +23,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_NOTE_SETTING;
 
 public class NoteAlarmReceiver extends BroadcastReceiver {
     private static final String NOTIFICATION_CHANNEL_ID = "note_notification_channel";
     static Map<String, Note> noteTimeMap = new HashMap<String, Note>();                       //зраниение значиний времени старта и номера состояния
+    static SharedPreferences prefs;
+    static NotificationManager notificationManager;
     String name;
     Note note;
-    static NotificationManager notificationManager;
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -36,6 +40,8 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
         Log.d("alarm", "receiveNote");
         NoteHelper nh = new NoteHelper(context);                                     // инициализация помощника управления состояниямив базе данных
         loadNotes(nh.getAll());
+        prefs = context.getSharedPreferences("myPrefs",
+                Context.MODE_PRIVATE);
 
 
         notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
@@ -45,7 +51,7 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
             this.note = (noteTimeMap.get(name));
             Log.d("alarm", "setNote: " + name);
             HistoryHelper hh = new HistoryHelper(context);
-            hh.insert("Заметка: "+ note.getText()+ "\nВремя включения: "+ getDate());
+            hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getDate());
             sendNotification(context);
 
         }
@@ -74,27 +80,37 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
     }
 
 
-
     private void sendNotification(Context context) {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                    "Note notifications", NotificationManager.IMPORTANCE_HIGH);
+            if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, true)) {
 
-            // Configure the notification channel.
-            notificationChannel.setDescription("Channel description");
-            notificationChannel.enableLights(true);
-            notificationChannel.enableVibration(true);
-            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500,
-                    1000});
+                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                        "Note notifications", NotificationManager.IMPORTANCE_HIGH);
+                // Configure the notification channel.
+                notificationChannel.setDescription("Channel description");
+                notificationChannel.enableLights(true);
+                notificationChannel.enableVibration(true);
 
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(notificationChannel);
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(notificationChannel);
+                }
+            } else {
+                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                        "Note notifications", NotificationManager.IMPORTANCE_LOW);
+                // Configure the notification channel.
+                notificationChannel.setDescription("Channel description");
+                notificationChannel.enableLights(true);
+                notificationChannel.enableVibration(true);
+
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(notificationChannel);
+                }
             }
         }
 
+
         Intent notifyIntent = new Intent(context, ShowActivity.class);
-        notifyIntent.putExtra("type","Note");
+        notifyIntent.putExtra("type", "Note");
         notifyIntent.putExtra("name", note.getName());
         notifyIntent.putExtra("text", note.getText());
         notifyIntent.putExtra("lat", note.getLat());
@@ -115,5 +131,6 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
         assert notificationManager != null;
         notificationManager.notify(note.getId(), builder.build());
     }
+
 
 }

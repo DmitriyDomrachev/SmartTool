@@ -1,82 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="com.example.dima.smarttool.fragment.SettingFragment">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/setting_content"
-        android:elevation="@dimen/cardview_default_elevation"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/SettingFragmentJournalTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_margin"
-            android:text="Журнал"
-            android:textColor="@color/primaryTextColor"
-            android:textSize="24sp" />
-
-        <Button
-            android:id="@+id/SettingFragmentClearButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Отчистить журнал" />
-
-        <Spinner
-            android:id="@+id/SettingFragmentJournalSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:spinnerMode="dialog" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/setting_content"
+        android:orientation="vertical"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:elevation="@dimen/cardview_default_elevation"
-        android:orientation="vertical">
+        android:layout_marginBottom="@dimen/activity_vertical_margin">
 
-        <TextView
-            android:id="@+id/SettingFragmentJPSTextView"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_margin"
-            android:text="Местоположение"
-            android:textColor="@color/primaryTextColor"
-            android:textSize="24sp" />
+            android:background="@drawable/setting_content"
+            android:elevation="@dimen/cardview_default_elevation"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/SettingFragmentLocationTextView"
+            <TextView
+                android:id="@+id/SettingFragmentJournalTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:text="Журнал"
+                android:textColor="@color/colorSecondaryDark"
+                android:textSize="24sp" />
+
+
+
+
+            <TextView
+                android:id="@+id/SettingFragmentClearText"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:text="    Отчистить журнал"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="18sp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider" />
+
+
+
+            <Spinner
+                android:id="@+id/SettingFragmentJournalSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:elevation="@dimen/cardview_default_elevation"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/SettingFragmentJPSTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:text="Местоположение"
+                android:textColor="@color/colorSecondaryDark"
+                android:textSize="24sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Обновление данных о местоположении"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+
+
+
+            <Spinner
+                android:id="@+id/SettingFragmentTimeLocationSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="3dp"
+                android:spinnerMode="dialog" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider" />
+
+            <Spinner
+                android:id="@+id/SettingFragmentDistanceLocationSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:spinnerMode="dialog" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginStart="@dimen/text_margin"
-            android:text="Обновление данных о местоположении"
-            android:textColor="@color/secondaryTextColor"
-            android:textSize="14sp" />
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:orientation="vertical"
+            android:background="@drawable/setting_content">
 
-        <Spinner
-            android:id="@+id/SettingFragmentTimeLocationSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:spinnerMode="dialog" />
-        <Spinner
-            android:id="@+id/SettingFragmentDistanceLocationSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:spinnerMode="dialog" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Уведомления"
+                android:textColor="@color/colorSecondaryDark"
+                android:textSize="24sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Состояния"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <Switch
+                android:id="@+id/SettingFragmentStateNotificationSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:text="Отправлять уведомление"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="18sp"
+                tools:checked="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider" />
+
+            <Switch
+                android:id="@+id/SettingFragmentStateSoundNotificationSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="3dp"
+                android:text="Звук"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="18sp"
+                tools:checked="true" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Напоминания"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+
+            <Switch
+                android:id="@+id/SettingFragmentNoteSoundNotificationSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:text="Звук"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="18sp"
+                tools:checked="true" />
+
+
+        </LinearLayout>
 
     </LinearLayout>
-</LinearLayout>
+
+
+
+</android.support.v4.widget.NestedScrollView>

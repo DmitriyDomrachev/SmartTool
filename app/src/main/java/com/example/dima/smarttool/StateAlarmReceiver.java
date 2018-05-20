@@ -26,11 +26,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.example.dima.smarttool.fragment.SettingFragment.NOTIF_STATE_SETTING;
+import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_STATE_SETTING;
 
 public class StateAlarmReceiver extends BroadcastReceiver {
     private static final String STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel";
     static Map<String, State> stateTimeMap = new HashMap<String, State>();            //храниение значиний времени старта и номера состояния
     static AudioManager audioManager;
+    static SharedPreferences prefs;
     String name;
     State state;
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -45,6 +48,8 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         Log.d("alarm", "receive");
         StateHelper sh = new StateHelper(context);                                     // инициализация помощника управления состояниямив базе данных
         loadStates(sh.getAll());
+        prefs = context.getSharedPreferences("myPrefs",
+                Context.MODE_PRIVATE);
         wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         audioManager = (AudioManager) context.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
@@ -116,16 +121,46 @@ public class StateAlarmReceiver extends BroadcastReceiver {
     private void sendNotification(Context context) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                    "State notifications", NotificationManager.IMPORTANCE_LOW);
+            if (prefs.getBoolean(NOTIF_STATE_SETTING, true)) {
+                if (prefs.getBoolean(SOUND_NOTIF_STATE_SETTING, false)) {
+                    NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                            "State notifications", NotificationManager.IMPORTANCE_DEFAULT);
+                    // Configure the notification channel.
+                    notificationChannel.setDescription("Channel description");
+                    notificationChannel.enableLights(true);
+                    notificationChannel.enableVibration(false);
 
-            // Configure the notification channel.
-            notificationChannel.setDescription("Channel description");
-            notificationChannel.enableLights(true);
-            notificationChannel.enableVibration(false);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(notificationChannel);
+                    if (notificationManager != null) {
+                        notificationManager.createNotificationChannel(notificationChannel);
+                    }
+                } else {
+                    NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                            "State notifications", NotificationManager.IMPORTANCE_LOW);
+                    // Configure the notification channel.
+                    notificationChannel.setDescription("Channel description");
+                    notificationChannel.enableLights(true);
+                    notificationChannel.enableVibration(false);
+
+                    if (notificationManager != null) {
+                        notificationManager.createNotificationChannel(notificationChannel);
+                    }
+                }
+
+
+            } else {
+                NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                        "State notifications", NotificationManager.IMPORTANCE_MIN);
+                // Configure the notification channel.
+                notificationChannel.setDescription("Channel description");
+                notificationChannel.enableLights(true);
+                notificationChannel.enableVibration(false);
+
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(notificationChannel);
+                }
             }
+
+
         }
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);

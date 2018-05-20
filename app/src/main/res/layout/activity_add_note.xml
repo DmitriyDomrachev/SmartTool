@@ -43,71 +43,60 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="360dp"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="@drawable/setting_content"
-            android:elevation="2dp"
-            android:orientation="vertical">
 
 
-            <EditText
-                android:id="@+id/addNoteTextEditText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_height="360dp"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:background="@android:color/transparent"
-                android:gravity="top"
-                android:hint="Содержание"
-                android:scrollbars="vertical"
-                android:textColor="@color/secondaryTextColor" />
+                android:background="@drawable/setting_content"
+                android:elevation="2dp"
+                android:orientation="vertical">
 
 
-        </LinearLayout>
+                <EditText
+                    android:id="@+id/addNoteTextEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:background="@android:color/transparent"
+                    android:gravity="top"
+                    android:hint="Содержание"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/secondaryTextColor" />
 
-        <!--android:layout_marginEnd="@dimen/activity_horizontal_margin"-->
-        <!--android:layout_marginStart="@dimen/activity_horizontal_margin"-->
 
-        <!--android:background="@android:color/transparent"-->
+            </LinearLayout>
 
-        <Spinner
-            android:id="@+id/addNoteConditionSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:spinnerMode="dialog" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/addNoteSaveButton"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/setting_content"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:text="Сохранить"
-                android:textColor="@color/secondaryTextColor" />
+                android:elevation="2dp">
 
-        </LinearLayout>
+                <Spinner
+                    android:id="@+id/addNoteConditionSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:spinnerMode="dialog"
+                    />
 
-    </LinearLayout>
+            </LinearLayout>
+
+
+
 
 
 </LinearLayout>
