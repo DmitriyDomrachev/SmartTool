@@ -113,8 +113,11 @@ public class AddNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note);
 
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.noteToolbar);
         setSupportActionBar(toolbar);
+
 
         hour = 0;
         minute = 0;

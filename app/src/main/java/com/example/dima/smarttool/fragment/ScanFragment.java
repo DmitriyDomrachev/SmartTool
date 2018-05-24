@@ -29,8 +29,6 @@ public class ScanFragment extends Fragment {
     int BatteryState = 0, SoundState = 0;
     String[] names;
     ArrayList<String> nameList;
-    TextView stateName;
-    boolean isWiFiState, isBluetoothState;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -49,8 +47,8 @@ public class ScanFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
         TextView batteryText = view.findViewById(R.id.ScanFragmentBatteryTextView);
-        ImageButton wifi = view.findViewById(R.id.ScanFragmentWiFiImageButton);
-        ImageButton bluetooth = view.findViewById(R.id.ScanFragmentBluetoothImageButton);
+        final ImageButton wifi = view.findViewById(R.id.ScanFragmentWiFiImageButton);
+        final ImageButton bluetooth = view.findViewById(R.id.ScanFragmentBluetoothImageButton);
         ImageButton battery = view.findViewById(R.id.ScanFragmentBatteryImageButton);
         TextView stateName = view.findViewById(R.id.ScanFragmentStateTextView);
 
@@ -62,21 +60,15 @@ public class ScanFragment extends Fragment {
             SoundState = getArguments().getInt("sound");
         }
         batteryText.setText("" + BatteryState);
-        if (WiFiState)
-            wifi.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
-        else wifi.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
-        if (BluetoothState)
-            bluetooth.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
-        else bluetooth.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
-        if (BatteryState > 30)
-            battery.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
-        else battery.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
+
 
         wifi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 WiFiState = !WiFiState;
-                MainActivity.setWiFi(WiFiState);
+                if (WiFiState)
+                    wifi.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
+                else wifi.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));                MainActivity.setWiFi(WiFiState);
             }
         });
 
@@ -84,6 +76,9 @@ public class ScanFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 BluetoothState =! BluetoothState;
+                if (BluetoothState)
+                    bluetooth.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
+                else bluetooth.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
                 MainActivity.setBluetooth(BluetoothState);
             }
         });

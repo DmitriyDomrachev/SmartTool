@@ -1,6 +1,5 @@
 package com.example.dima.smarttool;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -38,12 +37,13 @@ import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_NO
 import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_STATE_SETTING;
 
 public class GPSService extends Service {
-    private static final String TAG = "mygps", WIFI_PREFS = "currentWiFi",
+    public static final String TAG = "mygps", WIFI_PREFS = "currentWiFi",
             BLUETOOTH_PREFS = "currentBluetooth", MEDIA_PREFS = "currentMedia",
             SYSTEM_PREFS = "currentSYSTEM", STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel",
-            NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel", CURRENT_STATE = "currentState";
-    private static final int LOCATION_INTERVAL = 0;
-    private static final float LOCATION_DISTANCE = 0;
+            NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel",
+            FOREGROUND_NOTIFICATION_CHANNEL_ID = "foreground_notification_channel",
+    NOTE_SOUND_NOTIFICATION_CHANNEL_ID = "note_sound_notification_channel",
+            STATE_SOUND_NOTIFICATION_CHANNEL_ID = "state_sound_notification_channel", CURRENT_STATE = "currentState";
     static HashMap<Integer, State> stateGpsMap = new HashMap<>();
     static HashMap<Integer, Note> noteGpsMap = new HashMap<>();
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
@@ -55,7 +55,6 @@ public class GPSService extends Service {
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
 
-    Location mLastLocation;
     LocationListener[] mLocationListeners = new LocationListener[]{
             new LocationListener(LocationManager.GPS_PROVIDER),
             new LocationListener(LocationManager.NETWORK_PROVIDER)
@@ -67,10 +66,31 @@ public class GPSService extends Service {
 
 
 
-
-    @SuppressLint("MissingPermission")
     @Override
-    public void onCreate() {
+    public void onDestroy() {
+        Log.e(TAG, "onDestroy");
+        super.onDestroy();
+        if (mLocationManager != null) {
+            for (int i = 0; i < mLocationListeners.length; i++) {
+                try {
+                    mLocationManager.removeUpdates(mLocationListeners[i]);
+                } catch (Exception ex) {
+                    Log.i(TAG, "fail to remove location listners, ignore", ex);
+                }
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        sendNotification();
+
         prefs = getApplicationContext().getSharedPreferences("myPrefs",
                 Context.MODE_PRIVATE);
 
@@ -81,13 +101,11 @@ public class GPSService extends Service {
                 = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
-
-
         Log.e(TAG, "onCreate");
         initializeLocationManager();
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    LocationManager.NETWORK_PROVIDER, getMinTime(), getMinDistance(),
                     mLocationListeners[1]);
         } catch (java.lang.SecurityException ex) {
             Log.i(TAG, "fail to request location update, ignore", ex);
@@ -96,7 +114,7 @@ public class GPSService extends Service {
         }
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    LocationManager.GPS_PROVIDER, getMinTime(), getMinDistance(),
                     mLocationListeners[0]);
         } catch (java.lang.SecurityException ex) {
             Log.i(TAG, "fail to request location update, ignore", ex);
@@ -115,30 +133,11 @@ public class GPSService extends Service {
         Log.d(TAG, "createService");
         Log.d(TAG, "getMinDistance: " + getMinDistance());
         Log.d(TAG, "getMinTime: " + getMinTime());
+
+        return Service.START_STICKY;
     }
 
-    @Override
-    public void onDestroy() {
-        Log.e(TAG, "onDestroy");
-        super.onDestroy();
-        if (mLocationManager != null) {
-            for (int i = 0; i < mLocationListeners.length; i++) {
-                try {
-                    mLocationManager.removeUpdates(mLocationListeners[i]);
-                } catch (Exception ex) {
-                    Log.i(TAG, "fail to remove location listners, ignore", ex);
-                }
-            }
-        }
-    }
 
-    @Nullable
-
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 
     private void loadStates(ArrayList<State> states) {
         for (int i = 0; i < states.size(); i++) {
@@ -181,7 +180,8 @@ public class GPSService extends Service {
         ed.putString("stateName", state.getName());
         ed.apply();
         Log.d(TAG, "setState: " + state.getName());
-        sendNotification(getApplicationContext(), state);
+        if (prefs.getBoolean(NOTIF_STATE_SETTING, true))
+            sendNotification(getApplicationContext(), state);
 
 
     }
@@ -194,11 +194,15 @@ public class GPSService extends Service {
     private int checkLatLngState(double lat, double lng) {
 
         for (int i = 0; i < stateGpsList.size(); i++) {
-            if (Math.pow((stateGpsList.get(i).latitude - lat), 2) + Math.pow((stateGpsList.get(i).longitude - lng), 2) <= Math.pow(16.986137129513397E-4, 2)) {
+            if (Math.pow((stateGpsList.get(i).latitude - lat), 2) +
+                    Math.pow((stateGpsList.get(i).longitude - lng), 2) <= Math.pow(16.986137129513397E-4, 2)) {
                 Log.d(TAG, "set " + i + ": " + stateGpsMap.get(i).getName());
                 return i;
             }
-            Log.d(TAG, Math.pow((lat - stateGpsList.get(i).latitude), 2) + Math.pow((lng - stateGpsList.get(i).latitude), 2) + "    " + Math.pow(16.986137129513397E-4, 2));
+            Log.d(TAG, Math.pow((lat - stateGpsList.get(i).latitude), 2)
+                    + Math.pow((lng - stateGpsList.get(i).latitude), 2)
+                    + "    " + Math.pow(16.986137129513397E-4, 2));
+
             Log.d(TAG, stateGpsList.get(i).latitude + "");
             Log.d(TAG, stateGpsList.get(i).longitude + "");
 
@@ -210,11 +214,15 @@ public class GPSService extends Service {
     private int checkLatLngNote(double lat, double lng) {
 
         for (int i = 0; i < noteGpsList.size(); i++) {
-            if (Math.pow((noteGpsList.get(i).latitude - lat), 2) + Math.pow((noteGpsList.get(i).longitude - lng), 2) <= Math.pow(16.986137129513397E-4, 2)) {
+            if (Math.pow((noteGpsList.get(i).latitude - lat), 2)
+                    + Math.pow((noteGpsList.get(i).longitude - lng), 2) <= Math.pow(16.986137129513397E-4, 2)) {
                 Log.d(TAG, "set " + i + ": " + noteGpsMap.get(i).getName());
                 return i;
             }
-            Log.d(TAG, Math.pow((lat - noteGpsList.get(i).latitude), 2) + Math.pow((lng - noteGpsList.get(i).latitude), 2) + "    " + Math.pow(16.986137129513397E-4, 2));
+            Log.d(TAG, Math.pow((lat - noteGpsList.get(i).latitude), 2)
+                    + Math.pow((lng - noteGpsList.get(i).latitude), 2)
+                    + "    " + Math.pow(16.986137129513397E-4, 2));
+
             Log.d(TAG, "check" + noteGpsList.get(i).latitude + "");
             Log.d(TAG, "check" + noteGpsList.get(i).longitude + "");
         }
@@ -295,46 +303,30 @@ public class GPSService extends Service {
     private void sendNotification(Context context, State state) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (prefs.getBoolean(NOTIF_STATE_SETTING, true)) {
-                if (prefs.getBoolean(SOUND_NOTIF_STATE_SETTING, false)) {
-                    NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                            "State notifications", NotificationManager.IMPORTANCE_DEFAULT);
-                    // Configure the notification channel.
-                    notificationChannel.setDescription("Channel description");
-                    notificationChannel.enableLights(true);
-                    notificationChannel.enableVibration(false);
 
-                    if (notificationManager != null) {
-                        notificationManager.createNotificationChannel(notificationChannel);
-                    }
-                } else {
-                    NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                            "State notifications", NotificationManager.IMPORTANCE_LOW);
-                    // Configure the notification channel.
-                    notificationChannel.setDescription("Channel description");
-                    notificationChannel.enableLights(true);
-                    notificationChannel.enableVibration(false);
-
-                    if (notificationManager != null) {
-                        notificationManager.createNotificationChannel(notificationChannel);
-                    }
-                }
+            NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                    "State notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel 1");
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(false);
 
 
-            } else {
-                NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                        "State notifications", NotificationManager.IMPORTANCE_MIN);
-                // Configure the notification channel.
-                notificationChannel.setDescription("Channel description");
-                notificationChannel.enableLights(true);
-                notificationChannel.enableVibration(false);
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(notificationChannel);
 
-                if (notificationManager != null) {
-                    notificationManager.createNotificationChannel(notificationChannel);
-                }
+            notificationChannel = new NotificationChannel(STATE_SOUND_NOTIFICATION_CHANNEL_ID,
+                    "State notifications", NotificationManager.IMPORTANCE_HIGH);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel 2");
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(false);
+
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+
+
             }
-
-
         }
 
 
@@ -352,47 +344,51 @@ public class GPSService extends Service {
                 context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setSmallIcon(R.drawable.list)
-                .setContentTitle("Установлен профиль")
-                .setContentText(state.getName())
-                .setAutoCancel(true)
-                .setContentIntent(notifyPendingIntent);
-        assert notificationManager != null;
-        notificationManager.notify(state.getId(), builder.build());
-    }
+        if (prefs.getBoolean(SOUND_NOTIF_STATE_SETTING, false)) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_SOUND_NOTIFICATION_CHANNEL_ID)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setSmallIcon(R.drawable.list)
+                    .setContentTitle("Установлен профиль")
+                    .setContentText(state.getName())
+                    .setAutoCancel(true)
+                    .setContentIntent(notifyPendingIntent);
+            assert notificationManager != null;
+            notificationManager.notify(state.getId(), builder.build());
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.list)
+                    .setContentTitle("Установлен профиль")
+                    .setContentText(state.getName())
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_MIN)
+                    .setContentIntent(notifyPendingIntent);
+            assert notificationManager != null;
+            notificationManager.notify(state.getId(), builder.build());
+        }
 
+    }
 
     private void sendNotification(Context context, Note note) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, true)) {
+            NotificationChannel notificationChannel = new NotificationChannel(NOTE_NOTIFICATION_CHANNEL_ID,
+                    "Note notifications", NotificationManager.IMPORTANCE_MIN);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel 01");
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(true);
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(notificationChannel);
 
-                NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                        "Note notifications", NotificationManager.IMPORTANCE_HIGH);
-                // Configure the notification channel.
-                notificationChannel.setDescription("Channel description");
-                notificationChannel.enableLights(true);
-                notificationChannel.enableVibration(true);
-
-                if (notificationManager != null) {
-                    notificationManager.createNotificationChannel(notificationChannel);
-                }
-            } else {
-                NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                        "Note notifications", NotificationManager.IMPORTANCE_LOW);
-                // Configure the notification channel.
-                notificationChannel.setDescription("Channel description");
-                notificationChannel.enableLights(true);
-                notificationChannel.enableVibration(true);
-
-                if (notificationManager != null) {
-                    notificationManager.createNotificationChannel(notificationChannel);
-                }
-            }
-
+            notificationChannel = new NotificationChannel(NOTE_SOUND_NOTIFICATION_CHANNEL_ID,
+                    "Note notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel 02");
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(true);
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(notificationChannel);
 
         }
 
@@ -409,15 +405,79 @@ public class GPSService extends Service {
                 context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_NOTIFICATION_CHANNEL_ID)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setSmallIcon(R.drawable.note)
-                .setContentTitle("Напоминание")
-                .setContentText(note.getName())
-                .setAutoCancel(true)
-                .setContentIntent(notifyPendingIntent);
-        assert notificationManager != null;
-        notificationManager.notify(note.getId(), builder.build());
+
+
+
+        if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, false)) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_SOUND_NOTIFICATION_CHANNEL_ID)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setSmallIcon(R.drawable.list)
+                    .setContentTitle("Установлен профиль")
+                    .setContentText(note.getName())
+                    .setAutoCancel(true)
+                    .setContentIntent(notifyPendingIntent)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+
+            assert notificationManager != null;
+            notificationManager.notify(note.getId(), builder.build());
+
+
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setSmallIcon(R.drawable.list)
+                    .setContentTitle("Установлен профиль")
+                    .setContentText(note.getName())
+                    .setPriority(NotificationCompat.PRIORITY_MIN)
+                    .setAutoCancel(true)
+                    .setContentIntent(notifyPendingIntent);
+
+            assert notificationManager != null;
+            notificationManager.notify(note.getId(), builder.build());
+
+
+        }
+
+
+
+    }
+
+    //Send custom notification
+    public void sendNotification() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            NotificationChannel notificationChannel = new NotificationChannel(FOREGROUND_NOTIFICATION_CHANNEL_ID,
+                    "Foreground notifications", NotificationManager.IMPORTANCE_LOW);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Foreground channel");
+            notificationChannel.enableLights(true);
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(notificationChannel);
+
+
+
+        }
+
+        //These three lines makes Notification to open main activity after clicking on it
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
+        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), FOREGROUND_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.notificatoin_icon)
+                .setContentTitle("SmartTool")
+                .setContentText("Отслеживание местоположения")
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setWhen(System.currentTimeMillis())
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true);
+
+        startForeground(231,builder.build());
+
+
     }
 
     private void initializeLocationManager() {
@@ -471,7 +531,7 @@ public class GPSService extends Service {
                 if ((!Objects.equals(String.valueOf(prefs.getString("noteName", "")), note.getName()))) {
                     sendNotification(getApplicationContext(), note);
                     HistoryHelper hh = new HistoryHelper(getApplicationContext());
-                    hh.insert("Заметка: " + note.getText() + "\nВремя включения: " + getDate());
+                    hh.insert("Напоминание: " + note.getName() + "\nВремя включения: " + getDate());
                     SharedPreferences.Editor ed = prefs.edit();
                     ed.putString("noteName", note.getName());
                     ed.apply();

@@ -39,11 +39,12 @@ import com.example.dima.smarttool.fragment.StateFragment;
 import java.util.ArrayList;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String[] READ_ACCESS_FINE = new String[]{ACCESS_FINE_LOCATION};
+    private static final String[] READ_ACCESS_FINE = new String[]{ACCESS_FINE_LOCATION, RECEIVE_BOOT_COMPLETED};
     public static int batteryChange;
     static FragmentTransaction fragmentTransaction;
     static AudioManager audioManager;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     static WifiManager wifiManager;
     static ArrayList<State> stateLoadArr = new ArrayList<>();
     static ArrayList<Note> noteLoadArr = new ArrayList<>();
+    static String TAG = "mainActivity";
     static int countState, countNote;
     private static int navigateID = R.id.navigation_scan;
     private static int REQUEST_READ_ACCESS_FINE = 3;
@@ -84,11 +86,15 @@ public class MainActivity extends AppCompatActivity {
 
     public static void setWiFi(boolean wifi) {
         wifiManager.setWifiEnabled(wifi);
+        Log.d(TAG, "setWiFi");
+
     }
 
     public static void setBluetooth(boolean bluetooth) {
         if (bluetooth) btAdapter.enable();
         else btAdapter.disable();
+        Log.d(TAG, "setBluetooth");
+
     }
 
     @Override
@@ -149,6 +155,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         loadDB();           // заргузка данных из базы данных
+
+        startService(new Intent(MainActivity.this,GPSService.class));
+
         fragmentL = new StateFragment();
         fragmentN = new NoteFragment();
         fragmentS = new SettingFragment();
@@ -180,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navigation_note:
                         fab.show();
                         navigateID = R.id.navigation_note;
-                        getSupportActionBar().setTitle("Список напоминаий");
+                        getSupportActionBar().setTitle("Список напоминаний");
                         loadFragment(fragmentN);
                         return true;
 
@@ -230,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container, fragmentSc);
             fragmentTransaction.commitAllowingStateLoss();
-            Log.d("test1", "rewrite scan");
+            Log.d(TAG, "rewrite scan");
         }
     }                                        //пересоздание фрагментов для отображения измененной информации
 
