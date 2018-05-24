@@ -17,7 +17,6 @@ import com.example.dima.smarttool.DB.NoteHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,12 +57,6 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
 
     }
 
-    private String getTime() {                                                          // используйте метод для вывода текущего времени
-        Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        date.setTime(calendar.getTimeInMillis());
-        return date.getHours() + ":" + date.getMinutes();
-    }
 
     public void loadNotes(ArrayList<Note> notes) {
         for (int i = 0; i < notes.size(); i++) {

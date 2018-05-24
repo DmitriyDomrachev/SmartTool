@@ -20,7 +20,6 @@ import com.example.dima.smarttool.DB.StateHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,8 @@ import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_ST
 
 public class StateAlarmReceiver extends BroadcastReceiver {
     private static final String STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel";
-    static Map<String, State> stateTimeMap = new HashMap<String, State>();            //храниение значиний времени старта и номера состояния
+    static Map<String, State> stateTimeMap = new HashMap<String, State>();
+    //храниение значиний времени старта и номера состояния
     static AudioManager audioManager;
     static SharedPreferences prefs;
     String name;
@@ -46,7 +46,8 @@ public class StateAlarmReceiver extends BroadcastReceiver {
 
         name = intent.getStringExtra("nameEditText");
         Log.d("alarm", "receive");
-        StateHelper sh = new StateHelper(context);                                     // инициализация помощника управления состояниямив базе данных
+        StateHelper sh = new StateHelper(context);
+        // инициализация помощника управления состояниямив базе данных
         loadStates(sh.getAll());
         prefs = context.getSharedPreferences("myPrefs",
                 Context.MODE_PRIVATE);
@@ -74,12 +75,6 @@ public class StateAlarmReceiver extends BroadcastReceiver {
 
     }
 
-    private String getTime() {                                                          // используйте метод для вывода текущего времени
-        Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        date.setTime(calendar.getTimeInMillis());
-        return date.getHours() + ":" + date.getMinutes();
-    }
 
     public void loadStates(ArrayList<State> states) {
         for (int i = 0; i < states.size(); i++) {
@@ -108,10 +103,7 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         return (int) (max * in);
     }
 
-    private String boolToString (boolean in){
-        if (in) return "on";
-        else  return "off";
-    }
+
 
     private String getDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
@@ -123,7 +115,8 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (prefs.getBoolean(NOTIF_STATE_SETTING, true)) {
                 if (prefs.getBoolean(SOUND_NOTIF_STATE_SETTING, false)) {
-                    NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                    NotificationChannel notificationChannel =
+                            new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
                             "State notifications", NotificationManager.IMPORTANCE_DEFAULT);
                     // Configure the notification channel.
                     notificationChannel.setDescription("Channel description");
@@ -134,7 +127,8 @@ public class StateAlarmReceiver extends BroadcastReceiver {
                         notificationManager.createNotificationChannel(notificationChannel);
                     }
                 } else {
-                    NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                    NotificationChannel notificationChannel =
+                            new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
                             "State notifications", NotificationManager.IMPORTANCE_LOW);
                     // Configure the notification channel.
                     notificationChannel.setDescription("Channel description");
@@ -148,7 +142,8 @@ public class StateAlarmReceiver extends BroadcastReceiver {
 
 
             } else {
-                NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                NotificationChannel notificationChannel =
+                        new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
                         "State notifications", NotificationManager.IMPORTANCE_MIN);
                 // Configure the notification channel.
                 notificationChannel.setDescription("Channel description");
@@ -177,7 +172,8 @@ public class StateAlarmReceiver extends BroadcastReceiver {
                 context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setSmallIcon(R.drawable.list)
                 .setContentTitle("State time")

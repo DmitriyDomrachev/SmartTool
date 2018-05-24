@@ -115,7 +115,7 @@ public class AddNoteActivity extends AppCompatActivity {
 
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.noteToolbar);
+        Toolbar toolbar = findViewById(R.id.noteToolbar);
         setSupportActionBar(toolbar);
 
 
@@ -165,6 +165,7 @@ public class AddNoteActivity extends AppCompatActivity {
 
             }
         });
+        //Установка условий
 
     }
 
@@ -176,6 +177,7 @@ public class AddNoteActivity extends AppCompatActivity {
             lng = data.getDoubleExtra("lng", 0);
         }
     }
+    //Установка широты и долготы
 
 
     public static void setTime(int hour, int minute) {

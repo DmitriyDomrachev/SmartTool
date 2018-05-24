@@ -110,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         NotificationManager notificationManager = (NotificationManager) getApplicationContext()
-                .getSystemService(Context.NOTIFICATION_SERVICE); //запрос разрешения на изменения состояния не беспокоить
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        //запрос разрешения на изменения состояния не беспокоить
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && !notificationManager.isNotificationPolicyAccessGranted()) {
@@ -124,8 +125,9 @@ public class MainActivity extends AppCompatActivity {
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         setContentView(R.layout.activity_main);
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);                      //IntentFilter батареи
-        Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);                       //текущее состояние батареи, mBroadcastReceiver в качестве преемника
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);
+        //текущее состояние батареи, mBroadcastReceiver в качестве преемника
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
@@ -241,12 +243,14 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction.commitAllowingStateLoss();
             Log.d(TAG, "rewrite scan");
         }
-    }                                        //пересоздание фрагментов для отображения измененной информации
+    } //пересоздание фрагментов для отображения измененной информации
 
     public void loadDB() {
-        StateHelper sh = new StateHelper(getApplicationContext());                                     // инициализация помощника управления состояниямив базе данных
+        StateHelper sh = new StateHelper(getApplicationContext());
+        // инициализация помощника управления состояниямив базе данных
         stateLoadArr.clear();
-        stateLoadArr.addAll(sh.getAll());                                                              // сохранениесех состаяний из БД в ArrayList
+        stateLoadArr.addAll(sh.getAll());
+        // сохранениесех состаяний из БД в ArrayList
         countState = stateLoadArr.size();
         NoteHelper nh = new NoteHelper(getApplicationContext());
         noteLoadArr.clear();
@@ -284,7 +288,8 @@ public class MainActivity extends AppCompatActivity {
                 rewriteFragment();
 
             while (navigateID == R.id.navigation_scan) {
-                if (wifi != wifiManager.isWifiEnabled() || bt != btAdapter.isEnabled() || battery != batteryChange) {
+                if (wifi != wifiManager.isWifiEnabled() || bt != btAdapter.isEnabled() ||
+                        battery != batteryChange) {
                     rewriteFragment();
                     wifi = wifiManager.isWifiEnabled();
                     bt = btAdapter.isEnabled();

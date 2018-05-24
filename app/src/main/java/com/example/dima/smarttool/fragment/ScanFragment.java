@@ -49,7 +49,6 @@ public class ScanFragment extends Fragment {
         TextView batteryText = view.findViewById(R.id.ScanFragmentBatteryTextView);
         final ImageButton wifi = view.findViewById(R.id.ScanFragmentWiFiImageButton);
         final ImageButton bluetooth = view.findViewById(R.id.ScanFragmentBluetoothImageButton);
-        ImageButton battery = view.findViewById(R.id.ScanFragmentBatteryImageButton);
         TextView stateName = view.findViewById(R.id.ScanFragmentStateTextView);
 
         Bundle bundle = this.getArguments();
@@ -58,7 +57,7 @@ public class ScanFragment extends Fragment {
             BluetoothState = getArguments().getBoolean("bluetooth");
             BatteryState = getArguments().getInt("battery");
             SoundState = getArguments().getInt("sound");
-        }
+        } //загрузка значений
         batteryText.setText("" + BatteryState);
 
 
@@ -68,7 +67,9 @@ public class ScanFragment extends Fragment {
                 WiFiState = !WiFiState;
                 if (WiFiState)
                     wifi.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
-                else wifi.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));                MainActivity.setWiFi(WiFiState);
+                else wifi.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
+                MainActivity.setWiFi(WiFiState);
+                //управление состоянием
             }
         });
 
@@ -80,6 +81,8 @@ public class ScanFragment extends Fragment {
                     bluetooth.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
                 else bluetooth.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
                 MainActivity.setBluetooth(BluetoothState);
+                //управление состоянием
+
             }
         });
 
@@ -87,7 +90,7 @@ public class ScanFragment extends Fragment {
         stateName.setText(String.valueOf(stateName.getText() + (prefs.getString("stateName", ""))));
 
         // находим список
-        ListView lvMain = (ListView) view.findViewById(R.id.ScanFragmentListView);
+        ListView lvMain = view.findViewById(R.id.ScanFragmentListView);
 
         // создаем адаптер
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
@@ -112,12 +115,6 @@ public class ScanFragment extends Fragment {
 
     }
 
-    private String boolToString(boolean in) {
-        if (in)
-            return " on";
-        else
-            return " off";
-    }
 
 
 }

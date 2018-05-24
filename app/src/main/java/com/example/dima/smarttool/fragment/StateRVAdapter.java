@@ -35,13 +35,13 @@ public class StateRVAdapter extends RecyclerView.Adapter<StateRVAdapter.Contacts
 
     @Override
     public ContactsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rule_cv, parent, false); // создаём вьюшку для кажого элемента
-        return new ContactsViewHolder(view); //передаём вьюшку в качестве аргумента для холдера
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rule_cv, parent, false);
+        return new ContactsViewHolder(view); //передаём view в качестве аргумента для холдера
     }
 
     @Override
-    public void onBindViewHolder(final ContactsViewHolder holder, int position) {                       //тут будет просходить обработка каждого элемента, кога он появится на экране
-        final State state = states.get(position);                                                       // получаем элемент для удобства использования
+    public void onBindViewHolder(final ContactsViewHolder holder, int position) {
+        final State state = states.get(position);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(state.getStartTime());
         long millis = calendar.getTimeInMillis();
@@ -62,8 +62,9 @@ public class StateRVAdapter extends RecyclerView.Adapter<StateRVAdapter.Contacts
             holder.iconImageView.setImageResource(R.drawable.my_location);
             holder.gpsImageView.setVisibility(View.VISIBLE);
         }
-        holder.cvListener.setRecord(state);                                                             // как-то надо понимать с каким состоянием работаем
-        holder.btnClickListener.setRecord(state);                                                       // как-то надо понимать с состоянием  работаем
+        holder.cvListener.setRecord(state);
+        holder.btnClickListener.setRecord(state);
+        // состояние, с которым работаем
 
     }
 
@@ -72,7 +73,7 @@ public class StateRVAdapter extends RecyclerView.Adapter<StateRVAdapter.Contacts
         return states.size();
     }
 
-    //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
+    //инциализация всех View-элементов.
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtName, txtDelete, txtTime;
@@ -103,7 +104,7 @@ public class StateRVAdapter extends RecyclerView.Adapter<StateRVAdapter.Contacts
         }
     }
 
-    //классы для обработки нажатий. Главное, чтобы они релизовывали интерфейс View.OnClickListener
+    //классы для обработки нажатий
 
     class CardViewClickListener implements View.OnClickListener {
 
@@ -148,7 +149,7 @@ public class StateRVAdapter extends RecyclerView.Adapter<StateRVAdapter.Contacts
             sh.deleteState(String.valueOf(state.getId()));
             Log.d("DB", sh.getAll().toString());
             states.remove(state); // удаляем его из списка
-            notifyItemRemoved(position); // метод для удалаении из самого RecyclerView. Именно он отвечает за анимации
+            notifyItemRemoved(position); // метод для удалаении из RecyclerView
 
         }
 

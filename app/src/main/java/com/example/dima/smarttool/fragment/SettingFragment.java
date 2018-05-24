@@ -84,6 +84,7 @@ public class SettingFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         distanceLocationSpinner.setAdapter(adapter);
         distanceLocationSpinner.setSelection(prefs.getInt(DIST_LOCATION_SETTING,0));
+        //настройка spinners
 
         soundStateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -110,7 +111,7 @@ public class SettingFragment extends Fragment {
                 ed.apply();
 
             }
-        });
+        }); //слушатели на switch с сохранением в SharedPreference
 
 
 
@@ -126,7 +127,7 @@ public class SettingFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
-        });     //устоновка слушателей на spinner
+        });
 
         timeLocationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

@@ -133,7 +133,7 @@ public class AddStateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_state);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.stateToolbar);
+        Toolbar toolbar = findViewById(R.id.stateToolbar);
         setSupportActionBar(toolbar);
 
         hour = 0;

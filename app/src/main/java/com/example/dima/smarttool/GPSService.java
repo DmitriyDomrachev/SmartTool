@@ -89,7 +89,7 @@ public class GPSService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        sendNotification();
+        sendNotification();     //запуск сервиса в foreground
 
         prefs = getApplicationContext().getSharedPreferences("myPrefs",
                 Context.MODE_PRIVATE);
@@ -121,12 +121,14 @@ public class GPSService extends Service {
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
+        //установка отслеживания местоположения
 
 
         StateHelper sh = new StateHelper(getApplicationContext());
         loadStates(sh.getAll());
         NoteHelper nh = new NoteHelper(getApplicationContext());
         loadNotes(nh.getAll());
+        //загрузка заметок и напоминаний
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
@@ -210,6 +212,7 @@ public class GPSService extends Service {
 
         return 999;
     }
+    //поиск состояния по координатам
 
     private int checkLatLngNote(double lat, double lng) {
 
@@ -228,6 +231,8 @@ public class GPSService extends Service {
         }
         return 999;
     }
+    //поиск напоминания по координатам
+
 
     private String getDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
@@ -442,14 +447,13 @@ public class GPSService extends Service {
 
     }
 
-    //Send custom notification
     public void sendNotification() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             NotificationChannel notificationChannel = new NotificationChannel(FOREGROUND_NOTIFICATION_CHANNEL_ID,
                     "Foreground notifications", NotificationManager.IMPORTANCE_LOW);
-            // Configure the notification channel.
+
             notificationChannel.setDescription("Foreground channel");
             notificationChannel.enableLights(true);
             if (notificationManager != null)
@@ -459,7 +463,6 @@ public class GPSService extends Service {
 
         }
 
-        //These three lines makes Notification to open main activity after clicking on it
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -557,4 +560,5 @@ public class GPSService extends Service {
             Log.e(TAG, "onStatusChanged: " + provider);
         }
     }
+    //слушатель изменений местоположения
 }

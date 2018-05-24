@@ -59,13 +59,15 @@ public class ShowActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("showActivity", "lat: " + lat + "    lng: " + lng);
-                if ((lat != 0 || lng != 0) && time == 999999999) {              //если запуск по gps открывается гугл карта
+                if ((lat != 0 || lng != 0) && time == 999999999) {
+                    //если запуск по gps открывается гугл карта
                     Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + lat + "," + lng + "("
                             + String.valueOf(name.getText()) + ")");
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
-                } else if (time != 0 && time != 999999999) {                      //если запуск по времени открывается диалоговое окно c временем запуска
+                } else if (time != 0 && time != 999999999) {
+                    // /если запуск по времени открывается диалоговое окно c временем запуска
                     AlertDialog.Builder builder = new AlertDialog.Builder(ShowActivity.this);
                     builder.setTitle(String.valueOf(name.getText()))
                             .setMessage("Включение в " + finalHour + ":" + finalMinute)
@@ -105,6 +107,3 @@ public class ShowActivity extends AppCompatActivity {
 
 }
 
-
-//56.90146805056319
-//60.613915175199516

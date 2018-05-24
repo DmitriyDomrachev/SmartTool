@@ -36,13 +36,13 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
 
     @Override
     public ContactsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_cv, parent, false); // создаём вьюшку для кажого элемента
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_cv, parent, false);
         return new ContactsViewHolder(view); //передаём вьюшку в качестве аргумента для холдера
     }
 
     @Override
-    public void onBindViewHolder(final ContactsViewHolder holder, int position) {                       //тут будет просходить обработка каждого элемента, кога он появится на экране
-        final Note note = notes.get(position);                                                       // получаем элемент для удобства использования
+    public void onBindViewHolder(final ContactsViewHolder holder, int position) {
+        final Note note = notes.get(position);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(note.getStartTime());
         long millis = calendar.getTimeInMillis();
@@ -63,12 +63,13 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
             holder.iconImageView.setImageResource(R.drawable.my_location);
             holder.gpsImageView.setVisibility(View.VISIBLE);
         }
-        holder.cvListener.setRecord(note);// как-то надо понимать с каким состоянием работаем
+        holder.cvListener.setRecord(note);// как-то надо понимать с каким напоминанием работаем
         String noteText = note.getText();
         if (noteText.length() > 100)
             noteText = noteText.substring(0, 100) + "...";
         holder.txtText.setText(noteText);
-        holder.btnClickListener.setRecord(note);                                                       // как-то надо понимать с состоянием  работаем
+        holder.btnClickListener.setRecord(note);
+        //напоминание, с которым работаем
 
     }
 
@@ -77,7 +78,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         return notes.size();
     }
 
-    //это самый первый класс, который вы должны создать при содании адептера. В нём происходит инциализации всех View-элементов.
+   //инциализации всех View-элементов
     class ContactsViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtName, txtText, txtStart, txtTime, txtDelete;
@@ -103,7 +104,6 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
             noteImageView = itemView.findViewById(R.id.cvNoteNoteImageView);
 
 
-            //цепляем слушатели
             cv.setOnClickListener(cvListener);
             txtDelete.setOnClickListener(btnClickListener);
 
@@ -111,7 +111,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         }
     }
 
-    //классы для обработки нажатий. Главное, чтобы они релизовывали интерфейс View.OnClickListener
+    //классы для обработки нажатий
 
     class CardViewClickListener implements View.OnClickListener {
 
@@ -145,7 +145,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
             nh.deleteState(String.valueOf(note.getId()));
             Log.d("DB", nh.getAll().toString());
             notes.remove(note);                     // удаляем его из списка
-            notifyItemRemoved(position);            // метод для удалаении из самого RecyclerView. Именно он отвечает за анимации
+            notifyItemRemoved(position);            // метод для удалаении из RecyclerView
 
         }
 
