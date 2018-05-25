@@ -1,4 +1,4 @@
-package com.example.dima.smarttool;
+package com.example.dima.smarttool.activity;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -22,7 +22,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.NoteHelper;
+import com.example.dima.smarttool.GPSService;
+import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.fragment.TimePickerFragment;
+import com.example.dima.smarttool.receiver.NoteAlarmReceiver;
 
 import java.util.Calendar;
 import java.util.Random;

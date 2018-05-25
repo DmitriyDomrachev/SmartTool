@@ -1,4 +1,4 @@
-package com.example.dima.smarttool.fragment;
+package com.example.dima.smarttool.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.R;
-import com.example.dima.smarttool.ShowActivity;
 import com.example.dima.smarttool.State;
+import com.example.dima.smarttool.activity.ShowActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,7 +28,7 @@ public class StateRVAdapter extends RecyclerView.Adapter<StateRVAdapter.Contacts
     private static ArrayList<State> states;
     private Context context;
 
-    StateRVAdapter(ArrayList<State> states, Context context) {
+    public StateRVAdapter(ArrayList<State> states, Context context) {
         this.states = states;
         this.context = context;
     }

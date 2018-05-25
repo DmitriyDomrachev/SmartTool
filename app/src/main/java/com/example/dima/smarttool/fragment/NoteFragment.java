@@ -12,9 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.dima.smarttool.MainActivity;
 import com.example.dima.smarttool.Note;
 import com.example.dima.smarttool.R;
+import com.example.dima.smarttool.activity.MainActivity;
+import com.example.dima.smarttool.adapter.NoteRVAdapter;
 
 import java.util.ArrayList;
 

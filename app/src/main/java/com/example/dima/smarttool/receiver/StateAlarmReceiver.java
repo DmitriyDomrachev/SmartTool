@@ -1,4 +1,4 @@
-package com.example.dima.smarttool;
+package com.example.dima.smarttool.receiver;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -17,6 +17,9 @@ import android.util.Log;
 
 import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.DB.StateHelper;
+import com.example.dima.smarttool.R;
+import com.example.dima.smarttool.State;
+import com.example.dima.smarttool.activity.ShowActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -24,6 +24,8 @@ import android.widget.Toast;
 import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
+import com.example.dima.smarttool.activity.MainActivity;
+import com.example.dima.smarttool.activity.ShowActivity;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package com.example.dima.smarttool.fragment;
+package com.example.dima.smarttool.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.Note;
 import com.example.dima.smarttool.R;
-import com.example.dima.smarttool.ShowActivity;
+import com.example.dima.smarttool.activity.ShowActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,7 +29,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
     private static ArrayList<Note> notes;
     private Context context;
 
-    NoteRVAdapter(ArrayList<Note> notes, Context context) {
+    public NoteRVAdapter(ArrayList<Note> notes, Context context) {
         this.notes = notes;
         this.context = context;
     }

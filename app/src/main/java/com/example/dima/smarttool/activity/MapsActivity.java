@@ -1,4 +1,4 @@
-package com.example.dima.smarttool;
+package com.example.dima.smarttool.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
+import com.example.dima.smarttool.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;

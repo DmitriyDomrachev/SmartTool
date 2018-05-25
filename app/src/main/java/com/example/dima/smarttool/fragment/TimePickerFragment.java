@@ -8,8 +8,8 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.TimePicker;
 
-import com.example.dima.smarttool.AddNoteActivity;
-import com.example.dima.smarttool.AddStateActivity;
+import com.example.dima.smarttool.activity.AddNoteActivity;
+import com.example.dima.smarttool.activity.AddStateActivity;
 
 import java.util.Calendar;
 

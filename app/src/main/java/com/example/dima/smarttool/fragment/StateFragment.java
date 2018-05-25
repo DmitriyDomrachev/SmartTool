@@ -12,9 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.dima.smarttool.MainActivity;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.State;
+import com.example.dima.smarttool.activity.MainActivity;
+import com.example.dima.smarttool.adapter.StateRVAdapter;
 
 import java.util.ArrayList;
 

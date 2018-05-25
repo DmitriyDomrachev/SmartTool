@@ -14,8 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.dima.smarttool.DB.HistoryHelper;
-import com.example.dima.smarttool.MainActivity;
 import com.example.dima.smarttool.R;
+import com.example.dima.smarttool.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;

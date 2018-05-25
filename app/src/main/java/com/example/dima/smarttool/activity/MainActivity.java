@@ -1,4 +1,4 @@
-package com.example.dima.smarttool;
+package com.example.dima.smarttool.activity;
 
 import android.Manifest;
 import android.app.AlarmManager;
@@ -31,6 +31,10 @@ import android.view.View;
 
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
+import com.example.dima.smarttool.GPSService;
+import com.example.dima.smarttool.Note;
+import com.example.dima.smarttool.R;
+import com.example.dima.smarttool.State;
 import com.example.dima.smarttool.fragment.NoteFragment;
 import com.example.dima.smarttool.fragment.ScanFragment;
 import com.example.dima.smarttool.fragment.SettingFragment;
