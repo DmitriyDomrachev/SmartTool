@@ -316,6 +316,7 @@ public class GPSService extends Service {
             // Configure the notification channel.
             notificationChannel.setDescription("Channel 1");
             notificationChannel.enableLights(true);
+            notificationChannel.setSound(null, null);
             notificationChannel.enableVibration(false);
 
 
@@ -380,16 +381,17 @@ public class GPSService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             NotificationChannel notificationChannel = new NotificationChannel(NOTE_NOTIFICATION_CHANNEL_ID,
-                    "Note notifications", NotificationManager.IMPORTANCE_MIN);
+                    "Note notifications", NotificationManager.IMPORTANCE_DEFAULT);
             // Configure the notification channel.
             notificationChannel.setDescription("Channel 01");
+            notificationChannel.setSound(null, null);
             notificationChannel.enableLights(true);
             notificationChannel.enableVibration(true);
             if (notificationManager != null)
                 notificationManager.createNotificationChannel(notificationChannel);
 
             notificationChannel = new NotificationChannel(NOTE_SOUND_NOTIFICATION_CHANNEL_ID,
-                    "Note notifications", NotificationManager.IMPORTANCE_DEFAULT);
+                    "Note notifications", NotificationManager.IMPORTANCE_HIGH);
             // Configure the notification channel.
             notificationChannel.setDescription("Channel 02");
             notificationChannel.enableLights(true);
@@ -415,12 +417,12 @@ public class GPSService extends Service {
 
 
 
-        if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, false)) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_SOUND_NOTIFICATION_CHANNEL_ID)
+        if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, true)) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_SOUND_NOTIFICATION_CHANNEL_ID)
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setSmallIcon(R.drawable.list)
-                    .setContentTitle("Установлен профиль")
-                    .setContentText(note.getName())
+                    .setContentTitle(note.getName())
+                    .setContentText(note.getText())
                     .setAutoCancel(true)
                     .setContentIntent(notifyPendingIntent)
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
@@ -430,11 +432,10 @@ public class GPSService extends Service {
 
 
         } else {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
-                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.list)
-                    .setContentTitle("Установлен профиль")
-                    .setContentText(note.getName())
+                    .setContentTitle(note.getName())
+                    .setContentText(note.getText())
                     .setPriority(NotificationCompat.PRIORITY_MIN)
                     .setAutoCancel(true)
                     .setContentIntent(notifyPendingIntent);

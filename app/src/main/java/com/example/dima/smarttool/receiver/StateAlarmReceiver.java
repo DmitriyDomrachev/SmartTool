@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.example.dima.smarttool.GPSService.STATE_SOUND_NOTIFICATION_CHANNEL_ID;
 import static com.example.dima.smarttool.fragment.SettingFragment.NOTIF_STATE_SETTING;
 import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_STATE_SETTING;
 
@@ -72,7 +73,8 @@ public class StateAlarmReceiver extends BroadcastReceiver {
             HistoryHelper hh = new HistoryHelper(context);
             hh.insert("Состояние: "+ state.getName()+ "\nВремя включения: "+ getDate());
             Log.d("alarm", "setState: " + name);
-            sendNotification(context);
+            if (prefs.getBoolean(NOTIF_STATE_SETTING, true))
+                sendNotification(context);
 
         }
 
@@ -116,53 +118,36 @@ public class StateAlarmReceiver extends BroadcastReceiver {
     private void sendNotification(Context context) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (prefs.getBoolean(NOTIF_STATE_SETTING, true)) {
-                if (prefs.getBoolean(SOUND_NOTIF_STATE_SETTING, false)) {
-                    NotificationChannel notificationChannel =
-                            new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                            "State notifications", NotificationManager.IMPORTANCE_DEFAULT);
-                    // Configure the notification channel.
-                    notificationChannel.setDescription("Channel description");
-                    notificationChannel.enableLights(true);
-                    notificationChannel.enableVibration(false);
 
-                    if (notificationManager != null) {
-                        notificationManager.createNotificationChannel(notificationChannel);
-                    }
-                } else {
-                    NotificationChannel notificationChannel =
-                            new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                            "State notifications", NotificationManager.IMPORTANCE_LOW);
-                    // Configure the notification channel.
-                    notificationChannel.setDescription("Channel description");
-                    notificationChannel.enableLights(true);
-                    notificationChannel.enableVibration(false);
-
-                    if (notificationManager != null) {
-                        notificationManager.createNotificationChannel(notificationChannel);
-                    }
-                }
+            NotificationChannel notificationChannel = new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
+                    "State notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel 1");
+            notificationChannel.enableLights(true);
+            notificationChannel.setSound(null, null);
+            notificationChannel.enableVibration(false);
 
 
-            } else {
-                NotificationChannel notificationChannel =
-                        new NotificationChannel(STATE_NOTIFICATION_CHANNEL_ID,
-                        "State notifications", NotificationManager.IMPORTANCE_MIN);
-                // Configure the notification channel.
-                notificationChannel.setDescription("Channel description");
-                notificationChannel.enableLights(true);
-                notificationChannel.enableVibration(false);
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(notificationChannel);
 
-                if (notificationManager != null) {
-                    notificationManager.createNotificationChannel(notificationChannel);
-                }
+            notificationChannel = new NotificationChannel(STATE_SOUND_NOTIFICATION_CHANNEL_ID,
+                    "State notifications", NotificationManager.IMPORTANCE_HIGH);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel 2");
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(false);
+
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+
+
             }
-
-
         }
 
+
         Intent notifyIntent = new Intent(context, ShowActivity.class);
-        notifyIntent.putExtra("type","State");
+        notifyIntent.putExtra("type", "State");
         notifyIntent.putExtra("name", state.getName());
         notifyIntent.putExtra("lat", state.getLat());
         notifyIntent.putExtra("lng", state.getLng());
@@ -175,16 +160,28 @@ public class StateAlarmReceiver extends BroadcastReceiver {
                 context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setSmallIcon(R.drawable.list)
-                .setContentTitle("State time")
-                .setContentText("State: " + state.getName())
-                .setAutoCancel(true)
-                .setContentIntent(notifyPendingIntent);
-        assert notificationManager != null;
-        notificationManager.notify(state.getId(), builder.build());
+        if (prefs.getBoolean(SOUND_NOTIF_STATE_SETTING, false)) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_SOUND_NOTIFICATION_CHANNEL_ID)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setSmallIcon(R.drawable.list)
+                    .setContentTitle("Установлен профиль")
+                    .setContentText(state.getName())
+                    .setAutoCancel(true)
+                    .setContentIntent(notifyPendingIntent);
+            assert notificationManager != null;
+            notificationManager.notify(state.getId(), builder.build());
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.list)
+                    .setContentTitle("Установлен профиль")
+                    .setContentText(state.getName())
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_MIN)
+                    .setContentIntent(notifyPendingIntent);
+            assert notificationManager != null;
+            notificationManager.notify(state.getId(), builder.build());
+        }
+
     }
 
 

@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.example.dima.smarttool.GPSService.NOTE_NOTIFICATION_CHANNEL_ID;
+import static com.example.dima.smarttool.GPSService.NOTE_SOUND_NOTIFICATION_CHANNEL_ID;
 import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_NOTE_SETTING;
 
 public class NoteAlarmReceiver extends BroadcastReceiver {
@@ -77,55 +79,77 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
 
 
     private void sendNotification(Context context) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, true)) {
 
-                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                        "Note notifications", NotificationManager.IMPORTANCE_HIGH);
-                // Configure the notification channel.
-                notificationChannel.setDescription("Channel description");
-                notificationChannel.enableLights(true);
-                notificationChannel.enableVibration(true);
+            NotificationChannel notificationChannel = new NotificationChannel(NOTE_NOTIFICATION_CHANNEL_ID,
+                    "Note notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel 01");
+            notificationChannel.setSound(null, null);
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(true);
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(notificationChannel);
 
-                if (notificationManager != null) {
-                    notificationManager.createNotificationChannel(notificationChannel);
-                }
-            } else {
-                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                        "Note notifications", NotificationManager.IMPORTANCE_LOW);
-                // Configure the notification channel.
-                notificationChannel.setDescription("Channel description");
-                notificationChannel.enableLights(true);
-                notificationChannel.enableVibration(true);
+            notificationChannel = new NotificationChannel(NOTE_SOUND_NOTIFICATION_CHANNEL_ID,
+                    "Note notifications", NotificationManager.IMPORTANCE_HIGH);
+            // Configure the notification channel.
+            notificationChannel.setDescription("Channel 02");
+            notificationChannel.enableLights(true);
+            notificationChannel.enableVibration(true);
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(notificationChannel);
 
-                if (notificationManager != null) {
-                    notificationManager.createNotificationChannel(notificationChannel);
-                }
-            }
         }
 
 
         Intent notifyIntent = new Intent(context, ShowActivity.class);
         notifyIntent.putExtra("type", "Note");
         notifyIntent.putExtra("name", note.getName());
-        notifyIntent.putExtra("text", note.getText());
         notifyIntent.putExtra("lat", note.getLat());
         notifyIntent.putExtra("lng", note.getLng());
         notifyIntent.putExtra("time", note.getStartTime());
+        notifyIntent.putExtra("text", note.getText());
         notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(
                 context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setSmallIcon(R.drawable.note)
-                .setContentTitle("Напоминание")
-                .setContentText(note.getName())
-                .setAutoCancel(true)
-                .setContentIntent(notifyPendingIntent);
-        assert notificationManager != null;
-        notificationManager.notify(note.getId(), builder.build());
+
+
+
+        if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, true)) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_SOUND_NOTIFICATION_CHANNEL_ID)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setSmallIcon(R.drawable.list)
+                    .setContentTitle(note.getName())
+                    .setContentText(note.getText())
+                    .setAutoCancel(true)
+                    .setContentIntent(notifyPendingIntent)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+
+            assert notificationManager != null;
+            notificationManager.notify(note.getId(), builder.build());
+
+
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.list)
+                    .setContentTitle(note.getName())
+                    .setContentText(note.getText())
+                    .setPriority(NotificationCompat.PRIORITY_MIN)
+                    .setAutoCancel(true)
+                    .setContentIntent(notifyPendingIntent);
+
+            assert notificationManager != null;
+            notificationManager.notify(note.getId(), builder.build());
+
+
+        }
+
+
+
     }
 
 
