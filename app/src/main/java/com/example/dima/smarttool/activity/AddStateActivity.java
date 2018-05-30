@@ -23,7 +23,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.StateHelper;
-import com.example.dima.smarttool.GPSService;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.fragment.TimePickerFragment;
 import com.example.dima.smarttool.receiver.StateAlarmReceiver;
@@ -32,6 +31,8 @@ import java.util.Calendar;
 import java.util.Random;
 
 import static com.example.dima.smarttool.fragment.StateFragment.FIRST_START_STATES;
+
+//import com.example.dima.smarttool.GPSService;
 
 public class AddStateActivity extends AppCompatActivity {
     static Switch wifiSwitch, bluetoothSwitch;
@@ -107,8 +108,8 @@ public class AddStateActivity extends AppCompatActivity {
                 }
 
                 Log.d("DB", "add: " + sh.getAll().toString());
-                stopService(new Intent(AddStateActivity.this, GPSService.class));
-                startService(new Intent(AddStateActivity.this, GPSService.class));
+//                stopService(new Intent(AddStateActivity.this, GPSService.class));
+//                startService(new Intent(AddStateActivity.this, GPSService.class));
                 finish();
             }
 

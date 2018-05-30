@@ -25,10 +25,16 @@ import java.util.ArrayList;
 
 public class StateFragment extends Fragment {
     public static final String FIRST_START_STATES = "firstStates";
+
+
     ArrayList<State> stateArrayList = new ArrayList<>(MainActivity.getStateArr());
+
+
     RecyclerView rv;
     TextView firstTextView;
     Boolean firstStart;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,4 +55,6 @@ public class StateFragment extends Fragment {
         rv.setAdapter(new StateRVAdapter(stateArrayList, view.getContext()));
         return view;
     }
+
+
 }

@@ -142,7 +142,7 @@ public class NoteRVAdapter extends RecyclerView.Adapter<NoteRVAdapter.ContactsVi
         public void onClick(View v) {
             int position = notes.indexOf(note);        // получаем индекс удаляемого элемента
             NoteHelper nh = new NoteHelper(context);
-            nh.deleteState(String.valueOf(note.getId()));
+            nh.deleteNote(String.valueOf(note.getId()));
             Log.d("DB", nh.getAll().toString());
             notes.remove(note);                     // удаляем его из списка
             notifyItemRemoved(position);            // метод для удалаении из RecyclerView

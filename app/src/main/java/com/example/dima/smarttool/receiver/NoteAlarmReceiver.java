@@ -25,9 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.example.dima.smarttool.GPSService.NOTE_NOTIFICATION_CHANNEL_ID;
-import static com.example.dima.smarttool.GPSService.NOTE_SOUND_NOTIFICATION_CHANNEL_ID;
 import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_NOTE_SETTING;
+
+//import static com.example.dima.smarttool.GPSService.NOTE_NOTIFICATION_CHANNEL_ID;
+//import static com.example.dima.smarttool.GPSService.NOTE_SOUND_NOTIFICATION_CHANNEL_ID;
 
 public class NoteAlarmReceiver extends BroadcastReceiver {
     private static final String NOTIFICATION_CHANNEL_ID = "note_notification_channel";
@@ -82,7 +83,7 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            NotificationChannel notificationChannel = new NotificationChannel(NOTE_NOTIFICATION_CHANNEL_ID,
+            NotificationChannel notificationChannel = new NotificationChannel("NOTE_NOTIFICATION_CHANNEL_ID",
                     "Note notifications", NotificationManager.IMPORTANCE_DEFAULT);
             // Configure the notification channel.
             notificationChannel.setDescription("Channel 01");
@@ -92,7 +93,7 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
             if (notificationManager != null)
                 notificationManager.createNotificationChannel(notificationChannel);
 
-            notificationChannel = new NotificationChannel(NOTE_SOUND_NOTIFICATION_CHANNEL_ID,
+            notificationChannel = new NotificationChannel("NOTE_SOUND_NOTIFICATION_CHANNEL_ID",
                     "Note notifications", NotificationManager.IMPORTANCE_HIGH);
             // Configure the notification channel.
             notificationChannel.setDescription("Channel 02");
@@ -120,7 +121,7 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
 
 
         if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, true)) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_SOUND_NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "NOTE_SOUND_NOTIFICATION_CHANNEL_ID")
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setSmallIcon(R.drawable.list)
                     .setContentTitle(note.getName())
@@ -134,7 +135,7 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
 
 
         } else {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "NOTE_NOTIFICATION_CHANNEL_ID")
                     .setSmallIcon(R.drawable.list)
                     .setContentTitle(note.getName())
                     .setContentText(note.getText())

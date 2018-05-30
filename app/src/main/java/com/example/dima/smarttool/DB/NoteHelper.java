@@ -80,7 +80,7 @@ public class NoteHelper {
         return arr; // вернули коллекцию
     }
 
-    public void deleteState(String id) {
+    public void deleteNote(String id) {
         Log.d("DB", "delete id = " + id);
         db.delete(TABLE_NAME, NoteDBHelper.COLUMN_ID + "=?", new String[]{id});
     }

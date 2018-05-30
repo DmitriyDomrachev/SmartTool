@@ -22,7 +22,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.NoteHelper;
-import com.example.dima.smarttool.GPSService;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.fragment.TimePickerFragment;
 import com.example.dima.smarttool.receiver.NoteAlarmReceiver;
@@ -31,6 +30,8 @@ import java.util.Calendar;
 import java.util.Random;
 
 import static com.example.dima.smarttool.fragment.NoteFragment.FIRST_START_NOTES;
+
+//import com.example.dima.smarttool.GPSService;
 
 public class AddNoteActivity extends AppCompatActivity {
 
@@ -101,8 +102,8 @@ public class AddNoteActivity extends AppCompatActivity {
 
 
                 Log.d("DB", "add: " + nh.getAll().toString());
-                stopService(new Intent(AddNoteActivity.this, GPSService.class));
-                startService(new Intent(AddNoteActivity.this, GPSService.class));
+//                stopService(new Intent(AddNoteActivity.this, GPSService.class));
+//                startService(new Intent(AddNoteActivity.this, GPSService.class));
                 finish();
             }
 

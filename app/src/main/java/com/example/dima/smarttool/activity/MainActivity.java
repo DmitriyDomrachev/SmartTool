@@ -1,6 +1,7 @@
 package com.example.dima.smarttool.activity;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -31,7 +32,7 @@ import android.view.View;
 
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
-import com.example.dima.smarttool.GPSService;
+import com.example.dima.smarttool.GeoService;
 import com.example.dima.smarttool.Note;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.State;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private static int REQUEST_READ_ACCESS_FINE = 3;
     final int REQUEST_SAVE = 1;
     FragmentManager fragmentManager;
-    Fragment fragmentSc, fragmentL, fragmentN, fragmentS;
+    Fragment fragmentSc, fragmentSt, fragmentN, fragmentS;
     FloatingActionButton fab;
     AlarmManager alarmManager;
     Toolbar toolbar;
@@ -108,8 +109,6 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             requestPermission(READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);
-
-
         requestPermission(READ_ACCESS_FINE, REQUEST_READ_ACCESS_FINE);
 
 
@@ -123,14 +122,17 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(android.provider.Settings
                     .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
             startActivity(intent);
-        } else startService(new Intent(MainActivity.this, GPSService.class));
+        }
 
 
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         setContentView(R.layout.activity_main);
+
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+
         Intent batteryStatus = registerReceiver(mBroadcastReceiver, ifilter);
+
         //текущее состояние батареи, mBroadcastReceiver в качестве преемника
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         toolbar = findViewById(R.id.mainToolbar);
@@ -153,23 +155,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (!isMyServiceRunning(GeoService.class))
+            startService(new Intent(getApplicationContext(), GeoService.class));
 
-
+        if (!isMyServiceRunning(GeoService.class))
+            startService(new Intent(getApplicationContext(), GeoService.class));
 
     }
 
     protected void onResume() {
         super.onResume();
+
+        new Load().execute();
+
+
         loadDB();           // заргузка данных из базы данных
-
-        startService(new Intent(MainActivity.this,GPSService.class));
-
-        fragmentL = new StateFragment();
+        
+        fragmentSt = new StateFragment();
         fragmentN = new NoteFragment();
         fragmentS = new SettingFragment();
+
         fragmentManager = getFragmentManager();
 
+
         new RewriteFragment().execute();
+
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -189,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                         fab.show();
                         navigateID = R.id.navigation_list;
                         getSupportActionBar().setTitle("Список состояний");
-                        loadFragment(fragmentL);
+                        loadFragment(fragmentSt);
                         return true;
 
                     case R.id.navigation_note:
@@ -213,10 +223,10 @@ public class MainActivity extends AppCompatActivity {
 
         switch (navigation.getSelectedItemId()) {
             case R.id.navigation_list:
-                loadFragment(fragmentL);
+                loadFragment(fragmentSt);
                 return;
             case R.id.navigation_note:
-                loadFragment(fragmentN);
+                loadFragment(new NoteFragment());
                 return;
             case R.id.navigation_setting:
                 loadFragment(fragmentS);
@@ -227,8 +237,27 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
 
+
+        fragmentTransaction = null;
+        audioManager = null;
+        btAdapter = null;
+        wifiManager = null;
+        stateLoadArr.clear();
+        noteLoadArr.clear();
+//        TAG = null;
+
+        fragmentManager = null;
+        fragmentSc = null;
+        fragmentSt = null;
+        fragmentN = null;
+        fragmentS = null;
+//        fab = null;
+//        alarmManager = null;
+//        toolbar = null;
+
+
+        super.onDestroy();
         Log.d("alarm", "destroy");
     }
 
@@ -276,6 +305,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private class RewriteFragment extends AsyncTask<Void, Integer, Void> {
         @Override
         protected void onPreExecute() {
@@ -305,6 +345,21 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+
+
+            return null;
+        }
+
+    }
+
+    private class Load extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onPreExecute() {
+
+            super.onPreExecute();
+        }
+
+        protected Void doInBackground(Void... args) {
 
 
             return null;

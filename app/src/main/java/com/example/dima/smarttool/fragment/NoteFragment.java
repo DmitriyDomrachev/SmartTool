@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public class NoteFragment extends Fragment {
     public static final String FIRST_START_NOTES = "firstNotes";
+
     ArrayList<Note> noteArrayList = new ArrayList<>(MainActivity.getNoteArr());
     RecyclerView rv;
     TextView firstTextView;
@@ -42,7 +43,6 @@ public class NoteFragment extends Fragment {
             firstTextView.setVisibility(View.VISIBLE);
         //текст подсказка при первом запуске
 
-
         rv = view.findViewById(R.id.rvNote);
         rv.setLayoutManager(new LinearLayoutManager(view.getContext())); // устанавливаем разметку для списка.
         rv.setItemAnimator(new DefaultItemAnimator());          //устанавливаем класс, отвечающий за анимации в списке
@@ -50,6 +50,8 @@ public class NoteFragment extends Fragment {
 
         return view;
     }
+
+
 }
 
 

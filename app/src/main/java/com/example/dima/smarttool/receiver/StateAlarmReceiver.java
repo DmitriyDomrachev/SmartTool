@@ -28,9 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.example.dima.smarttool.GPSService.STATE_SOUND_NOTIFICATION_CHANNEL_ID;
 import static com.example.dima.smarttool.fragment.SettingFragment.NOTIF_STATE_SETTING;
 import static com.example.dima.smarttool.fragment.SettingFragment.SOUND_NOTIF_STATE_SETTING;
+
+//import static com.example.dima.smarttool.GPSService.STATE_SOUND_NOTIFICATION_CHANNEL_ID;
 
 public class StateAlarmReceiver extends BroadcastReceiver {
     private static final String STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel";
@@ -131,7 +132,7 @@ public class StateAlarmReceiver extends BroadcastReceiver {
             if (notificationManager != null)
                 notificationManager.createNotificationChannel(notificationChannel);
 
-            notificationChannel = new NotificationChannel(STATE_SOUND_NOTIFICATION_CHANNEL_ID,
+            notificationChannel = new NotificationChannel("STATE_SOUND_NOTIFICATION_CHANNEL_ID",
                     "State notifications", NotificationManager.IMPORTANCE_HIGH);
             // Configure the notification channel.
             notificationChannel.setDescription("Channel 2");
@@ -161,7 +162,7 @@ public class StateAlarmReceiver extends BroadcastReceiver {
         );
 
         if (prefs.getBoolean(SOUND_NOTIF_STATE_SETTING, false)) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, STATE_SOUND_NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "STATE_SOUND_NOTIFICATION_CHANNEL_ID")
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                     .setSmallIcon(R.drawable.list)
                     .setContentTitle("Установлен профиль")

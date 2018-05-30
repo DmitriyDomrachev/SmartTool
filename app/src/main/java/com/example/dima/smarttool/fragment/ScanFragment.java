@@ -12,13 +12,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.HistoryHelper;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.activity.MainActivity;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static com.example.dima.smarttool.GeoService.CHECK_PLAY_SERVICES;
+import static com.example.dima.smarttool.GeoService.PLAY_SERVICE_RESOLUTION_REQUEST;
 
 /**
  * Created by dima on 27.02.2018.
@@ -37,6 +43,12 @@ public class ScanFragment extends Fragment {
                              Bundle savedInstanceState) {
         SharedPreferences prefs = getActivity().getSharedPreferences("myPrefs",
                 Context.MODE_PRIVATE);
+
+
+        //check play services
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(CHECK_PLAY_SERVICES, checkPlayService());
+        editor.apply();
 
         HistoryHelper hh = new HistoryHelper(getActivity().getApplicationContext());
         nameList = hh.getAll();
@@ -64,11 +76,11 @@ public class ScanFragment extends Fragment {
         wifi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WiFiState = !WiFiState;
                 if (WiFiState)
                     wifi.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
                 else wifi.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
                 MainActivity.setWiFi(WiFiState);
+                WiFiState = !WiFiState;
                 //управление состоянием
             }
         });
@@ -76,11 +88,11 @@ public class ScanFragment extends Fragment {
         bluetooth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BluetoothState =! BluetoothState;
                 if (BluetoothState)
                     bluetooth.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
                 else bluetooth.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
                 MainActivity.setBluetooth(BluetoothState);
+                BluetoothState =! BluetoothState;
                 //управление состоянием
 
             }
@@ -113,6 +125,23 @@ public class ScanFragment extends Fragment {
         return view;
 
 
+    }
+
+        private boolean checkPlayService() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getActivity().getApplicationContext());
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, getActivity(),
+                        PLAY_SERVICE_RESOLUTION_REQUEST).show();
+
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(), "This device is not supported",
+                        Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+            return false;
+        }
+        return true;
     }
 
 
