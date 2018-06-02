@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +24,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.StateHelper;
+import com.example.dima.smarttool.GeoService;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.fragment.TimePickerFragment;
 import com.example.dima.smarttool.receiver.StateAlarmReceiver;
@@ -30,6 +32,7 @@ import com.example.dima.smarttool.receiver.StateAlarmReceiver;
 import java.util.Calendar;
 import java.util.Random;
 
+import static com.example.dima.smarttool.activity.MainActivity.audioManager;
 import static com.example.dima.smarttool.fragment.StateFragment.FIRST_START_STATES;
 
 //import com.example.dima.smarttool.GPSService;
@@ -71,7 +74,7 @@ public class AddStateActivity extends AppCompatActivity {
             ed.apply();
 
             if (name.length() == 0) {
-                Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),  getString(R.string.input_name), Toast.LENGTH_SHORT).show();
             } else {
                 if (condition == 0) {
                     sh.insert(name, wifi, bluetooth, 999999999, mediaI, systemI, 0, 0);
@@ -108,8 +111,8 @@ public class AddStateActivity extends AppCompatActivity {
                 }
 
                 Log.d("DB", "add: " + sh.getAll().toString());
-//                stopService(new Intent(AddStateActivity.this, GPSService.class));
-//                startService(new Intent(AddStateActivity.this, GPSService.class));
+                stopService(new Intent(AddStateActivity.this, GeoService.class));
+                startService(new Intent(AddStateActivity.this, GeoService.class));
                 finish();
             }
 
@@ -151,7 +154,9 @@ public class AddStateActivity extends AppCompatActivity {
         wifiSwitch = findViewById(R.id.addStateWiFiSwitch);
         bluetoothSwitch = findViewById(R.id.addStateBluetoothSwitch);
         mediaSeekBar = findViewById(R.id.addStateMediaSoundSeekBar);
+        mediaSeekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         systemSeekBar = findViewById(R.id.addStateSystemSoundSeekBar);
+        systemSeekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
 
         SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         final SharedPreferences.Editor ed = prefs.edit();

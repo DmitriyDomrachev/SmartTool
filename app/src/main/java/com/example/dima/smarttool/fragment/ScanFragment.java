@@ -99,7 +99,7 @@ public class ScanFragment extends Fragment {
         });
 
 
-        stateName.setText(String.valueOf(stateName.getText() + (prefs.getString("stateName", ""))));
+        stateName.setText(String.valueOf(stateName.getText() +" "+ (prefs.getString("stateName", ""))));
 
         // находим список
         ListView lvMain = view.findViewById(R.id.ScanFragmentListView);

@@ -10,14 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
+        android:layout_marginTop="@dimen/activity_vertical_margin">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/setting_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:elevation="@dimen/cardview_default_elevation"
             android:orientation="vertical">
 
@@ -28,7 +29,7 @@
                 android:layout_marginStart="@dimen/text_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:text="Журнал"
+                android:text="@string/setting_journal"
                 android:textColor="@color/colorSecondaryDark"
                 android:textSize="24sp" />
 
@@ -40,9 +41,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="38dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
-                android:text="    Отчистить журнал"
+                android:text="@string/setting_clear"
                 android:textColor="@color/secondaryTextColor"
                 android:textSize="18sp" />
 
@@ -69,6 +72,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/setting_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:elevation="@dimen/cardview_default_elevation"
             android:orientation="vertical">
 
@@ -80,7 +85,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:text="Местоположение"
+                android:text="@string/setting_location"
                 android:textColor="@color/colorSecondaryDark"
                 android:textSize="24sp" />
 
@@ -90,7 +95,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/text_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Обновление данных о местоположении"
+                android:text="@string/setting_update_location"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
@@ -125,7 +130,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:elevation="@dimen/cardview_default_elevation"
             android:orientation="vertical"
             android:background="@drawable/setting_content">
 
@@ -136,7 +144,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Уведомления"
+                android:text="@string/setting_notification"
                 android:textColor="@color/colorSecondaryDark"
                 android:textSize="24sp" />
 
@@ -146,7 +154,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/text_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Состояния"
+                android:text="@string/setting_state"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
@@ -157,7 +165,7 @@
                 android:layout_marginBottom="3dp"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:text="Отправлять уведомление"
+                android:text="@string/setting_send_notification"
                 android:textColor="@color/secondaryTextColor"
                 android:textSize="18sp"
                 tools:checked="true" />
@@ -175,7 +183,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="3dp"
-                android:text="Звук"
+                android:text="@string/setting_sound"
                 android:textColor="@color/secondaryTextColor"
                 android:textSize="18sp"
                 tools:checked="true" />
@@ -187,7 +195,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/text_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="Напоминания"
+                android:text="@string/setting_note"
                 android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
@@ -199,7 +207,7 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:text="Звук"
+                android:text="@string/setting_sound"
                 android:textColor="@color/secondaryTextColor"
                 android:textSize="18sp"
                 tools:checked="true" />

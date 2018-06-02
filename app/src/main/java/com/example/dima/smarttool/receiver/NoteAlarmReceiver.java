@@ -56,7 +56,8 @@ public class NoteAlarmReceiver extends BroadcastReceiver {
             this.note = (noteTimeMap.get(name));
             Log.d("alarm", "setNote: " + name);
             HistoryHelper hh = new HistoryHelper(context);
-            hh.insert("Напоминание: " + note.getName() + "\nВремя включения: " + getDate());
+            hh.insert( context.getResources().getString(R.string.note) + ": " + note.getName()
+                    + "\n" + context.getResources().getString(R.string.start_at)+ ": " + getDate());
             sendNotification(context);
 
         }

@@ -23,9 +23,9 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
-    private  UiSettings uiSettings;
     boolean first = true;
+    private GoogleMap mMap;
+    private UiSettings uiSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -48,7 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(this,
                     new String[]{ACCESS_FINE_LOCATION}, 3);
             return;
-                    }
+        }
         uiSettings = mMap.getUiSettings();
         mMap.setIndoorEnabled(false); //отключение  зданий
         mMap.setMyLocationEnabled(true); //добавление слоя моего местоположения
@@ -62,11 +61,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (first) {
                     LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 16.0f));
-                    first=!first;
+                    first = !first;
                 }
             }
         });     //перемещение карты на текущее местополложение
-
 
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {

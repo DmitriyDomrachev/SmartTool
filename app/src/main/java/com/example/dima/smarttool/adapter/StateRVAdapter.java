@@ -47,7 +47,7 @@ public class StateRVAdapter extends RecyclerView.Adapter<StateRVAdapter.Contacts
         long millis = calendar.getTimeInMillis();
         int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
         int minute = (int) TimeUnit.MILLISECONDS.toMinutes(millis - hour * 3600000);
-        holder.txtName.setText(String.valueOf(holder.txtName.getText() + state.getName()));
+        holder.txtName.setText(String.valueOf(state.getName()));
         if (state.getLat() == 0 && state.getStartTime() != 999999999) {
             if (minute > 10)
                 holder.txtTime.setText(String.valueOf(hour + ":" + minute));

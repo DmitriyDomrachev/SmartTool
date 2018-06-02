@@ -40,7 +40,7 @@
                 android:layout_marginTop="5dp"
                 android:background="@android:color/transparent"
                 android:ems="10"
-                android:hint="Введите название"
+                android:hint="@string/add_state_title"
                 android:inputType="textPersonName"
                 android:textColor="@color/secondaryTextColor" />
 
@@ -72,7 +72,7 @@
                     android:layout_width="193dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:text="Громкость медиа"
+                    android:text="@string/add_state_media_vol"
                     android:textColor="@color/secondaryTextColor"
                     android:textSize="18sp" />
 
@@ -99,7 +99,7 @@
                     android:layout_width="193dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:text="Системная громкость"
+                    android:text="@string/add_state_system_vol"
                     android:textColor="@color/secondaryTextColor"
                     android:textSize="18sp" />
 
@@ -124,7 +124,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="WiFi"
+                    android:text="@string/add_state_wifi"
                     android:textColor="@color/secondaryTextColor"
                     android:textSize="18sp" />
 
@@ -143,7 +143,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="Bluetooth"
+                    android:text="@string/add_state_bt"
                     android:textColor="@color/secondaryTextColor"
                     android:textSize="18sp" />
 

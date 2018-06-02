@@ -13,7 +13,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -49,9 +48,9 @@
             android:enabled="true"
             android:exported="true" />
 
-        <!--<service-->
-            <!--android:name=".GPSService"-->
-            <!--android:enabled="true" />-->
+        <!-- <service -->
+        <!-- android:name=".GPSService" -->
+        <!-- android:enabled="true" /> -->
 
         <service
             android:name=".GeoService"
@@ -61,21 +60,19 @@
         <activity android:name=".activity.ShowActivity" />
 
         <receiver
-            android:name="com.example.dima.smarttool.receiver.StartServiceReceiver"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
-            android:enabled="true">
+            android:name=".receiver.StartServiceReceiver"
+            android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.REBOOT"/>
+                <action android:name="android.intent.action.REBOOT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
-
-
-
-
+        <activity android:name=".InfoActivity"></activity>
     </application>
 
 </manifest>

@@ -72,7 +72,9 @@ public class StateAlarmReceiver extends BroadcastReceiver {
             ed.putString("stateName", state.getName());
             ed.apply();
             HistoryHelper hh = new HistoryHelper(context);
-            hh.insert("Состояние: "+ state.getName()+ "\nВремя включения: "+ getDate());
+            hh.insert( context.getResources().getString(R.string.state) + ": " + state.getName()
+                    + "\n" + context.getResources().getString(R.string.start_at)+ ": " + getDate());
+
             Log.d("alarm", "setState: " + name);
             if (prefs.getBoolean(NOTIF_STATE_SETTING, true))
                 sendNotification(context);

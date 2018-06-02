@@ -4,9 +4,9 @@
     android:id="@+id/note_rv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="6dp"
     android:layout_marginHorizontal="4dp"
     android:layout_marginTop="4dp"
-    android:layout_marginBottom="6dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:selectableItemBackground"
@@ -19,9 +19,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_height="50dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -30,21 +28,24 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_weight="0"
-                android:tint="@color/colorSecondaryDark"
+                android:tint="@color/divider"
                 app:srcCompat="@drawable/alarm" />
 
             <LinearLayout
-                android:layout_width="308dp"
-                android:layout_height="50dp"
-                android:layout_weight="01"
+                android:layout_width="260dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/cvNoteNameTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/text_margin"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="имя"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
                     android:textColor="@color/secondaryTextColor"
                     android:textSize="24sp" />
 
@@ -126,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:text="УДАЛИТЬ"
+                android:text="@string/delete"
                 android:textColor="@color/colorPrimary" />
         </LinearLayout>
 

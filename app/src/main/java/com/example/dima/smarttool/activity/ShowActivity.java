@@ -8,8 +8,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.dima.smarttool.R;
@@ -21,9 +21,58 @@ public class ShowActivity extends AppCompatActivity {
     Toolbar toolbar;
     Intent intent;
     TextView name, text;
-    Button condition;
     double lat = 0, lng = 0;
     long time = 0;
+    static String finalHour;
+    static String finalMinute;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_condition_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if ((lat != 0 || lng != 0) && time == 999999999) {
+            //если запуск по gps открывается гугл карта
+            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + lat + "," + lng + "("
+                    + String.valueOf(name.getText()) + ")");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            startActivity(mapIntent);
+        } else if (time != 0 && time != 999999999) {
+            // /если запуск по времени открывается диалоговое окно c временем запуска
+            AlertDialog.Builder builder = new AlertDialog.Builder(ShowActivity.this);
+            builder.setTitle(String.valueOf(name.getText()))
+                    .setMessage(getString(R.string.start_at)+" "+ finalHour + ":" + finalMinute)
+                    .setIcon(R.drawable.alarm)
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ShowActivity.this);
+            builder.setTitle(String.valueOf(name.getText()))
+                    .setMessage(getString(R.string.dont_have_condition))
+                    .setIcon(R.drawable.hand)
+                    .setCancelable(false)
+                    .setNegativeButton("ОК",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+        return true;
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,14 +81,14 @@ public class ShowActivity extends AppCompatActivity {
 
         intent = getIntent();
         toolbar = findViewById(R.id.showToolbar);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.icons));
+        setSupportActionBar(toolbar);
+
         if (Objects.equals(intent.getStringExtra("type"), "State"))
-            toolbar.setTitle("Состояние");
+            toolbar.setTitle( getString(R.string.state));
         else
-            toolbar.setTitle("Напоминание");
+            toolbar.setTitle( getString(R.string.note));
         name = findViewById(R.id.showNameText);
         text = findViewById(R.id.showText);
-        condition = findViewById(R.id.showConditionButton);
         name.setText(intent.getStringExtra("name"));
         text.setText(intent.getStringExtra("text"));
         lat += intent.getDoubleExtra("lat", 0);
@@ -55,53 +104,9 @@ public class ShowActivity extends AppCompatActivity {
             hour = "00";
         }
 
-        final String finalHour = hour;
-        final String finalMinute = minute;
-        condition.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("showActivity", "lat: " + lat + "    lng: " + lng);
-                if ((lat != 0 || lng != 0) && time == 999999999) {
-                    //если запуск по gps открывается гугл карта
-                    Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + lat + "," + lng + "("
-                            + String.valueOf(name.getText()) + ")");
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
-                } else if (time != 0 && time != 999999999) {
-                    // /если запуск по времени открывается диалоговое окно c временем запуска
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ShowActivity.this);
-                    builder.setTitle(String.valueOf(name.getText()))
-                            .setMessage("Включение в " + finalHour + ":" + finalMinute)
-                            .setIcon(R.drawable.alarm)
-                            .setCancelable(false)
-                            .setNegativeButton("ОК",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ShowActivity.this);
-                    builder.setTitle(String.valueOf(name.getText()))
-                            .setMessage("Нет условий для автоматического включения")
-                            .setIcon(R.drawable.hand)
-                            .setCancelable(false)
-                            .setNegativeButton("ОК",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                }
+        finalHour = hour;
+        finalMinute = minute;
 
-
-            }
-        });
 
 
     }

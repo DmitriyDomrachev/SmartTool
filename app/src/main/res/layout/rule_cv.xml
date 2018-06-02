@@ -28,9 +28,7 @@
                 android:id="@+id/cvRuleImageView"
                 android:layout_width="47dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_weight="0"
                 android:tint="@color/divider"
                 app:srcCompat="@drawable/alarm" />
@@ -39,15 +37,16 @@
             <LinearLayout
                 android:layout_width="260dp"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/cvRuleNameTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:layout_weight="0"
-                    android:text=""
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:text="имя"
                     android:textAlignment="viewStart"
                     android:textAllCaps="false"
                     android:textColor="@color/secondaryTextColor"
@@ -112,7 +111,7 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:text="УДАЛИТЬ"
+                android:text="@string/delete"
                 android:textColor="@color/colorPrimary" />
         </LinearLayout>
 

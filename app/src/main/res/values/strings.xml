@@ -1,16 +1,51 @@
 <resources>
     <string name="app_name">Smart tool</string>
-    <string name="title_scan">Scan</string>
-    <string name="title_add">List</string>
-    <string name="title_note">Note</string>
-    <string name="title_settings">Settings</string>
-    <string name="Battery">Заряд батареи: </string>
-    <string name="WiFi">Состояние WiFi: </string>
-    <string name="Bluetooth">Состояние Bluetooth: </string>
-    <!--<string name="Mobile">Mobile data status: </string>-->
-    <string name="Sound">Громкость звука: </string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="toolbar_add_note">Новое напоминание</string>
+    <string name="toolbar_add_state">Новое состояние</string>
+    <string name="title_activity_maps">Карта</string>
+    <string name="add_note_title">Заголовок</string>
+    <string name="add_note_text">Содержание</string>
+    <string name="add_state_title">Введите название</string>
+    <string name="add_state_media_vol">Громкость медиа</string>
+    <string name="add_state_system_vol">Системная громкость</string>
+    <string name="add_state_wifi">WiFi</string>
+    <string name="add_state_bt">Bluetooth</string>
+    <string name="show_condition">Показать условие</string>
+    <string name="first_note">Для добавления первого напоминания нажмите на +</string>
+    <string name="scan_current_profile">Текущий профиль:</string>
+    <string name="scan_journal">Журнал</string>
+    <string name="setting_journal">Журнал</string>
+    <string name="setting_clear">Отчистить журнал</string>
+    <string name="setting_location">Местоположение</string>
+    <string name="setting_update_location">Обновление данных о местоположении</string>
+    <string name="setting_notification">Уведомления</string>
+    <string name="setting_state">Состояния</string>
+    <string name="setting_send_notification">Отправлять уведомление</string>
+    <string name="setting_sound">Звук</string>
+    <string name="setting_note">Напоминания</string>
+    <string name="note">Напоминание</string>
+    <string name="state">Состояние</string>
+    <string name="first_state">Для добавления первого состояния нажмите на +</string>
+    <string name="delete">УДАЛИТЬ</string>
+    <string name="input_name">УДАЛИТЬ</string>
+    <string name="note_list">Список напоминаний</string>
+    <string name="state_list">Список состояний</string>
+    <string name="settings">Настройки</string>
+    <string name="dont_have_condition">"Нет условий для автоматического включения"</string>
+    <string name="start_at">"Включение в"</string>
+    <string name="give_me_permission">"Разрешения необходимы для корректоной работы программы"</string>
+    <string name="start_time">"Время включения:"</string>
+    <string name="info">"Информация"</string>
+
+
+    <string name="from_developer">"От автора"</string>
+    <string name="from_developer_text">"Привет! Я - молодой разработчик, а это приложение - мой первый проект. В приложение еще могут присутствовать некоторое баги. Сейчас ведется активная разработка приложения, дорабатывается интерфейс, исправляются ошибки. Вы тоже можете поучаствовать в развитие проекта. Пишите мне свои пожелания или замечания по адресу электронной почты uraldroid@gmail.com или воспользуйтесь кнопкой ниже."</string>
+
+    <string name="about_program">"О приложении"</string>
+    <string name="about_program_text">"SmartTool - приложение, объединяющие в себе две важные функции. С его помощью вы можете создавать профили состояний или напоминания активирующиеся в зависимости заданных вами условий. Оно всегда напомнит вам о важных делах и возьмет настройку смартфона на себя."</string>
+
+    <string name="for_miui">"Обращаем ваше внимание но то, что для корректной работы приложения на устройствах с MIUI необходимо вручную дать разрешение на автозапуск приложения. Для этого откройте системное приложение "безопасность" (security), перейдите в раздел "разрешения" (permission), в разделе "автозапуск" (autostart) дайте приложению разрешение на работу в фоновом режиме. "</string>
+
 
     <string-array name="journalSettingSpinner">
         <item>Сначала новые записи</item>

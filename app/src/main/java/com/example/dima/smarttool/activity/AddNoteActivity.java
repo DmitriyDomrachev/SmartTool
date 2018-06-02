@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.dima.smarttool.DB.NoteHelper;
+import com.example.dima.smarttool.GeoService;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.fragment.TimePickerFragment;
 import com.example.dima.smarttool.receiver.NoteAlarmReceiver;
@@ -67,7 +68,7 @@ public class AddNoteActivity extends AppCompatActivity {
             ed.apply();
             Log.d("addNote", "condition = " + condition);
             if (name.length() == 0)
-                Toast.makeText(getApplicationContext(), "Введите имя", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.input_name), Toast.LENGTH_SHORT).show();
             else {
                 if (condition == 0)
                     nh.insert(name, text, 999999999, 0, 0);
@@ -102,8 +103,8 @@ public class AddNoteActivity extends AppCompatActivity {
 
 
                 Log.d("DB", "add: " + nh.getAll().toString());
-//                stopService(new Intent(AddNoteActivity.this, GPSService.class));
-//                startService(new Intent(AddNoteActivity.this, GPSService.class));
+                stopService(new Intent(AddNoteActivity.this, GeoService.class));
+                startService(new Intent(AddNoteActivity.this, GeoService.class));
                 finish();
             }
 

@@ -14,32 +14,55 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/icons"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showToolbar">
 
-        <TextView
-            android:id="@+id/showNameText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/text_margin"
-            android:layout_weight="0"
-            android:text=""
-            android:textColor="@color/secondaryTextColor"
-            android:textSize="30sp" />
+            android:background="@drawable/head"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:elevation="2dp">
+
+            <TextView
+                android:id="@+id/showNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="@dimen/text_margin"
+                android:layout_marginStart="@dimen/text_margin"
+                android:layout_weight="0"
+                android:text=""
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="24sp" />
+
+        </LinearLayout>
+
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_weight="1"
+            android:background="@drawable/setting_content"
+            android:elevation="2dp"
             android:orientation="vertical"
             tools:layout_editor_absoluteX="16dp">
 
@@ -48,21 +71,15 @@
                 android:id="@+id/showText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:text=""
                 android:textColor="@color/colorSecondaryDark"
                 android:textSize="18sp" />
 
         </android.support.v4.widget.NestedScrollView>
-
-        <Button
-            android:id="@+id/showConditionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:text="Показать условие" />
 
     </LinearLayout>
 

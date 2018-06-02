@@ -27,12 +27,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.GeoService;
+import com.example.dima.smarttool.InfoActivity;
 import com.example.dima.smarttool.Note;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.State;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<Note> noteLoadArr = new ArrayList<>();
     static String TAG = "mainActivity";
     static int countState, countNote;
+    static RewriteFragment rw;
     private static int navigateID = R.id.navigation_scan;
     private static int REQUEST_READ_ACCESS_FINE = 3;
     final int REQUEST_SAVE = 1;
@@ -138,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("SmartTool");
-        toolbar.setTitleTextColor(getResources().getColor(R.color.icons));
 
         fab = findViewById(R.id.fab);
         fab.hide();
@@ -163,14 +165,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     protected void onResume() {
         super.onResume();
 
-        new Load().execute();
-
-
         loadDB();           // заргузка данных из базы данных
-        
+
         fragmentSt = new StateFragment();
         fragmentN = new NoteFragment();
         fragmentS = new SettingFragment();
@@ -178,7 +178,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getFragmentManager();
 
 
-        new RewriteFragment().execute();
+        rw = new RewriteFragment();
+        rw.execute();
 
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
@@ -198,21 +199,21 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navigation_list:
                         fab.show();
                         navigateID = R.id.navigation_list;
-                        getSupportActionBar().setTitle("Список состояний");
+                        getSupportActionBar().setTitle(getString(R.string.state_list));
                         loadFragment(fragmentSt);
                         return true;
 
                     case R.id.navigation_note:
                         fab.show();
                         navigateID = R.id.navigation_note;
-                        getSupportActionBar().setTitle("Список напоминаний");
+                        getSupportActionBar().setTitle(getString(R.string.note_list));
                         loadFragment(fragmentN);
                         return true;
 
                     case R.id.navigation_setting:
                         fab.hide();
                         navigateID = R.id.navigation_setting;
-                        getSupportActionBar().setTitle("Настройки");
+                        getSupportActionBar().setTitle(getString(R.string.settings));
                         loadFragment(fragmentS);
 
                         return true;
@@ -237,28 +238,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-
-
-        fragmentTransaction = null;
-        audioManager = null;
-        btAdapter = null;
-        wifiManager = null;
-        stateLoadArr.clear();
-        noteLoadArr.clear();
-//        TAG = null;
-
-        fragmentManager = null;
-        fragmentSc = null;
-        fragmentSt = null;
-        fragmentN = null;
-        fragmentS = null;
-//        fab = null;
-//        alarmManager = null;
-//        toolbar = null;
-
-
+        finish();
         super.onDestroy();
         Log.d("alarm", "destroy");
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_info_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_info) {
+            startActivity(new Intent(MainActivity.this, InfoActivity.class));
+        }
+        return true;
     }
 
     public void rewriteFragment() {
@@ -352,20 +349,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class Load extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPreExecute() {
 
-            super.onPreExecute();
-        }
-
-        protected Void doInBackground(Void... args) {
-
-
-            return null;
-        }
-
-    }
 }
 
 

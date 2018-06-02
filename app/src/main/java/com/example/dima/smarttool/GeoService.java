@@ -45,6 +45,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -72,29 +73,24 @@ public class GeoService extends Service implements
             FOREGROUND_NOTIFICATION_CHANNEL_ID = "foreground_notification_channel",
             NOTE_SOUND_NOTIFICATION_CHANNEL_ID = "note_sound_notification_channel",
             STATE_SOUND_NOTIFICATION_CHANNEL_ID = "state_sound_notification_channel",
-            IS_CURRENT_STATE_USERS = "currentState", LAST_NOTE = "lastNote";
+            CURRENT_STATE = "currentStateName", LAST_NOTE = "lastNote";
 
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
 
 
     static SharedPreferences pref;
-    private static int UPDATE_INTERVAL = 5000; //5 sec
-    private static int FASTEST_INTERVAL = 3000;
-    private static int DISPLACEMENT = 10;
+    static AudioManager audioManager;
+    private static int UPDATE_INTERVAL = 1000; //10 min
+    private static int FASTEST_INTERVAL = 900;
+    private static int DISPLACEMENT = 20;
+    private static int countNotes;
     ArrayList<GeoQuery> geoQuery = new ArrayList<GeoQuery>();
     DatabaseReference ref;
     GeoFire geoFire;
-    private LocationRequest mLocationRequest;
-    private GoogleApiClient mGoogleApiClient;
-
-    private static boolean isCurrentStateUsers = false;
-
-    private static int countNotes;
-
     BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
     WifiManager wifiManager;
-    static AudioManager audioManager;
-
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
 
     @Nullable
     @Override
@@ -124,11 +120,11 @@ public class GeoService extends Service implements
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
 
-        loadStatesNotes(sh.getAll(),nh.getAll());
+        loadStatesNotes(sh.getAll(), nh.getAll());
 
 
         // Start foreground
-//        sendNotification();
+        sendNotification();
 
         return Service.START_STICKY;
 
@@ -148,10 +144,6 @@ public class GeoService extends Service implements
                 (ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED)) {
 
-//            ActivityCompat.requestPermissions(this, new String[]{
-//                    ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION}, MY_PERNISSION_REQUEST_CODE);
-//            Log.d(TAG, "permission");
-//            setUpLocation();
             Toast.makeText(this, "Где мои разрешения??", Toast.LENGTH_LONG).show();
             //TODO: start activity to request permissions
 
@@ -257,53 +249,57 @@ public class GeoService extends Service implements
 
 
     private void setGeoFence(final State state, int i) {
-        Log.d(TAG, "setGeoFence: " + state.getName());
+        Log.d(TAG, "i:: " + i);
         final SharedPreferences prefs = getSharedPreferences("myPrefs",
                 Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = prefs.edit();
-        geoQuery.add(geoFire.queryAtLocation(new GeoLocation(state.getLat(), state.getLng()), 0.1f));
-        geoQuery.get(i).addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
+
+        geoQuery.add(geoFire.queryAtLocation(new GeoLocation(state.getLat(), state.getLng()), 0.2f));
+
+        if (state.getLat() != 0 || state.getLng() != 0) {
+            geoQuery.get(i).addGeoQueryEventListener(new GeoQueryEventListener() {
+                @Override
+                public void onKeyEntered(String key, GeoLocation location) {
 
 
+                    if(!Objects.equals(prefs.getString(CURRENT_STATE, ""), state.getName())){
+                        setLastState(getCurrentState());
+                        setState(state);
+                        editor.putString(CURRENT_STATE, state.getName());
+                        editor.apply();
 
-                if (prefs.getBoolean(IS_CURRENT_STATE_USERS,true)) {
-                    setLastState(getCurrentState());
-                    setState(state);
-                    editor.putBoolean(IS_CURRENT_STATE_USERS,false);
-                    editor.apply();
+                    }
+
+
                 }
 
-            }
+                @Override
+                public void onKeyExited(String key) {
+                    Log.d(TAG, "onKeyExited");
+                    setState(getLastState());
+                    editor.putString(CURRENT_STATE, "users");
+                    editor.apply();
 
-            @Override
-            public void onKeyExited(String key) {
-                Log.d(TAG, "onKeyExited");
+                }
 
-                setState(getLastState());
-                editor.putBoolean(IS_CURRENT_STATE_USERS,true);
-                editor.apply();
-            }
+                @Override
+                public void onKeyMoved(String key, GeoLocation location) {
+                    Log.d(TAG, String.format("%s moved within dangerous area [%f/%f]", key, location.latitude, location.longitude));
 
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-                Log.d(TAG, String.format("%s moved within dangerous area [%f/%f]", key, location.latitude, location.longitude));
-
-            }
+                }
 
 
-            @Override
-            public void onGeoQueryReady() {
+                @Override
+                public void onGeoQueryReady() {
 
-            }
+                }
 
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-                Log.e("ERROR", "" + error);
-            }
-        });
-
+                @Override
+                public void onGeoQueryError(DatabaseError error) {
+                    Log.e("ERROR", "" + error);
+                }
+            });
+        }
     }
 
 
@@ -313,59 +309,62 @@ public class GeoService extends Service implements
                 Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = prefs.edit();
 
-        geoQuery.add(geoFire.queryAtLocation(new GeoLocation(note.getLat(), note.getLng()), 0.1f));
-        geoQuery.get(i).addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                Log.d(TAG, "onKeyEntered");
+        geoQuery.add(geoFire.queryAtLocation(new GeoLocation(note.getLat(), note.getLng()), 0.2f));
 
-                if(!prefs.getBoolean(note.getName()+"activated",false)) {
-                    sendNotification(getApplicationContext(), note);
-                    editor.putBoolean(note.getName()+"activated", true);
-                    editor.apply();
+
+        if (note.getLat() != 0 || note.getLng() != 0) {
+            geoQuery.get(i).addGeoQueryEventListener(new GeoQueryEventListener() {
+                @Override
+                public void onKeyEntered(String key, GeoLocation location) {
+                    Log.d(TAG, "onKeyEntered");
+
+                    if (!prefs.getBoolean(note.getName() + "activated", false)) {
+                        sendNotification(getApplicationContext(), note);
+                        editor.putBoolean(note.getName() + "activated", true);
+                        editor.apply();
+                    }
                 }
-            }
 
-            @Override
-            public void onKeyExited(String key) {
-                Log.d(TAG, "onKeyExited");
-                editor.putBoolean(note.getName()+"activated", false);
-                editor.apply();
+                @Override
+                public void onKeyExited(String key) {
+                    Log.d(TAG, "onKeyExited");
+                    editor.putBoolean(note.getName() + "activated", false);
+                    editor.apply();
 
-            }
+                }
 
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-                Log.d(TAG, String.format("%s moved within dangerous area [%f/%f]", key, location.latitude, location.longitude));
+                @Override
+                public void onKeyMoved(String key, GeoLocation location) {
+                    Log.d(TAG, String.format("%s moved within dangerous area [%f/%f]", key, location.latitude, location.longitude));
 
-            }
+                }
 
 
-            @Override
-            public void onGeoQueryReady() {
+                @Override
+                public void onGeoQueryReady() {
 
-            }
+                }
 
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-                Log.e("ERROR", "" + error);
-            }
-        });
-
+                @Override
+                public void onGeoQueryError(DatabaseError error) {
+                    Log.e("ERROR", "" + error);
+                }
+            });
+        }
     }
 
 
     private void loadStatesNotes(ArrayList<State> states, ArrayList<Note> notes) {
 
         countNotes = notes.size();
-
-        for (int i = 0 ; i < countNotes; i++) {
+        Log.d(TAG, "Count: " + countNotes);
+        for (int i = 0; i < countNotes; i++) {
             Note note = notes.get(i);
             LatLng latLng = new LatLng(note.getLat(), note.getLng());
             stateGpsList.add(latLng);
             setGeoFence(note, i);
 
-            geoFire.setLocation("Note: "+note.getName(), new GeoLocation(note.getLat(), note.getLat()), new GeoFire.CompletionListener() {
+            geoFire.setLocation("Note: " + note.getName(), new GeoLocation(note.getLat(), note.getLat()), new GeoFire.CompletionListener() {
                 @Override
                 public void onComplete(String key, DatabaseError error) {
                     Log.d(TAG, "note added to firebase");
@@ -383,7 +382,7 @@ public class GeoService extends Service implements
             setGeoFence(state, countNotes);
             countNotes++;
 
-            geoFire.setLocation("State: "+state.getName(), new GeoLocation(state.getLat(), state.getLat()), new GeoFire.CompletionListener() {
+            geoFire.setLocation("State: " + state.getName(), new GeoLocation(state.getLat(), state.getLat()), new GeoFire.CompletionListener() {
                 @Override
                 public void onComplete(String key, DatabaseError error) {
                     Log.d(TAG, "state added to firebase");
@@ -409,10 +408,8 @@ public class GeoService extends Service implements
         if (state.isBluetoothState()) btAdapter.enable();
         else btAdapter.disable();
 
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, numToPercent(state.getMediaSoundState(),
-                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)), 0);
-        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, numToPercent(state.getSystemSoundState(),
-                audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM)), 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, state.getMediaSoundState(), 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_SYSTEM, state.getSystemSoundState(), 0);
 
         SharedPreferences prefs = getSharedPreferences("myPrefs",
                 Context.MODE_PRIVATE);
@@ -544,8 +541,6 @@ public class GeoService extends Service implements
         );
 
 
-
-
         if (prefs.getBoolean(SOUND_NOTIF_NOTE_SETTING, true)) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTE_SOUND_NOTIFICATION_CHANNEL_ID)
                     .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
@@ -576,7 +571,6 @@ public class GeoService extends Service implements
         }
 
 
-
     }
 
 
@@ -586,7 +580,7 @@ public class GeoService extends Service implements
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            NotificationChannel notificationChannel = new NotificationChannel("FOREGROUND_NOTIFICATION_CHANNEL_ID",
+            NotificationChannel notificationChannel = new NotificationChannel(FOREGROUND_NOTIFICATION_CHANNEL_ID,
                     "Foreground notifications", NotificationManager.IMPORTANCE_LOW);
 
             notificationChannel.setDescription("Foreground channel");
@@ -603,7 +597,7 @@ public class GeoService extends Service implements
 
         PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "FOREGROUND_NOTIFICATION_CHANNEL_ID")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), FOREGROUND_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.notificatoin_icon)
                 .setContentTitle("SmartTool")
                 .setContentText("Отслеживание местоположения")
@@ -635,8 +629,8 @@ public class GeoService extends Service implements
                 Context.MODE_PRIVATE);
         boolean wifi = prefs.getBoolean(WIFI_PREFS, false);
         boolean bluetooth = prefs.getBoolean(BLUETOOTH_PREFS, false);
-        int media = prefs.getInt(MEDIA_PREFS, 0);
-        int system = prefs.getInt(SYSTEM_PREFS, 0);
+        int media = prefs.getInt(MEDIA_PREFS, 100);
+        int system = prefs.getInt(SYSTEM_PREFS, 100);
         return new State(wifi, bluetooth, media, system, "Пользовательский");
     }
 
@@ -655,6 +649,11 @@ public class GeoService extends Service implements
 
 
     private State getCurrentState() {
+
+        Log.e(TAG,"getCurrentState"+ wifiManager.isWifiEnabled() +" "+ btAdapter.isEnabled() +
+                " "+ audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) +" "+
+                audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
+
         return new State(wifiManager.isWifiEnabled(), btAdapter.isEnabled(),
                 audioManager.getStreamVolume(AudioManager.STREAM_MUSIC),
                 audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
