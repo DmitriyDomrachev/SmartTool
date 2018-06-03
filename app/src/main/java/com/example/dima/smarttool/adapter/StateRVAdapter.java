@@ -123,6 +123,10 @@ public class StateRVAdapter extends RecyclerView.Adapter<StateRVAdapter.Contacts
 
             Intent intent = new Intent(context, ShowActivity.class);
             intent.putExtra("name", state.getName());
+            intent.putExtra("wifi", state.isWiFiState());
+            intent.putExtra("bluetooth", state.isBluetoothState());
+            intent.putExtra("media", state.getMediaSoundState());
+            intent.putExtra("system", state.getSystemSoundState());
             intent.putExtra("text", "Wifi: " + wifi
                     + "\nBluetooth: " + bt + "\nMedia: " + state.getMediaSoundState()
                     + "%\nSystem: " + state.getSystemSoundState() + "%");

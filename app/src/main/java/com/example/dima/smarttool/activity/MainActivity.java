@@ -34,7 +34,6 @@ import android.view.View;
 import com.example.dima.smarttool.DB.NoteHelper;
 import com.example.dima.smarttool.DB.StateHelper;
 import com.example.dima.smarttool.GeoService;
-import com.example.dima.smarttool.InfoActivity;
 import com.example.dima.smarttool.Note;
 import com.example.dima.smarttool.R;
 import com.example.dima.smarttool.State;
@@ -80,9 +79,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public static int getCountState() {
-        return countState;
-    }
+
 
     public static ArrayList<State> getStateArr() {
         return stateLoadArr;
@@ -168,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-
+        Log.d(TAG, "onResume");
         loadDB();           // заргузка данных из базы данных
 
         fragmentSt = new StateFragment();
@@ -177,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentManager = getFragmentManager();
 
+        rewriteFragment();
 
         rw = new RewriteFragment();
         rw.execute();
@@ -236,12 +234,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onDestroy() {
-        finish();
-        super.onDestroy();
-        Log.d("alarm", "destroy");
-    }
 
 
     @Override
@@ -257,6 +249,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
 
     public void rewriteFragment() {
         if (navigateID == R.id.navigation_scan) {
@@ -275,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
         }
     } //пересоздание фрагментов для отображения измененной информации
 
+
     public void loadDB() {
         StateHelper sh = new StateHelper(getApplicationContext());
         // инициализация помощника управления состояниямив базе данных
@@ -290,6 +284,7 @@ public class MainActivity extends AppCompatActivity {
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
     }
+
 
     private void requestPermission(String[] permission, int requestCode) {
         ActivityCompat.requestPermissions(this, permission, requestCode);
@@ -329,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
                 rewriteFragment();
 
             while (navigateID == R.id.navigation_scan) {
+                Log.d("RewriteFragment","while");
                 if (wifi != wifiManager.isWifiEnabled() || bt != btAdapter.isEnabled() ||
                         battery != batteryChange) {
                     rewriteFragment();

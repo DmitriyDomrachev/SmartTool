@@ -72,7 +72,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".InfoActivity"></activity>
+        <activity android:name=".activity.InfoActivity"></activity>
     </application>
 
 </manifest>

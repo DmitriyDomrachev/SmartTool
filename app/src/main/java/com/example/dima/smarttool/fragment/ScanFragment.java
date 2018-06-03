@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class ScanFragment extends Fragment {
     int BatteryState = 0, SoundState = 0;
     String[] names;
     ArrayList<String> nameList;
+    final String TAG = "scanFragment";
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -67,20 +69,31 @@ public class ScanFragment extends Fragment {
         if (bundle != null) {
             WiFiState = getArguments().getBoolean("wifi");
             BluetoothState = getArguments().getBoolean("bluetooth");
+            Log.d(TAG, "state: "+WiFiState+BluetoothState);
             BatteryState = getArguments().getInt("battery");
             SoundState = getArguments().getInt("sound");
         } //загрузка значений
         batteryText.setText("" + BatteryState);
 
 
+        if (WiFiState)
+            wifi.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
+        else wifi.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
+
+        if (BluetoothState)
+            bluetooth.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
+        else bluetooth.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
+        //установка цвета при запуске
+
+
         wifi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                WiFiState = !WiFiState;
                 if (WiFiState)
                     wifi.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
                 else wifi.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
                 MainActivity.setWiFi(WiFiState);
-                WiFiState = !WiFiState;
                 //управление состоянием
             }
         });
@@ -88,11 +101,11 @@ public class ScanFragment extends Fragment {
         bluetooth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BluetoothState =! BluetoothState;
                 if (BluetoothState)
                     bluetooth.setColorFilter(getResources().getColor(R.color.colorPrimaryLight));
                 else bluetooth.setColorFilter(getResources().getColor(R.color.colorSecondaryDark));
                 MainActivity.setBluetooth(BluetoothState);
-                BluetoothState =! BluetoothState;
                 //управление состоянием
 
             }

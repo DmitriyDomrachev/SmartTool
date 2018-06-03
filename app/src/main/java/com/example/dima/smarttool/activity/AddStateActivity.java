@@ -153,16 +153,13 @@ public class AddStateActivity extends AppCompatActivity {
         nameEditText = findViewById(R.id.addStateNameEditText);
         wifiSwitch = findViewById(R.id.addStateWiFiSwitch);
         bluetoothSwitch = findViewById(R.id.addStateBluetoothSwitch);
+
         mediaSeekBar = findViewById(R.id.addStateMediaSoundSeekBar);
         mediaSeekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         systemSeekBar = findViewById(R.id.addStateSystemSoundSeekBar);
         systemSeekBar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM));
 
         SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        final SharedPreferences.Editor ed = prefs.edit();
-
-        final StateHelper sh = new StateHelper(getApplicationContext());
-
         ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(getApplicationContext(),
                 R.array.startCondition, R.layout.spinner_text);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

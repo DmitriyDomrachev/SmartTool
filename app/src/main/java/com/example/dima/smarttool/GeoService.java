@@ -66,14 +66,18 @@ public class GeoService extends Service implements
     public static final String CHECK_PLAY_SERVICES = "CheckPlayServices";
     //PlayService Location
     private static final int MY_PERNISSION_REQUEST_CODE = 1236;
-    private static final String TAG = "GeoService", WIFI_PREFS = "currentWiFi",
-            BLUETOOTH_PREFS = "currentBluetooth", MEDIA_PREFS = "currentMedia",
-            SYSTEM_PREFS = "currentSYSTEM", STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel",
-            NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel",
-            FOREGROUND_NOTIFICATION_CHANNEL_ID = "foreground_notification_channel",
-            NOTE_SOUND_NOTIFICATION_CHANNEL_ID = "note_sound_notification_channel",
-            STATE_SOUND_NOTIFICATION_CHANNEL_ID = "state_sound_notification_channel",
-            CURRENT_STATE = "currentStateName", LAST_NOTE = "lastNote";
+    private static final String TAG = "GeoService";
+    private static final String WIFI_PREFS = "currentWiFi";
+    private static final String BLUETOOTH_PREFS = "currentBluetooth";
+    private static final String MEDIA_PREFS = "currentMedia";
+    private static final String SYSTEM_PREFS = "currentSYSTEM";
+    public static final String STATE_NOTIFICATION_CHANNEL_ID = "state_notification_channel";
+    public static final String NOTE_NOTIFICATION_CHANNEL_ID = "note_notification_channel";
+    private static final String FOREGROUND_NOTIFICATION_CHANNEL_ID = "foreground_notification_channel";
+    public static final String NOTE_SOUND_NOTIFICATION_CHANNEL_ID = "note_sound_notification_channel";
+    public static final String STATE_SOUND_NOTIFICATION_CHANNEL_ID = "state_sound_notification_channel";
+    private static final String CURRENT_STATE = "currentStateName";
+    private static final String LAST_NOTE = "lastNote";
 
     static ArrayList<LatLng> stateGpsList = new ArrayList<LatLng>();
 
@@ -194,7 +198,7 @@ public class GeoService extends Service implements
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
         Log.d(TAG, "createLocationRequest");
 
@@ -262,7 +266,7 @@ public class GeoService extends Service implements
                 public void onKeyEntered(String key, GeoLocation location) {
 
 
-                    if(!Objects.equals(prefs.getString(CURRENT_STATE, ""), state.getName())){
+                    if(!Objects.equals(prefs.getString(CURRENT_STATE, "1"), state.getName())){
                         setLastState(getCurrentState());
                         setState(state);
                         editor.putString(CURRENT_STATE, state.getName());
@@ -641,7 +645,7 @@ public class GeoService extends Service implements
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor ed = prefs.edit();
         ed.putBoolean(WIFI_PREFS, lastState.isWiFiState());
-        ed.putBoolean(BLUETOOTH_PREFS, lastState.isWiFiState());
+        ed.putBoolean(BLUETOOTH_PREFS, lastState.isBluetoothState());
         ed.putInt(MEDIA_PREFS, lastState.getMediaSoundState());
         ed.putInt(SYSTEM_PREFS, lastState.getSystemSoundState());
         ed.apply();
@@ -649,11 +653,6 @@ public class GeoService extends Service implements
 
 
     private State getCurrentState() {
-
-        Log.e(TAG,"getCurrentState"+ wifiManager.isWifiEnabled() +" "+ btAdapter.isEnabled() +
-                " "+ audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) +" "+
-                audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));
-
         return new State(wifiManager.isWifiEnabled(), btAdapter.isEnabled(),
                 audioManager.getStreamVolume(AudioManager.STREAM_MUSIC),
                 audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM));

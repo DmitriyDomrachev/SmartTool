@@ -3,6 +3,7 @@ package com.example.dima.smarttool.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,14 +18,19 @@ import com.example.dima.smarttool.R;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.example.dima.smarttool.activity.MainActivity.audioManager;
+
 public class ShowActivity extends AppCompatActivity {
+    static String finalHour;
+    static String finalMinute;
     Toolbar toolbar;
     Intent intent;
     TextView name, text;
     double lat = 0, lng = 0;
     long time = 0;
-    static String finalHour;
-    static String finalMinute;
+    String textS;
+    int media, system;
+    boolean wifi, bluetooth;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,7 +51,7 @@ public class ShowActivity extends AppCompatActivity {
             // /если запуск по времени открывается диалоговое окно c временем запуска
             AlertDialog.Builder builder = new AlertDialog.Builder(ShowActivity.this);
             builder.setTitle(String.valueOf(name.getText()))
-                    .setMessage(getString(R.string.start_at)+" "+ finalHour + ":" + finalMinute)
+                    .setMessage(getString(R.string.start_at) + " " + finalHour + ":" + finalMinute)
                     .setIcon(R.drawable.alarm)
                     .setCancelable(false)
                     .setNegativeButton("ОК",
@@ -81,19 +87,33 @@ public class ShowActivity extends AppCompatActivity {
 
         intent = getIntent();
         toolbar = findViewById(R.id.showToolbar);
-        setSupportActionBar(toolbar);
 
-        if (Objects.equals(intent.getStringExtra("type"), "State"))
-            toolbar.setTitle( getString(R.string.state));
-        else
-            toolbar.setTitle( getString(R.string.note));
         name = findViewById(R.id.showNameText);
         text = findViewById(R.id.showText);
+
+
+        if (Objects.equals(intent.getStringExtra("type"), "State")) {
+            toolbar.setTitle(getString(R.string.state));
+            wifi = intent.getBooleanExtra("wifi", false);
+            bluetooth = intent.getBooleanExtra("bluetooth", false);
+            media = intent.getIntExtra("media", 0);
+            system = intent.getIntExtra("system", 0);
+            textS = "Wifi: " + booleanToString(wifi) + "\nBluetooth: " + booleanToString(bluetooth)
+                    + "\n" + intToPrecent(media, "media") + "\n" + intToPrecent(system, "system");
+        } else {
+            toolbar.setTitle(getString(R.string.note));
+            textS = intent.getStringExtra("text");
+        }
+        text.setText(textS);
+        setSupportActionBar(toolbar);
+
+
         name.setText(intent.getStringExtra("name"));
-        text.setText(intent.getStringExtra("text"));
         lat += intent.getDoubleExtra("lat", 0);
         lng += intent.getDoubleExtra("lng", 0);
         time += intent.getLongExtra("time", 0);
+
+
         int hourI = (int) TimeUnit.MILLISECONDS.toHours(time);
         String hour = String.valueOf(TimeUnit.MILLISECONDS.toHours(time));
         String minute = String.valueOf(TimeUnit.MILLISECONDS.toMinutes(time - hourI * 3600000));
@@ -108,9 +128,26 @@ public class ShowActivity extends AppCompatActivity {
         finalMinute = minute;
 
 
-
     }
 
+    //TODO: text about state from data
+
+    private String booleanToString(boolean in) {
+        if (in)
+            return "on";
+        else
+            return "off";
+    }
+
+    private String intToPrecent(int in, String type) {
+        float count = in;
+        if (Objects.equals(type, "media")) {
+            return getString(R.string.media_sound) + " " + (int) (count
+                    / audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) * 100) + "%";
+        } else
+            return getString(R.string.system_sound) + " " + (int) (count
+                    / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM) * 100) + "%";
+    }
 
 }
 
