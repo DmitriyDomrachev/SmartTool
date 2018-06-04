@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.dima.smarttool.fragment.SettingFragment">
+    tools:context="com.uraldroid.dima.smarttool.fragment.SettingFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -186,7 +186,7 @@
                 android:text="@string/setting_sound"
                 android:textColor="@color/secondaryTextColor"
                 android:textSize="18sp"
-                tools:checked="true" />
+                tools:checked="false" />
 
 
             <TextView

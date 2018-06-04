@@ -1,39 +1,39 @@
 {
   "project_info": {
-    "project_number": "801751244628",
-    "firebase_url": "https://smarttool-bb3fc.firebaseio.com",
-    "project_id": "smarttool-bb3fc",
-    "storage_bucket": "smarttool-bb3fc.appspot.com"
+    "project_number": "132762030979",
+    "firebase_url": "https://smrattool.firebaseio.com",
+    "project_id": "smrattool",
+    "storage_bucket": "smrattool.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:801751244628:android:4273ac905a6647a7",
+        "mobilesdk_app_id": "1:132762030979:android:1f235830516daa68",
         "android_client_info": {
-          "package_name": "com.example.dima.smarttool"
+          "package_name": "com.uraldroid.dima.smarttool"
         }
       },
       "oauth_client": [
         {
-          "client_id": "801751244628-iiu1cmieiom53k3v78d14p0uod7osu57.apps.googleusercontent.com",
+          "client_id": "132762030979-q7srklstf6uknieucnb10bjgpj87tn61.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.dima.smarttool",
-            "certificate_hash": "584ff065f8762782c216cf31d7824a1e1d4304e9"
+            "package_name": "com.uraldroid.dima.smarttool",
+            "certificate_hash": "bdd43d723cf439a0b4df5c555048eef0bee98b7e"
           }
         },
         {
-          "client_id": "801751244628-64dfc81vctg898qvefuclg9d4m3j6g5i.apps.googleusercontent.com",
+          "client_id": "132762030979-om0bj595pqf4rsg0uqa7velfppgtgntf.apps.googleusercontent.com",
           "client_type": 3
         },
         {
-          "client_id": "801751244628-64dfc81vctg898qvefuclg9d4m3j6g5i.apps.googleusercontent.com",
+          "client_id": "132762030979-om0bj595pqf4rsg0uqa7velfppgtgntf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBYgZJNhGeatF3gEiHh-vhsALMRl_FVQMk"
+          "current_key": "AIzaSyB9u73Ip5gcG-BaRkotFm0L05hyn8LvQmQ"
         }
       ],
       "services": {
@@ -44,7 +44,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "801751244628-64dfc81vctg898qvefuclg9d4m3j6g5i.apps.googleusercontent.com",
+              "client_id": "132762030979-om0bj595pqf4rsg0uqa7velfppgtgntf.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

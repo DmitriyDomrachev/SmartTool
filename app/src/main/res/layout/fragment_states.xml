@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.dima.smarttool.fragment.StateFragment">
+    tools:context="com.uraldroid.dima.smarttool.fragment.StateFragment">
 
 
     <android.support.v7.widget.RecyclerView

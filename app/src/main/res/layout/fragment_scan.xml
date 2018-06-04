@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/navigation_margin"
     android:orientation="vertical"
-    tools:context="com.example.dima.smarttool.fragment.ScanFragment">
+    tools:context="com.uraldroid.dima.smarttool.fragment.ScanFragment">
 
 
     <LinearLayout
